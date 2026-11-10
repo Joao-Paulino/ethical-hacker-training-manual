@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 17 — Advanced Persistence | Ch. 17</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 17 — Advanced Persistence</h1>
+<div class="sub">Ch. 17 — Persistência Avançada em Active Directory</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Avançado / AD</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#sapphire">Sapphire Tickets</a></li><li><a href="#dcshadow">DCShadow</a></li>
+<li><a href="#dsrm">DSRM Backdoor</a></li><li><a href="#skeleton">Skeleton Key</a></li>
+<li><a href="#impact">Scripts de Impacto</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender as técnicas de persistência avançada em AD; executar Sapphire Tickets com Impacket (ticketer.py); realizar DCShadow com Mimikatz; explorar o backdoor da conta DSRM; executar Skeleton Key via patch de LSASS; <strong>construir scripts de impacto nativos</strong> para deteção.</span>
+<span class="en">Understand advanced AD persistence techniques; execute Sapphire Tickets with Impacket (ticketer.py); perform DCShadow with Mimikatz; exploit the DSRM account backdoor; execute Skeleton Key via LSASS patch; <strong>build native impact scripts</strong> for detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Depois de obter Domain Admin, o objetivo é manter o acesso mesmo que as credenciais sejam mudadas. As técnicas deste capítulo são particularmente perigosas porque abusam de mecanismos legítimos do AD ou de processos de confiança (replicação, LSASS) que os defensores raramente monitorizam de perto. Sapphire Tickets reutilizam PACs legítimos; DCShadow abusa da replicação; o DSRM Backdoor ativa uma conta esquecida; Skeleton Key patcheia LSASS para aceitar uma password universal.</span>
+<span class="en">After obtaining Domain Admin, the goal is to maintain access even if credentials are changed. The techniques in this chapter are particularly dangerous because they abuse legitimate AD mechanisms or trusted processes (replication, LSASS) that defenders rarely monitor closely. Sapphire Tickets reuse legitimate PACs; DCShadow abuses replication; the DSRM Backdoor activates a forgotten account; Skeleton Key patches LSASS to accept a universal password.</span>
+</div>
+</section>
+
+<section id="sapphire">
+<h2>3. Sapphire Tickets <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Um Sapphire Ticket é uma das técnicas de abuso de Kerberos mais avançadas atualmente discutidas publicamente. Em vez de forjar informação PAC, o atacante extrai o PAC legítimo de um utilizador privilegiado através da funcionalidade de delegação S4U e embebe esse PAC autêntico num ticket modificado. Os tickets forjados tradicionais contêm dados PAC artificiais criados pelo hacker. Os Sapphire Tickets reutilizam dados de autorização legítimos gerados pelo domínio. Como resultado, o ticket parece muito mais autêntico durante as verificações de validação.</span>
+<span class="en">A Sapphire Ticket is one of the most advanced Kerberos abuse techniques currently discussed publicly. Instead of forging PAC information, the attacker extracts the legitimate PAC from a privileged user through S4U delegation functionality and embeds that authentic PAC into a modified ticket. Traditional forged tickets contain artificial PAC data created by the hacker. Sapphire Tickets reuse legitimate authorization data generated by the domain. As a result, the ticket appears far more authentic during validation checks.</span>
+</div>
+<h3>3.1 Execução / Execution</h3>
+<pre>kali > python3 ticketer.py -request -domain domain.local -user lowpriv -password 'P@ssw0rd123' -aesKey <KRBTGT_AES256> -domain-sid S-1-5-21-XXXXXXXX -impersonate Administrator domain.local</pre>
+<div class="lang">
+<span class="pt">Os tickets são geralmente válidos por cerca de 10 horas por omissão. Embora seja tecnicamente possível estender o tempo de vida, isso não é uma boa decisão OPSEC — tickets de longa duração destacam-se em investigações.</span>
+<span class="en">Tickets are typically valid for around 10 hours by default. While it's technically possible to extend the lifetime, doing so is not a good OPSEC decision — long-lived tickets stand out during investigations.</span>
+</div>
+</section>
+
+<section id="dcshadow">
+<h2>4. DCShadow <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O DCShadow abusa dos mecanismos de replicação que o AD depende internamente. Normalmente, os Domain Controllers replicam alterações entre si automaticamente, e as soluções de monitorização confiam nesse tráfego. O atacante regista temporariamente uma máquina rogue como um falso Domain Controller e empurra alterações arbitrárias para o AD através de protocolos de replicação. Como as modificações parecem originar-se de atividade legítima de replicação de DC, muitos mecanismos de logging padrão falham em detetar a atividade. Requer privilégios de Domain Admin.</span>
+<span class="en">DCShadow abuses the replication mechanisms that AD depends on internally. Normally, Domain Controllers replicate changes between each other automatically, and monitoring solutions trust this traffic. The attacker temporarily registers a rogue machine as a fake Domain Controller and pushes arbitrary changes into AD through replication protocols. Since the modifications appear to originate from legitimate DC replication activity, many standard logging mechanisms fail to detect the activity. Requires Domain Admin privileges.</span>
+</div>
+<h3>4.1 Execução / Execution</h3>
+<pre># Shell 1: SYSTEM via PsExec
+PS > .\PsExec.exe \\delivery -u sekvoya.local\service_adm -p P@ssw0rd123! -s powershell
+
+# Modificar o alvo (promover a Domain Admin)
+PS > .\mimikatz.exe "privilege::debug" "lsadump::dcshadow /object:CN=lowpriv,CN=Users,DC=sekvoya,DC=local /attribute:primaryGroupID /value:512" "exit"
+
+# Shell 2: Domain Admin — empurrar alterações
+PS > .\mimikatz.exe "lsadump::dcshadow /push"</pre>
+</section>
+
+<section id="dsrm">
+<h2>5. DSRM Account Backdoor <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Cada Domain Controller contém uma conta local de administrador do Directory Services Restore Mode (DSRM). Esta conta atua como mecanismo de recuperação de emergência. Durante a promoção do DC, os administradores definem a password DSRM uma vez e frequentemente esquecem-se dela. Por omissão, a conta DSRM não pode autenticar pela rede enquanto o domínio opera normalmente. No entanto, uma modificação no registo pode alterar esse comportamento.</span>
+<span class="en">Every Domain Controller contains a local Directory Services Restore Mode (DSRM) administrator account. This account acts as a break-glass recovery mechanism. During DC promotion, administrators set the DSRM password once and frequently forget about it. By default, the DSRM account cannot authenticate over the network while the domain operates normally. However, a registry modification can change that behavior.</span>
+</div>
+<h3>5.1 Execução / Execution</h3>
+<pre># Dump do SAM local do DC
+PS > . .\Invoke-Mimikatz.ps1
+PS > Invoke-Mimikatz -Command '"token::elevate" "lsadump::sam"'
+
+# Ativar logon de rede para a conta DSRM
+PS > reg add "HKLM\System\CurrentControlSet\Control\Lsa" /v DsrmAdminLogonBehavior /t REG_DWORD /d 2 /f</pre>
+</section>
+
+<section id="skeleton">
+<h2>6. Skeleton Key <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O Skeleton Key é uma técnica clássica mas ainda interessante. Em vez de modificar tickets Kerberos ou dados de replicação, patcheia a memória do LSASS diretamente no Domain Controller. Uma vez patcheado, o DC aceita uma password universal para todas as contas de domínio, continuando a aceitar as passwords normais.</span>
+<span class="en">Skeleton Key is a classic but still interesting technique. Instead of modifying Kerberos tickets or replication data, it patches LSASS memory directly on the Domain Controller. Once patched, the DC accepts a universal master password for every domain account while still accepting normal passwords.</span>
+</div>
+<pre># Executar Mimikatz no DC para patch de LSASS
+mimikatz # privilege::debug
+mimikatz # misc::skeleton</pre>
+<div class="lang">
+<span class="pt">A password universal padrão é <code class="inline">mimikatz</code>. Qualquer utilizador de domínio pode autenticar com essa password.</span>
+<span class="en">The default universal password is <code class="inline">mimikatz</code>. Any domain user can authenticate with that password.</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>7. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam o blue team a detetar as técnicas deste capítulo.</span>
+<span class="en">The scripts below help the blue team detect the techniques in this chapter.</span>
+</div>
+
+<h3>7.1 Script 17.1 — Deteção de DSRM Backdoor / DSRM Backdoor Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar a alteração de <code class="inline">DsrmAdminLogonBehavior</code> para 2 (logon de rede ativado). <strong>Evidência:</strong> <code class="inline">dsrm-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect the change of <code class="inline">DsrmAdminLogonBehavior</code> to 2 (network logon enabled). <strong>Evidence:</strong> <code class="inline">dsrm-detect.csv</code>.</span>
+</div>
+<pre># Script 17.1 - DSRM Backdoor Detection
+$out = ".\dsrm-detect.csv"
+$key = "HKLM:\System\CurrentControlSet\Control\Lsa"
+$val = (Get-ItemProperty $key -Name "DsrmAdminLogonBehavior" -EA SilentlyContinue).DsrmAdminLogonBehavior
+$hits = @()
+if ($val -eq 2) {
+  $hits += [PSCustomObject]@{ Key=$key; Value=$val; Status="NETWORK LOGON ENABLED"; Severity="CRITICAL" }
+} elseif ($val -eq 1) {
+  $hits += [PSCustomObject]@{ Key=$key; Value=$val; Status="SERVICE ONLY"; Severity="MEDIUM" }
+}
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] DSRM findings: $($hits.Count) -> $out" -ForegroundColor Red
+$hits | Format-Table -AutoSize</pre>
+
+<h3>7.2 Script 17.2 — Deteção de DCShadow / DCShadow Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar registos de DC rogue via evento 4742 (computer account changed) e tráfego de replicação anómalo. <strong>Evidência:</strong> <code class="inline">dcshadow-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect rogue DC registration via event 4742 (computer account changed) and anomalous replication traffic. <strong>Evidence:</strong> <code class="inline">dcshadow-detect.csv</code>.</span>
+</div>
+<pre># Script 17.2 - DCShadow Detection (heuristic)
+$out = ".\dcshadow-detect.csv"
+$hits = @()
+# Computer accounts changed recently
+Get-WinEvent -LogName Security -MaxEvents 2000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4742 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $target = ($xml.Event.EventData.Data | Where-Object Name -eq "TargetUserName").'#text'
+    if ($target -match "\$$") {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Computer=$target; Event="4742" }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Computer account changes: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+
+<h3>7.3 Script 17.3 — Deteção de Skeleton Key / Skeleton Key Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar logons com a password universal <code class="inline">mimikatz</code> (evento 4624) e patch de LSASS (Sysmon Event 10). <strong>Evidência:</strong> <code class="inline">skeleton-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect logons with the universal password <code class="inline">mimikatz</code> (event 4624) and LSASS patch (Sysmon Event 10). <strong>Evidence:</strong> <code class="inline">skeleton-detect.csv</code>.</span>
+</div>
+<pre># Script 17.3 - Skeleton Key Detection
+$out = ".\skeleton-detect.csv"
+$hits = @()
+# Logons with mimikatz password (4624) - requires auditing
+Get-WinEvent -LogName Security -MaxEvents 2000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4624 } | ForEach-Object {
+    if ($_.Message -match "mimikatz") {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Event="4624"; Note="Universal password detected" }
+    }
+  }
+# LSASS access (Sysmon 10)
+Get-WinEvent -LogName "Microsoft-Windows-Sysmon/Operational" -MaxEvents 1000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 10 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $target = ($xml.Event.EventData.Data | Where-Object Name -eq "TargetImage").'#text'
+    if ($target -match "lsass\.exe") {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Event="Sysmon10"; Note="LSASS access" }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Skeleton Key indicators: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+</section>
+
+<section id="mitre">
+<h2>8. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Steal or Forge Kerberos Tickets: Golden Ticket</td><td>T1558.001</td><td>Sapphire Tickets</td></tr>
+<tr><td>Domain Trust Modification</td><td>T1484</td><td>DCShadow</td></tr>
+<tr><td>Account Manipulation</td><td>T1098</td><td>DSRM Backdoor</td></tr>
+<tr><td>Modify Authentication Process: Domain Controller Authentication</td><td>T1556.001</td><td>Skeleton Key</td></tr>
+<tr><td>OS Credential Dumping: DCSync</td><td>T1003.006</td><td>DCShadow (replicação)</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>9. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Monitorizar DsrmAdminLogonBehavior</strong> — deve ser 0 ou 1, nunca 2.</li>
+<li><strong>Monitorizar evento 4742</strong> — criação/alteração de contas de computador (DC rogue).</li>
+<li><strong>Monitorizar replicação AD</strong> — tráfego de replicação de fontes não autorizadas.</li>
+<li><strong>Proteger LSASS</strong> — Credential Guard, RunAsPPL, e monitorização Sysmon 10.</li>
+<li><strong>Auditar Kerberos</strong> — tickets com PAC legítimo mas origem suspeita (Sapphire).</li>
+<li><strong>Restringir Domain Admin</strong> — Tier 0, Protected Users, gMSA.</li>
+<li><strong>Monitorizar password universal</strong> — alertar sobre logons com "mimikatz".</li>
+<li><strong>Honeytokens</strong> — conta DSRM falsa, DC falso.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>10. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> DC Windows Server + VM cliente加入 ao domínio. Snapshot antes. Kali com Impacket. <strong>Objetivo:</strong> executar as técnicas (simuladas) e correr os scripts de deteção.</span>
+<span class="en"><strong>Scenario:</strong> Windows Server DC + domain-joined client VM. Snapshot before. Kali with Impacket. <strong>Goal:</strong> execute the techniques (simulated) and run detection scripts.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Sapphire Ticket</td><td><code class="inline">ticketer.py -request -impersonate Administrator ...</code></td><td>Ticket</td></tr>
+<tr><td>2</td><td>DCShadow (mod)</td><td><code class="inline">lsadump::dcshadow /object:... /value:512</code></td><td>Output</td></tr>
+<tr><td>3</td><td>DSRM Backdoor</td><td><code class="inline">reg add ... DsrmAdminLogonBehavior /d 2 /f</code></td><td>Output</td></tr>
+<tr><td>4</td><td>Skeleton Key</td><td><code class="inline">misc::skeleton</code></td><td>Output</td></tr>
+<tr><td>5</td><td>Deteção DSRM</td><td><code class="inline">.\dsrm-detect.ps1</code></td><td><code class="inline">dsrm-detect.csv</code></td></tr>
+<tr><td>6</td><td>Deteção DCShadow</td><td><code class="inline">.\dcshadow-detect.ps1</code></td><td><code class="inline">dcshadow-detect.csv</code></td></tr>
+<tr><td>7</td><td>Deteção Skeleton</td><td><code class="inline">.\skeleton-detect.ps1</code></td><td><code class="inline">skeleton-detect.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Ticket Sapphire</li>
+<li>Output DCShadow</li>
+<li>Registo DSRM alterado</li>
+<li>Skeleton Key ativo</li>
+<li><code class="inline">dsrm-detect.csv</code></li>
+<li><code class="inline">dcshadow-detect.csv</code></li>
+<li><code class="inline">skeleton-detect.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>11. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>O que distingue um Sapphire Ticket de um Golden Ticket? / What distinguishes a Sapphire Ticket from a Golden Ticket?</li>
+<li>Porque é que o DCShadow é difícil de detetar? / Why is DCShadow hard to detect?</li>
+<li>O que faz o DsrmAdminLogonBehavior=2? / What does DsrmAdminLogonBehavior=2 do?</li>
+<li>Como funciona o Skeleton Key? / How does Skeleton Key work?</li>
+<li>Qual a password universal padrão do Skeleton Key? / What's the default universal password for Skeleton Key?</li>
+<li>Como se deteta o DSRM Backdoor? / How to detect the DSRM Backdoor?</li>
+<li>Porque é que a monitorização de replicação é crítica? / Why is replication monitoring critical?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>12. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu quatro técnicas avançadas de persistência em AD: <strong>Sapphire Tickets</strong> (reutilização de PAC legítimo via S4U), <strong>DCShadow</strong> (abuso de replicação para push de alterações), <strong>DSRM Account Backdoor</strong> (ativação de logon de rede para a conta de recuperação do DC) e <strong>Skeleton Key</strong> (patch de LSASS para aceitar uma password universal). Acrescentámos <strong>três scripts de impacto</strong> (deteção de DSRM, DCShadow, Skeleton Key) que ajudam o blue team a detetar estas técnicas. O Cap. 18 entra noutras ferramentas DFIR (AnyDesk, DeadMatter, Nyx).</span>
+<span class="en">This chapter covered four advanced AD persistence techniques: <strong>Sapphire Tickets</strong> (reuse of legitimate PAC via S4U), <strong>DCShadow</strong> (abuse of replication to push changes), <strong>DSRM Account Backdoor</strong> (enabling network logon for the DC recovery account), and <strong>Skeleton Key</strong> (LSASS patch to accept a universal password). We added <strong>three impact scripts</strong> (DSRM, DCShadow, Skeleton Key detection) that help the blue team detect these techniques. Ch. 18 moves into other DFIR tools (AnyDesk, DeadMatter, Nyx).</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 17 / Ethical Hacker Training Manual — Ch. 17</div>
+<div style="margin-top:.6rem">
+<a href="cap16.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap18.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

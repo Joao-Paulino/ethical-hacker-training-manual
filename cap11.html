@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 11 — Dropping Nukes | Ch. 11</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 11 — Dropping Nukes</h1>
+<div class="sub">Ch. 11 — Simulação de Adversários com Atomic Red Team</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Purple Team / Deteção</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#atomic">Invoke-AtomicRedTeam</a></li><li><a href="#repo">Repositório e Referências</a></li>
+<li><a href="#install">Instalação</a></li><li><a href="#techniques">Técnicas</a></li>
+<li><a href="#prereqs">Pré-requisitos</a></li><li><a href="#testing">Testes</a></li>
+<li><a href="#impact">Scripts de Impacto</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o papel do Purple Teaming; instalar e configurar o Invoke-AtomicRedTeam; explorar técnicas e sub-técnicas do MITRE ATT&CK; verificar e instalar pré-requisitos; executar testes individuais ou por técnica; interpretar o log de execução; validar deteções no SIEM/EDR; <strong>construir scripts de impacto nativos</strong> para validação de telemetria.</span>
+<span class="en">Understand the role of Purple Teaming; install and configure Invoke-AtomicRedTeam; explore MITRE ATT&CK techniques and sub-techniques; check and install prerequisites; run individual or technique-level tests; interpret the execution log; validate detections in SIEM/EDR; <strong>build native impact scripts</strong> for telemetry validation.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Os artigos anteriores focaram-se em como os atacantes pensam e operam. Agora olhamos para o outro lado: ferramentas que ajudam as organizações a <strong>melhorar</strong>, não apenas a passar auditorias. O foco está em duas ferramentas que aproximam red team e blue team: <strong>Nebula</strong> e <strong>Invoke-AtomicRedTeam</strong>. Estas ferramentas simulam comportamento real de atacantes de forma controlada, permitindo aos defensores observar e melhorar. Ajudam a perceber não só se algo pode ser feito, mas se seria <strong>notado</strong> quando importa. Quando usadas corretamente, apoiam a colaboração com o blue team, ajudando a afinar lógica de deteção e a reduzir pontos cegos.</span>
+<span class="en">Previous articles focused on how attackers think and operate. Now we look at the other side: tools that help organizations <strong>improve</strong>, not just pass audits. The focus is on two tools that bridge red team and blue team: <strong>Nebula</strong> and <strong>Invoke-AtomicRedTeam</strong>. These tools simulate real-world attacker behavior in a controlled way, allowing defenders to observe and improve. They help understand not only whether something can be done, but whether it would actually be <strong>noticed</strong> when it matters. When used correctly, they support collaboration with the blue team, helping tune detection logic and reduce blind spots.</span>
+</div>
+</section>
+
+<section id="atomic">
+<h2>3. Invoke-AtomicRedTeam <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O projeto <strong>Atomic Red Team</strong> foi desenvolvido pela Red Canary para fornecer testes pequenos e focados que mapeiam diretamente para técnicas reais de adversários. O <strong>Invoke-AtomicRedTeam</strong> é um módulo PowerShell que permite executar esses testes diretamente de um sistema Windows. Cada teste corresponde a uma técnica do framework MITRE ATT&CK, e todos estão armazenados na chamada pasta <code class="inline">atomics</code>. Dentro dessa pasta, encontras um diretório para cada técnica, identificado pelo seu número T. Dentro de cada diretório, há ficheiros YAML que descrevem como o ataque funciona, o que requer e o que faz, juntamente com uma versão markdown mais legível para humanos.</span>
+<span class="en">The <strong>Atomic Red Team</strong> project was developed by Red Canary to provide small, focused tests that map directly to real adversary techniques. <strong>Invoke-AtomicRedTeam</strong> is a PowerShell module that allows you to execute these tests directly from a Windows system. Each test corresponds to a technique from the MITRE ATT&CK framework, and all of them are stored in the so-called <code class="inline">atomics</code> folder. Inside this folder, you will find a directory for each technique, identified by its T-number. Within each of those directories, there are YAML files that describe how the attack works, what it requires, and what it does, along with a more readable markdown version for humans.</span>
+</div>
+</section>
+
+<section id="repo">
+<h2>4. Repositório Oficial e Referências <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O Invoke-AtomicRedTeam é apenas o motor de execução. Os testes em si (os "atomics") vivem no repositório oficial da Red Canary no GitHub. O comando de instalação descarrega automaticamente o repositório para a tua máquina, mas deves consultar os ficheiros originais para entender, referenciar e adaptar os testes.</span>
+<span class="en">Invoke-AtomicRedTeam is just the execution engine. The tests themselves (the "atomics") live in the official Red Canary repository on GitHub. The installation command automatically downloads the repository to your machine, but you should consult the original files to understand, reference, and adapt the tests.</span>
+</div>
+<h3>4.1 Links essenciais / Essential links</h3>
+<table>
+<tr><th>Recurso / Resource</th><th>URL</th><th>Para que serve / Purpose</th></tr>
+<tr><td>Repositório principal / Main repo</td><td><code class="inline">https://github.com/redcanaryco/atomic-red-team</code></td><td>Fonte de todos os testes, organizados por técnica / Source of all tests, organized by technique</td></tr>
+<tr><td>Módulo PowerShell / PowerShell module</td><td><code class="inline">https://github.com/redcanaryco/invoke-atomicredteam</code></td><td>Código do módulo que corre os testes / Module code that runs the tests</td></tr>
+<tr><td>Pasta atomics / atomics folder</td><td><code class="inline">https://github.com/redcanaryco/atomic-red-team/tree/master/atomics</code></td><td>YAML e Markdown por técnica / YAML and Markdown per technique</td></tr>
+</table>
+<h3>4.2 Exemplos de ficheiros citados no capítulo / Example files cited in the chapter</h3>
+<table>
+<tr><th>Técnica / Technique</th><th>Link direto / Direct link</th></tr>
+<tr><td>T1012 (Query Registry)</td><td><code class="inline">https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1012/T1012.md</code></td></tr>
+<tr><td>T1003 (OS Credential Dumping)</td><td><code class="inline">https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1003/T1003.yaml</code></td></tr>
+<tr><td>T1072 (Software Deployment Tools)</td><td><code class="inline">https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1072/T1072.md</code></td></tr>
+<tr><td>T1106 (Native API)</td><td><code class="inline">https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1106/T1106.md</code></td></tr>
+</table>
+<div class="callout info">
+<strong>Nota / Note:</strong>
+<div class="lang">
+<span class="pt">Os links apontam para o branch <code class="inline">master</code>. Se o projeto mudar para <code class="inline">main</code>, substitui no URL. Podes também navegar a partir da raiz do repositório e escolher a técnica que queres consultar.</span>
+<span class="en">Links point to the <code class="inline">master</code> branch. If the project moves to <code class="inline">main</code>, replace it in the URL. You can also navigate from the repository root and pick the technique you want to consult.</span>
+</div>
+</div>
+</section>
+
+<section id="install">
+<h2>5. Instalação <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Há várias formas de instalar o Invoke-AtomicRedTeam, mas uma das mais rápidas é fornecida diretamente na documentação oficial. É importante compreender que isto <strong>requer privilégios administrativos</strong> e, em muitos casos, as proteções antivírus terão de ser desativadas na máquina de teste. Por isso, nem todos os sistemas são adequados para executar estes testes. A abordagem recomendada é usar uma <strong>máquina de teste dedicada</strong> ligada ao teu SIEM e stack de monitorização de segurança. Isso permite observar alertas, logs e deteções sem arriscar sistemas de produção.</span>
+<span class="en">There are several ways to install Invoke-AtomicRedTeam, but one of the quickest methods is provided directly in the official documentation. It is important to understand that this <strong>requires administrative privileges</strong> and, in many cases, antivirus protections will need to be disabled on the test machine. Because of this, not every system is suitable for running these tests. The recommended approach is to use a <strong>dedicated testing machine</strong> connected to your SIEM and security monitoring stack. This allows you to observe alerts, logs, and detections without risking production systems.</span>
+</div>
+<pre>PS > IEX (IWR 'https://raw.githubusercontent.com/redcanaryco/invoke-atomicredteam/master/install-atomicredteam.ps1' -UseBasicParsing);
+PS > Install-AtomicRedTeam -getAtomics -Force</pre>
+<div class="lang">
+<span class="pt">O processo de instalação pode demorar algum tempo, pois descarrega os ficheiros necessários e prepara o ambiente de teste.</span>
+<span class="en">The installation process can take some time, as it downloads the necessary files and prepares the testing environment.</span>
+</div>
+</section>
+
+<section id="techniques">
+<h2>6. Técnicas <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Após a instalação, tens acesso a uma vasta gama de técnicas MITRE ATT&CK. Cada técnica pode incluir múltiplas sub-técnicas, dependendo do sistema operativo. Podes explorar todas em detalhe e listar sub-técnicas disponíveis com um comando simples:</span>
+<span class="en">Once installation is complete, you have access to a wide range of MITRE ATT&CK techniques. Each technique may include multiple sub-techniques, depending on the operating system. You can explore them all in detail, and list available sub-techniques with a simple command:</span>
+</div>
+<pre>PS > Invoke-AtomicTest T1012 -ShowDetailsBrief</pre>
+<div class="lang">
+<span class="pt">Para uma visão mais profunda do que uma sub-técnica específica faz, podes pedir detalhes completos:</span>
+<span class="en">For deeper insight into what a specific sub-technique does, you can request full details:</span>
+</div>
+<pre>PS > Invoke-AtomicTest T1003-3 -ShowDetails</pre>
+<div class="lang">
+<span class="pt">Se uma deteção falhar ou nenhum alerta for acionado, podes entregar os comandos exatos e referências de técnicas aos defensores para melhorarem as suas regras e visibilidade.</span>
+<span class="en">If a detection fails or no alert is triggered, you can hand over the exact commands and technique references so defenders can improve their rules and visibility.</span>
+</div>
+</section>
+
+<section id="prereqs">
+<h2>7. Pré-requisitos <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Alguns testes atómicos requerem pré-requisitos específicos. Isto pode incluir software, alterações de configuração ou ferramentas que devem estar presentes no sistema. Um exemplo comum é o <strong>PDQ Deploy</strong>, uma ferramenta legítima de deployment de software usada por administradores para empurrar atualizações em grandes ambientes Windows. O PDQ Deploy é poderoso e, como muitas ferramentas administrativas, pode tornar-se perigoso nas mãos erradas. Foi abusado por grupos de ransomware como o LockBit para distribuir payloads maliciosos em redes inteiras. Isto não é exclusivo do PDQ Deploy. Group Policy, plataformas de gestão de endpoints e até consolas de gestão de antivírus podem ser transformadas em ferramentas de ataque uma vez comprometidas. Atacantes também recorrem por vezes ao <strong>Safe Mode</strong>, onde muitas ferramentas de segurança não correm. Ao forçar sistemas a reiniciar em Safe Mode através de alterações de política e executar scripts de shares confiáveis, podem contornar proteções por completo. É por isso que a deteção precoce é o que precisamos. Apanhar um atacante antes de chegar a este estágio pode salvar uma organização de danos generalizados.</span>
+<span class="en">Some atomic tests require specific prerequisites. This may include certain software, configuration changes, or tools that must be present on the system. A common example is <strong>PDQ Deploy</strong>, a legitimate software deployment tool used by administrators to push updates across large Windows environments. PDQ Deploy is powerful and, like many administrative tools, can become dangerous in the wrong hands. It has been abused by ransomware groups such as LockBit to distribute malicious payloads across entire networks. This is not unique to PDQ Deploy. Group Policy, endpoint management platforms, and even antivirus management consoles can be turned into attack tools once compromised. Attackers also sometimes rely on <strong>Safe Mode</strong>, where many security tools do not run. By forcing systems to reboot into Safe Mode through policy changes and executing scripts from trusted shares, they can bypass protections entirely. This is why early detection is what we need. Catching an attacker before they reach this stage can save an organization from widespread damage.</span>
+</div>
+<div class="lang">
+<span class="pt">Antes de correr um teste, podes verificar se todos os pré-requisitos estão cumpridos:</span>
+<span class="en">Before running a test, you can check whether all prerequisites are met:</span>
+</div>
+<pre>PS > Invoke-AtomicTest T1072-2 -CheckPrereqs</pre>
+<div class="lang">
+<span class="pt">Se faltar algo, podes deixar o framework tratar disso:</span>
+<span class="en">If something is missing, you can let the framework handle it:</span>
+</div>
+<pre>PS > Invoke-AtomicTest T1072-2 -GetPrereqs</pre>
+</section>
+
+<section id="testing">
+<h2>8. Testes <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Uma vez satisfeitos os pré-requisitos, o teste pode começar. Podes correr todas as sub-técnicas de uma técnica com um único comando:</span>
+<span class="en">Once prerequisites are satisfied, testing can begin. You can run all sub-techniques for a technique with a single command:</span>
+</div>
+<pre>PS > Invoke-AtomicTest T1106</pre>
+<div class="lang">
+<span class="pt">Ou focar-te numa sub-técnica específica:</span>
+<span class="en">Or focus on a specific sub-technique:</span>
+</div>
+<pre>PS > Invoke-AtomicTest T1106-2</pre>
+<div class="lang">
+<span class="pt">Geralmente é melhor correr os testes individualmente. Isto dá-te mais controlo sobre o que está a ser executado e quando, facilitando a correlação com alertas no SIEM.</span>
+<span class="en">It is generally better to run tests individually. This gives you more control over what is being executed and when, making it easier to correlate with SIEM alerts.</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>9. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam a validar a telemetria gerada pelos testes atómicos, comparando o que foi executado com o que foi registado. São úteis para fechar o ciclo Purple Team.</span>
+<span class="en">The scripts below help validate telemetry generated by atomic tests, comparing what was executed with what was logged. They are useful for closing the Purple Team loop.</span>
+</div>
+
+<h3>9.1 Script 11.1 — Verificação de Telemetria Pós-Teste / Post-Test Telemetry Check</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> após correr um teste atómico, verificar se os eventos esperados foram registados (Security, Sysmon, PowerShell). <strong>Evidência:</strong> <code class="inline">telemetry-check.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> after running an atomic test, verify that expected events were logged (Security, Sysmon, PowerShell). <strong>Evidence:</strong> <code class="inline">telemetry-check.csv</code>.</span>
+</div>
+<pre># Script 11.1 - Post-Atomic Telemetry Check
+param([int]$MinutesBack = 10)
+$out = ".\telemetry-check.csv"
+$since = (Get-Date).AddMinutes(-$MinutesBack)
+$checks = @()
+$sec = Get-WinEvent -LogName Security -MaxEvents 500 -EA SilentlyContinue | Where-Object { $_.TimeCreated -gt $since }
+$checks += [PSCustomObject]@{ Source="Security"; EventCount=$sec.Count; LastEvent=($sec | Select-Object -First 1).TimeCreated }
+$sys = Get-WinEvent -LogName "Microsoft-Windows-Sysmon/Operational" -MaxEvents 500 -EA SilentlyContinue | Where-Object { $_.TimeCreated -gt $since }
+$checks += [PSCustomObject]@{ Source="Sysmon"; EventCount=$sys.Count; LastEvent=($sys | Select-Object -First 1).TimeCreated }
+$ps = Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 500 -EA SilentlyContinue | Where-Object { $_.TimeCreated -gt $since }
+$checks += [PSCustomObject]@{ Source="PowerShell"; EventCount=$ps.Count; LastEvent=($ps | Select-Object -First 1).TimeCreated }
+$checks | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Telemetry check -> $out" -ForegroundColor Green
+$checks | Format-Table -AutoSize</pre>
+
+<h3>9.2 Script 11.2 — Correlação de Processos Suspeitos / Suspicious Process Correlation</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> correlacionar processos criados (4688) com padrões típicos de testes atómicos (PowerShell, cmd, mshta, rundll32). <strong>Evidência:</strong> <code class="inline">process-correlation.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> correlate created processes (4688) with typical atomic test patterns (PowerShell, cmd, mshta, rundll32). <strong>Evidence:</strong> <code class="inline">process-correlation.csv</code>.</span>
+</div>
+<pre># Script 11.2 - Suspicious Process Correlation
+$out = ".\process-correlation.csv"
+$patterns = @("powershell","cmd\.exe","mshta","rundll32","regsvr32","certutil","bitsadmin")
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 2000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4688 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $proc = ($xml.Event.EventData.Data | Where-Object Name -eq "NewProcessName").'#text'
+    $cmd  = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    foreach ($p in $patterns) { if ($proc -match $p -or $cmd -match $p) { $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Process=$proc; Cmd=$cmd; Pattern=$p } } }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Process hits: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+
+<h3>9.3 Script 11.3 — Auditoria de Pré-requisitos / Prerequisite Audit</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> verificar o estado dos pré-requisitos comuns (PDQ Deploy, Sysmon, PowerShell logging) antes de correr testes. <strong>Evidência:</strong> <code class="inline">prereq-audit.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> check common prerequisites (PDQ Deploy, Sysmon, PowerShell logging) before running tests. <strong>Evidence:</strong> <code class="inline">prereq-audit.csv</code>.</span>
+</div>
+<pre># Script 11.3 - Prerequisite Audit
+$out = ".\prereq-audit.csv"
+$audit = @(
+  [PSCustomObject]@{ Item="PDQ Deploy"; Present=(Test-Path "C:\Program Files (x86)\PDQ Deploy") -or (Test-Path "C:\Program Files\PDQ Deploy") }
+  [PSCustomObject]@{ Item="Sysmon Service"; Present=($null -ne (Get-Service -Name Sysmon64,Sysmon -EA SilentlyContinue)) }
+  [PSCustomObject]@{ Item="Script Block Logging"; Present=((Get-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -EA SilentlyContinue).EnableScriptBlockLogging -eq 1) }
+  [PSCustomObject]@{ Item="Module Logging"; Present=((Get-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging" -EA SilentlyContinue).EnableModuleLogging -eq 1) }
+  [PSCustomObject]@{ Item="AtomicRedTeam folder"; Present=(Test-Path "C:\AtomicRedTeam") }
+)
+$audit | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Prereq audit -> $out" -ForegroundColor Green
+$audit | Format-Table -AutoSize</pre>
+</section>
+
+<section id="mitre">
+<h2>10. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>Testes atómicos, Script 11.2</td></tr>
+<tr><td>OS Credential Dumping: LSASS Memory</td><td>T1003.001</td><td>Exemplo de teste (T1003-3)</td></tr>
+<tr><td>System Information Discovery</td><td>T1082</td><td>Exemplo de teste (T1012)</td></tr>
+<tr><td>Software Deployment Tools</td><td>T1072</td><td>PDQ Deploy, T1072-2</td></tr>
+<tr><td>Native API</td><td>T1106</td><td>Exemplo de teste (T1106)</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>11. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Usar máquina de teste dedicada</strong> — nunca em produção.</li>
+<li><strong>Ligar ao SIEM/EDR</strong> — validar que os eventos chegam e disparam regras.</li>
+<li><strong>Documentar gaps</strong> — se um teste não gerou alerta, criar/ajustar regra.</li>
+<li><strong>Desativar AV na máquina de teste</strong> — para evitar bloqueio dos testes.</li>
+<li><strong>Correr testes individualmente</strong> — facilita correlação e troubleshooting.</li>
+<li><strong>Verificar pré-requisitos</strong> antes de cada teste (Script 11.3).</li>
+<li><strong>Fazer cleanup</strong> após cada teste (<code class="inline">-Cleanup</code>).</li>
+<li><strong>Monitorizar PDQ Deploy e ferramentas de deployment</strong> — são alvos de abuso.</li>
+<li><strong>Detetar Safe Mode abuse</strong> — alterações de política que forçam reboot em Safe Mode.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>12. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows 10/11 isolada, com Sysmon e PowerShell logging ativados, ligada a um SIEM (Splunk/Wazuh) ou pelo menos com Event Viewer. Snapshot antes. AV desativado. <strong>Objetivo:</strong> instalar o Invoke-AtomicRedTeam, correr um teste, validar telemetria e cleanup.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows 10/11 VM with Sysmon and PowerShell logging enabled, connected to a SIEM (Splunk/Wazuh) or at least Event Viewer. Snapshot before. AV disabled. <strong>Goal:</strong> install Invoke-AtomicRedTeam, run a test, validate telemetry, and cleanup.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Instalar</td><td><code class="inline">Install-AtomicRedTeam -getAtomics -Force</code></td><td>Pasta <code class="inline">C:\AtomicRedTeam</code></td></tr>
+<tr><td>2</td><td>Listar T1012</td><td><code class="inline">Invoke-AtomicTest T1012 -ShowDetailsBrief</code></td><td>Output</td></tr>
+<tr><td>3</td><td>Detalhes T1003-3</td><td><code class="inline">Invoke-AtomicTest T1003-3 -ShowDetails</code></td><td>Output</td></tr>
+<tr><td>4</td><td>Verificar pré-requisitos</td><td><code class="inline">Invoke-AtomicTest T1072-2 -CheckPrereqs</code></td><td>Output</td></tr>
+<tr><td>5</td><td>Correr teste</td><td><code class="inline">Invoke-AtomicTest T1106-2</code></td><td>Log de execução</td></tr>
+<tr><td>6</td><td>Validar telemetria</td><td><code class="inline">.\telemetry-check.ps1</code></td><td><code class="inline">telemetry-check.csv</code></td></tr>
+<tr><td>7</td><td>Correlacionar processos</td><td><code class="inline">.\process-correlation.ps1</code></td><td><code class="inline">process-correlation.csv</code></td></tr>
+<tr><td>8</td><td>Cleanup</td><td><code class="inline">Invoke-AtomicTest T1106-2 -Cleanup</code></td><td>Output</td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Instalação concluída</li>
+<li>Output de <code class="inline">-ShowDetails</code></li>
+<li>Log de execução do teste</li>
+<li><code class="inline">telemetry-check.csv</code></li>
+<li><code class="inline">process-correlation.csv</code></li>
+<li>Cleanup executado</li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>13. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Qual é o objetivo do Purple Teaming? / What is the goal of Purple Teaming?</li>
+<li>O que é o Invoke-AtomicRedTeam e como se relaciona com MITRE ATT&CK? / What is Invoke-AtomicRedTeam and how does it relate to MITRE ATT&CK?</li>
+<li>Porque é que a máquina de teste deve estar ligada ao SIEM? / Why should the test machine be connected to the SIEM?</li>
+<li>O que faz o comando <code class="inline">-CheckPrereqs</code>? / What does <code class="inline">-CheckPrereqs</code> do?</li>
+<li>Porque é que o PDQ Deploy é um exemplo de ferramenta legítima abusada? / Why is PDQ Deploy an example of a legitimate tool being abused?</li>
+<li>Como se valida que um teste atómico gerou telemetria? / How to validate that an atomic test generated telemetry?</li>
+<li>Porque é que se deve correr testes individualmente? / Why should tests be run individually?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>14. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo introduziu o Purple Teaming com o <strong>Invoke-AtomicRedTeam</strong>. O Atomic Red Team fornece testes pequenos e focados que mapeiam para técnicas MITRE ATT&CK, armazenados na pasta <code class="inline">atomics</code> com ficheiros YAML e markdown. A instalação requer admin e, idealmente, uma máquina de teste dedicada ligada ao SIEM. Podes explorar técnicas (<code class="inline">-ShowDetailsBrief</code>, <code class="inline">-ShowDetails</code>), verificar pré-requisitos (<code class="inline">-CheckPrereqs</code>, <code class="inline">-GetPrereqs</code>) e executar testes (<code class="inline">Invoke-AtomicTest T1106</code>). Acrescentámos a secção <strong>Repositório Oficial e Referências</strong> com os links essenciais do GitHub e <strong>três scripts de impacto</strong> (telemetria pós-teste, correlação de processos, auditoria de pré-requisitos) que fecham o ciclo Purple Team. O Cap. 12 entra na evasão de AV com Tenebris-Gate.</span>
+<span class="en">This chapter introduced Purple Teaming with <strong>Invoke-AtomicRedTeam</strong>. Atomic Red Team provides small, focused tests that map to MITRE ATT&CK techniques, stored in the <code class="inline">atomics</code> folder with YAML and markdown files. Installation requires admin and, ideally, a dedicated test machine connected to the SIEM. You can explore techniques (<code class="inline">-ShowDetailsBrief</code>, <code class="inline">-ShowDetails</code>), check prerequisites (<code class="inline">-CheckPrereqs</code>, <code class="inline">-GetPrereqs</code>), and run tests (<code class="inline">Invoke-AtomicTest T1106</code>). We added the <strong>Official Repository and References</strong> section with essential GitHub links and <strong>three impact scripts</strong> (post-test telemetry, process correlation, prerequisite audit) that close the Purple Team loop. Ch. 12 moves into AV evasion with Tenebris-Gate.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 11 / Ethical Hacker Training Manual — Ch. 11</div>
+<div style="margin-top:.6rem">
+<a href="cap10.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap12.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 3 — Exploring PowerView | Ch. 3 — Exploring PowerView</title>
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#161b22; --bg3:#1c2128; --fg:#c9d1d9; --fg2:#8b949e;
+    --accent:#39d353; --accent2:#58a6ff; --warn:#d29922; --danger:#f85149;
+    --border:#30363d; --code-bg:#0b0f14; --code-fg:#7ee787;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65; font-size:16px;
+  }
+  header{
+    background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);
+    border-bottom:2px solid var(--accent);
+    padding:2rem 1.5rem 1.5rem;
+  }
+  header h1{margin:0 0 .3rem; font-size:1.9rem; color:var(--accent)}
+  header .sub{color:var(--fg2); font-size:.95rem}
+  header .meta{margin-top:.8rem; font-size:.85rem; color:var(--fg2)}
+  header .meta span{margin-right:1.2rem}
+  nav.toc{
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+    padding:1rem 1.2rem; margin:1.5rem auto; max-width:1100px;
+  }
+  nav.toc h2{margin:0 0 .6rem; font-size:1rem; color:var(--accent2); text-transform:uppercase; letter-spacing:.05em}
+  nav.toc ol{margin:0; padding-left:1.3rem; columns:2; column-gap:2rem}
+  nav.toc a{color:var(--fg); text-decoration:none}
+  nav.toc a:hover{color:var(--accent)}
+  main{max-width:1100px; margin:0 auto; padding:0 1.5rem 3rem}
+  section{
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+    padding:1.4rem 1.6rem; margin:1.5rem 0;
+  }
+  section h2{
+    margin-top:0; color:var(--accent2); font-size:1.3rem;
+    border-bottom:1px solid var(--border); padding-bottom:.5rem;
+  }
+  section h3{color:var(--accent); font-size:1.05rem; margin-top:1.4rem}
+  .lang{display:block; margin:.4rem 0}
+  .lang .pt::before{content:"🇵🇹 PT "; color:var(--accent); font-weight:600; font-size:.8rem; letter-spacing:.05em}
+  .lang .en::before{content:"🇬🇧 EN "; color:var(--accent2); font-weight:600; font-size:.8rem; letter-spacing:.05em}
+  .lang .pt,.lang .en{display:block; margin:.25rem 0 .25rem 0}
+  pre{
+    background:var(--code-bg); border:1px solid var(--border); border-left:3px solid var(--accent);
+    border-radius:6px; padding:1rem 1.1rem; overflow-x:auto;
+    font-family:"Cascadia Code","Fira Code",Consolas,monospace; font-size:.88rem;
+    color:var(--code-fg); line-height:1.5;
+  }
+  code.inline{
+    background:var(--bg3); border:1px solid var(--border); border-radius:4px;
+    padding:.1rem .4rem; font-family:Consolas,monospace; font-size:.88rem; color:var(--accent);
+  }
+  table{width:100%; border-collapse:collapse; margin:1rem 0; font-size:.92rem}
+  th,td{border:1px solid var(--border); padding:.55rem .7rem; text-align:left; vertical-align:top}
+  th{background:var(--bg3); color:var(--accent2)}
+  tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+  .callout{
+    border-left:4px solid var(--warn); background:rgba(210,153,34,.08);
+    padding:.8rem 1rem; border-radius:0 6px 6px 0; margin:1rem 0;
+  }
+  .callout.danger{border-left-color:var(--danger); background:rgba(248,81,73,.08)}
+  .callout.info{border-left-color:var(--accent2); background:rgba(88,166,255,.08)}
+  .callout.complement{border-left-color:var(--accent); background:rgba(57,211,83,.06)}
+  .callout strong{color:var(--fg)}
+  .badge{
+    display:inline-block; font-size:.7rem; font-weight:700; letter-spacing:.05em;
+    padding:.15rem .5rem; border-radius:999px; margin-left:.4rem; vertical-align:middle;
+  }
+  .badge.orig{background:rgba(88,166,255,.15); color:var(--accent2); border:1px solid var(--accent2)}
+  .badge.comp{background:rgba(57,211,83,.12); color:var(--accent); border:1px solid var(--accent)}
+  .badge.impact{background:rgba(248,81,73,.12); color:var(--danger); border:1px solid var(--danger)}
+  ul.checklist{list-style:none; padding-left:0}
+  ul.checklist li::before{content:"☐ "; color:var(--accent); font-weight:700; margin-right:.3rem}
+  footer{
+    border-top:1px solid var(--border); margin-top:3rem; padding:1.5rem;
+    text-align:center; color:var(--fg2); font-size:.85rem;
+  }
+  footer a{color:var(--accent2); text-decoration:none}
+  footer a:hover{color:var(--accent)}
+  @media (max-width:720px){ nav.toc ol{columns:1} header h1{font-size:1.4rem} }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Cap. 3 — Exploring PowerView</h1>
+  <div class="sub">Ch. 3 — Exploring PowerView</div>
+  <div class="meta">
+    <span>📖 Manual de Formação Ethical Hacker</span>
+    <span>🎯 Nível: Intermédio / Intermediate</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <h2>Índice / Table of Contents</h2>
+  <ol>
+    <li><a href="#obj">Objetivos / Objectives</a></li>
+    <li><a href="#ctx">Contexto / Context</a></li>
+    <li><a href="#import">Importar PowerView / Importing PowerView</a></li>
+    <li><a href="#domain">Funções de Domínio e LDAP / Domain &amp; LDAP Functions</a></li>
+    <li><a href="#user">Get-DomainUser (Comandos) / (Commands)</a></li>
+    <li><a href="#impact">Scripts de Impacto / Impact Scripts</a></li>
+    <li><a href="#mitre">MITRE ATT&amp;CK</a></li>
+    <li><a href="#mitig">Mitigações / Mitigations</a></li>
+    <li><a href="#lab">Laboratório / Lab</a></li>
+    <li><a href="#revq">Revisão / Review</a></li>
+    <li><a href="#sum">Resumo / Summary</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ===================== OBJETIVOS ===================== -->
+<section id="obj">
+  <h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+  <div class="lang">
+    <span class="pt">Compreender o que é o PowerView e porque é preferido em ambientes restritos (não requer RSAT); importar o script em memória; dominar funções de domínio (<code class="inline">Get-Domain</code>, <code class="inline">Get-Forest</code>, <code class="inline">Get-DomainDNSZone</code>); dominar <code class="inline">Get-DomainUser</code> com os seus filtros; <strong>construir scripts de impacto</strong> que automatizam enumeração, exportam para Hashcat e geram relatórios de risco; mapear a MITRE e propor mitigações.</span>
+    <span class="en">Understand what PowerView is and why it's preferred in restricted environments (no RSAT required); import the script in memory; master domain functions (<code class="inline">Get-Domain</code>, <code class="inline">Get-Forest</code>, <code class="inline">Get-DomainDNSZone</code>); master <code class="inline">Get-DomainUser</code> with its filters; <strong>build impact scripts</strong> that automate enumeration, export to Hashcat, and generate risk reports; map to MITRE and propose mitigations.</span>
+  </div>
+</section>
+
+<!-- ===================== CONTEXTO ===================== -->
+<section id="ctx">
+  <h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+  <div class="lang">
+    <span class="pt">O PowerView é particularmente útil porque <strong>não requer a instalação do RSAT</strong>, sendo eficaz em ambientes furtivos ou restritos. Originalmente parte do framework PowerSploit, tornou-se a ferramenta de eleição para operações red team e pós-exploração em ambientes de domínio Windows. Passamos para o PowerView depois de aprendermos a obter dados manualmente com filtros PowerShell e LDAP, porque ferramentas externas podem não estar sempre disponíveis, especialmente em ambientes com defesas ativas. Saber extrair dados discretamente com comandos nativos do Windows é uma competência crítica.</span>
+    <span class="en">PowerView is particularly useful because it <strong>doesn't require RSAT installation</strong>, making it effective in stealthy or restricted environments. Originally part of the PowerSploit framework, it has become a go-to tool for red team operations and post-exploitation in Windows domain environments. We move to PowerView after learning manual data retrieval with PowerShell filters and LDAP because external tools may not always be available, especially in environments with active defenses. Knowing how to extract data discreetly using native Windows commands is a critical skill.</span>
+  </div>
+</section>
+
+<!-- ===================== IMPORT ===================== -->
+<section id="import">
+  <h2>3. Importar PowerView / Importing PowerView <span class="badge orig">Original</span></h2>
+  <div class="lang">
+    <span class="pt">Importar um script permite chamar as suas funções conforme necessário, ao contrário de executar o script, que corre todos os comandos de uma vez. A importação pode ser restringida pela execution policy (ver Cap. 1).</span>
+    <span class="en">Importing a script lets you call its functions as needed, unlike running the script, which executes all commands at once. Importing may be restricted by execution policy (see Ch. 1).</span>
+  </div>
+<pre>PS > powershell -ep bypass
+PS > . .\PowerView.ps1</pre>
+  <div class="callout info">
+    <strong>Nota / Note:</strong>
+    <div class="lang">
+      <span class="pt">O ponto e espaço (<code class="inline">. .\PowerView.ps1</code>) é <em>dot-sourcing</em> — carrega o script no âmbito atual, tornando todas as funções disponíveis na sessão.</span>
+      <span class="en">The dot-space (<code class="inline">. .\PowerView.ps1</code>) is <em>dot-sourcing</em> — loads the script into the current scope, making all functions available in the session.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DOMAIN & LDAP ===================== -->
+<section id="domain">
+  <h2>4. Funções de Domínio e LDAP / Domain &amp; LDAP Functions <span class="badge orig">Original</span> <span class="badge comp">Complementar / Complementary</span></h2>
+
+  <h3>4.1 Get-DomainDNSZone</h3>
+  <div class="lang">
+    <span class="pt">Recupera as zonas DNS dentro de um domínio AD. Útil para compreender a estrutura interna da rede, identificar subdomínios e mapear alvos. Fornece informação sobre fronteiras de trust e resolução de nomes interna.</span>
+    <span class="en">Retrieves DNS zones within an AD domain. Useful for understanding internal network structure, identifying subdomains, and mapping targets. Provides insight into trust boundaries and internal name resolution.</span>
+  </div>
+<pre># Listar zonas DNS no domínio atual / List DNS zones in current domain:
+Get-DomainDNSZone | Get-DomainDNSRecord
+
+# Consultar domínio ou DC específico / Query specific domain or DC:
+Get-DomainDNSZone -Domain corp.test.local -Server dc01.corp.test.local | Get-DomainDNSRecord -Domain corp.test.local -Server dc01.corp.test.local
+
+# Output estruturado / Structured output:
+Get-DomainDNSZone | Get-DomainDNSRecord -Properties name,whencreated</pre>
+
+  <h3>4.2 Get-Domain</h3>
+  <div class="lang">
+    <span class="pt">Recupera informação essencial sobre o domínio: nome, SID, domain controllers e pertença à forest. Visão concisa do ambiente.</span>
+    <span class="en">Retrieves essential domain info: name, SID, domain controllers, and forest membership. Concise environment overview.</span>
+  </div>
+<pre>Get-Domain
+Get-Domain -Domain corp.test.local</pre>
+
+  <h3>4.3 Get-Forest</h3>
+  <div class="lang">
+    <span class="pt">Recolhe detalhes da forest a que o domínio pertence: nome, SID, domínios membros, forest mode, global catalogs e DCs. Ajuda a mapear a topologia e fronteiras de trust.</span>
+    <span class="en">Gathers details about the forest the domain belongs to: name, SID, member domains, forest mode, global catalogs, and DCs. Helps map topology and trust boundaries.</span>
+  </div>
+<pre>Get-Forest
+Get-Forest -Forest corp.test.local</pre>
+</section>
+
+<!-- ===================== GET-DOMAINUSER ===================== -->
+<section id="user">
+  <h2>5. Get-DomainUser — Comandos / Commands <span class="badge orig">Original</span></h2>
+  <div class="lang">
+    <span class="pt">Recupera objetos de conta de utilizador do AD. Por omissão lista todos, mas podes filtrar por username, SID, filtros LDAP ou atributos específicos. É valioso para identificar contas de serviço, contas desativadas, membresias e atributos exploráveis para escalada ou movimento lateral.</span>
+    <span class="en">Retrieves user account objects from AD. By default lists all users, but you can filter by username, SID, LDAP filters, or specific attributes. Valuable for identifying service accounts, disabled accounts, memberships, and attributes exploitable for escalation or lateral movement.</span>
+  </div>
+
+  <h3>5.1 Listar e detalhar / List and detail</h3>
+<pre># Listar todos os utilizadores / List all users:
+Get-DomainUser
+
+# Detalhe de um utilizador / Specific user detail:
+Get-DomainUser -Identity sql_service -Properties * | Format-List</pre>
+
+  <h3>5.2 Kerberoasting (<code class="inline">-SPN</code>)</h3>
+<pre># Utilizadores Kerberoastable / Kerberoastable users:
+Get-DomainUser -SPN -Properties samaccountname,memberof,serviceprincipalname
+
+# Cross-domain / Cross-domain:
+Get-DomainUser -SPN -Domain domain.local | select samaccountname,memberof,serviceprincipalname | fl
+
+# Kerberoastable Domain Admins:
+Get-DomainUser -SPN | Where-Object {$_.memberof -match 'Domain Admins'} | Select Name, ServicePrincipalName</pre>
+
+  <h3>5.3 AS-REP Roasting (<code class="inline">-KerberosPreauthNotRequired</code>)</h3>
+<pre>Get-DomainUser -KerberosPreauthNotRequired</pre>
+
+  <h3>5.4 PasswordNotRequired (<code class="inline">-UACFilter PASSWD_NOTREQD</code>)</h3>
+<pre>Get-DomainUser -UACFilter PASSWD_NOTREQD | Select-Object samaccountname,useraccountcontrol</pre>
+
+  <h3>5.5 Delegação (<code class="inline">-UnconstrainedDelegation</code>)</h3>
+<pre>Get-DomainUser -UnconstrainedDelegation -Properties samaccountname,useraccountcontrol,memberof</pre>
+
+  <h3>5.6 SID History (<code class="inline">-LDAPFilter '(sidHistory=*)'</code>)</h3>
+<pre>Get-DomainUser -LDAPFilter '(sidHistory=*)'</pre>
+
+  <h3>5.7 Descrições com segredos / Descriptions with secrets</h3>
+<pre>Get-DomainUser -Properties samaccountname,description | Where-Object {$_.description -ne $null}</pre>
+
+  <h3>5.8 Exportar para CSV / Export to CSV</h3>
+<pre>Get-DomainUser -Properties samaccountname,description,memberof | Export-Csv .\users.csv -NoTypeInformation</pre>
+</section>
+
+<!-- ===================== IMPACT SCRIPTS ===================== -->
+<section id="impact">
+  <h2>6. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto / Impact</span> <span class="badge comp">Complementar / Complementary</span></h2>
+  <div class="lang">
+    <span class="pt">Os comandos acima são úteis, mas em engagement real precisas de <strong>automatizar, exportar e priorizar</strong>. Os scripts abaixo são ferramentas completas, prontas a executar em laboratório, com tratamento de erros, output legível e exportação para ferramentas de cracking. Cada script indica a <strong>evidência</strong> que deve ser registada no relatório.</span>
+    <span class="en">The commands above are useful, but in a real engagement you need to <strong>automate, export, and prioritize</strong>. The scripts below are complete tools, ready to run in the lab, with error handling, readable output, and export to cracking tools. Each script states the <strong>evidence</strong> to record in the report.</span>
+  </div>
+
+  <!-- SCRIPT 3.1 -->
+  <h3>Script 3.1 — Enumeração Completa de Utilizadores / Full User Enumeration</h3>
+  <div class="lang">
+    <span class="pt"><strong>Objetivo:</strong> enumerar todos os utilizadores com os atributos relevantes, exportar para CSV e JSON, e mostrar um resumo no ecrã. <strong>Evidência:</strong> ficheiros <code class="inline">users.csv</code> e <code class="inline">users.json</code> + contagem.</span>
+    <span class="en"><strong>Goal:</strong> enumerate all users with relevant attributes, export to CSV and JSON, and show an on-screen summary. <strong>Evidence:</strong> <code class="inline">users.csv</code> and <code class="inline">users.json</code> files + count.</span>
+  </div>
+<pre># ============================================================
+# Script 3.1 — Full User Enumeration
+# Requires: PowerView.ps1 dot-sourced
+# Usage: .\enum-users.ps1 -OutputDir .\loot
+# ============================================================
+param(
+    [string]$OutputDir = ".\loot",
+    [string]$Domain    = $null
+)
+$ErrorActionPreference = "Stop"
+if (-not (Test-Path $OutputDir)) { New-Item -ItemType Directory -Path $OutputDir | Out-Null }
+
+$props = @(
+    "samaccountname","name","description","memberof","serviceprincipalname",
+    "useraccountcontrol","pwdlastset","lastlogon","admincount",
+    "doesnotrequirepreauth","trustedfordelegation","sidhistory","enabled"
+)
+
+Write-Host "[*] Enumerating users..." -ForegroundColor Cyan
+$users = if ($Domain) {
+    Get-DomainUser -Domain $Domain -Properties $props
+} else {
+    Get-DomainUser -Properties $props
+}
+
+$users | Select-Object $props |
+    Export-Csv -Path (Join-Path $OutputDir "users.csv") -NoTypeInformation -Encoding UTF8
+$users | Select-Object $props |
+    ConvertTo-Json -Depth 3 |
+    Out-File (Join-Path $OutputDir "users.json") -Encoding UTF8
+
+Write-Host "[+] Total users: $($users.Count)" -ForegroundColor Green
+Write-Host "[+] Enabled:     $(($users | ? { $_.enabled }).Count)" -ForegroundColor Green
+Write-Host "[+] Disabled:    $(($users | ? { -not $_.enabled }).Count)" -ForegroundColor Yellow
+Write-Host "[+] AdminCount=1: $(($users | ? { $_.admincount -eq 1 }).Count)" -ForegroundColor Red
+Write-Host "[+] Saved to:    $OutputDir\users.csv / users.json" -ForegroundColor Green</pre>
+
+  <!-- SCRIPT 3.2 -->
+  <h3>Script 3.2 — Caça a Kerberoastable + Export para Hashcat / Kerberoastable Hunt + Hashcat Export</h3>
+  <div class="lang">
+    <span class="pt"><strong>Objetivo:</strong> encontrar contas com SPN, priorizar as que pertencem a Domain Admins, e exportar a lista em formato pronto para <code class="inline">hashcat -m 13100</code>. <strong>Evidência:</strong> <code class="inline">kerberoastable.txt</code> (lista de SPNs) + <code class="inline">kerberoastable.csv</code>.</span>
+    <span class="en"><strong>Goal:</strong> find SPN accounts, prioritize those in Domain Admins, and export the list in a format ready for <code class="inline">hashcat -m 13100</code>. <strong>Evidence:</strong> <code class="inline">kerberoastable.txt</code> (SPN list) + <code class="inline">kerberoastable.csv</code>.</span>
+  </div>
+<pre># ============================================================
+# Script 3.2 — Kerberoastable Hunt
+# Requires: PowerView.ps1 dot-sourced
+# Usage: .\kerberoast-hunt.ps1 -OutputDir .\loot
+# Next step: request TGS with Rubeus/GetUserSPNs.py and crack
+#            hashcat -m 13100 hashes.txt wordlist.txt
+# ============================================================
+param([string]$OutputDir = ".\loot")
+$ErrorActionPreference = "Stop"
+if (-not (Test-Path $OutputDir)) { New-Item -ItemType Directory -Path $OutputDir | Out-Null }
+
+Write-Host "[*] Hunting Kerberoastable accounts..." -ForegroundColor Cyan
+$spnUsers = Get-DomainUser -SPN -Properties samaccountname,memberof,serviceprincipalname,pwdlastset,admincount
+
+$results = foreach ($u in $spnUsers) {
+    [PSCustomObject]@{
+        SamAccountName     = $u.samaccountname
+        IsDomainAdmin      = ($u.memberof -match "Domain Admins").Count -gt 0
+        IsAdminCount1      = $u.admincount -eq 1
+        SPN                = ($u.serviceprincipalname -join ";")
+        PasswordLastSet    = if ($u.pwdlastset -and $u.pwdlastset -gt 0) {
+                                 [DateTime]::FromFileTime($u.pwdlastset)
+                             } else { "NEVER" }
+        Risk               = if (($u.memberof -match "Domain Admins").Count -gt 0) { "CRITICAL" }
+                             elseif ($u.admincount -eq 1) { "HIGH" }
+                             else { "MEDIUM" }
+    }
+}
+
+$results | Sort-Object Risk, SamAccountName |
+    Export-Csv (Join-Path $OutputDir "kerberoastable.csv") -NoTypeInformation -Encoding UTF8
+
+# SPN list for Rubeus / GetUserSPNs.py
+$results | Where-Object { $_.SPN } |
+    ForEach-Object { $_.SPN } |
+    Out-File (Join-Path $OutputDir "kerberoastable.txt") -Encoding UTF8
+
+Write-Host "[+] Kerberoastable accounts: $($results.Count)" -ForegroundColor Green
+$results | Group-Object Risk | ForEach-Object {
+    $color = switch ($_.Name) { "CRITICAL" { "Red" } "HIGH" { "Yellow" } default { "Gray" } }
+    Write-Host "    $($_.Name): $($_.Count)" -ForegroundColor $color
+}
+Write-Host "[+] Saved: $OutputDir\kerberoastable.csv / .txt" -ForegroundColor Green
+Write-Host "[i] Next: Rubeus kerberoast / GetUserSPNs.py -request" -ForegroundColor Cyan
+Write-Host "[i] Crack: hashcat -m 13100 hashes.txt wordlist.txt" -ForegroundColor Cyan</pre>
+
+  <!-- SCRIPT 3.3 -->
+  <h3>Script 3.3 — Caça a AS-REP Roastable + Export para Hashcat / AS-REP Roastable Hunt + Hashcat Export</h3>
+  <div class="lang">
+    <span class="pt"><strong>Objetivo:</strong> encontrar contas sem pre-autenticação Kerberos e exportar em formato pronto para <code class="inline">hashcat -m 18200</code>. <strong>Evidência:</strong> <code class="inline">asrep.csv</code> + lista de usernames.</span>
+    <span class="en"><strong>Goal:</strong> find accounts without Kerberos pre-auth and export in a format ready for <code class="inline">hashcat -m 18200</code>. <strong>Evidence:</strong> <code class="inline">asrep.csv</code> + username list.</span>
+  </div>
+<pre># ============================================================
+# Script 3.3 — AS-REP Roastable Hunt
+# Requires: PowerView.ps1 dot-sourced
+# Usage: .\asrep-hunt.ps1 -OutputDir .\loot
+# Next step: GetNPUsers.py -dc-ip DC -usersfile users.txt -format hashcat
+#            hashcat -m 18200 hashes.txt wordlist.txt
+# ============================================================
+param([string]$OutputDir = ".\loot")
+$ErrorActionPreference = "Stop"
+if (-not (Test-Path $OutputDir)) { New-Item -ItemType Directory -Path $OutputDir | Out-Null }
+
+Write-Host "[*] Hunting AS-REP roastable accounts..." -ForegroundColor Cyan
+$asrep = Get-DomainUser -KerberosPreauthNotRequired -Properties samaccountname,memberof,pwdlastset,admincount,enabled
+
+$results = foreach ($u in $asrep) {
+    [PSCustomObject]@{
+        SamAccountName  = $u.samaccountname
+        Enabled         = $u.enabled
+        IsDomainAdmin   = ($u.memberof -match "Domain Admins").Count -gt 0
+        PasswordLastSet = if ($u.pwdlastset -and $u.pwdlastset -gt 0) {
+                              [DateTime]::FromFileTime($u.pwdlastset)
+                          } else { "NEVER" }
+        Risk            = if (($u.memberof -match "Domain Admins").Count -gt 0) { "CRITICAL" }
+                          elseif ($u.admincount -eq 1) { "HIGH" }
+                          else { "MEDIUM" }
+    }
+}
+
+$results | Sort-Object Risk, SamAccountName |
+    Export-Csv (Join-Path $OutputDir "asrep.csv") -NoTypeInformation -Encoding UTF8
+
+$results | Where-Object { $_.Enabled } |
+    ForEach-Object { $_.SamAccountName } |
+    Out-File (Join-Path $OutputDir "asrep-users.txt") -Encoding UTF8
+
+Write-Host "[+] AS-REP roastable: $($results.Count)" -ForegroundColor Green
+$results | Group-Object Risk | ForEach-Object {
+    $color = switch ($_.Name) { "CRITICAL" { "Red" } "HIGH" { "Yellow" } default { "Gray" } }
+    Write-Host "    $($_.Name): $($_.Count)" -ForegroundColor $color
+}
+Write-Host "[+] Saved: $OutputDir\asrep.csv / asrep-users.txt" -ForegroundColor Green
+Write-Host "[i] Next: GetNPUsers.py -dc-ip DC -usersfile asrep-users.txt -format hashcat" -ForegroundColor Cyan
+Write-Host "[i] Crack: hashcat -m 18200 hashes.txt wordlist.txt" -ForegroundColor Cyan</pre>
+
+  <!-- SCRIPT 3.4 -->
+  <h3>Script 3.4 — Auditoria de Delegação / Delegation Audit</h3>
+  <div class="lang">
+    <span class="pt"><strong>Objetivo:</strong> mapear delegação irrestrita (utilizadores + computadores), constrained e RBCD. <strong>Evidência:</strong> <code class="inline">delegation.csv</code> com tipo e risco.</span>
+    <span class="en"><strong>Goal:</strong> map unconstrained (users + computers), constrained, and RBCD delegation. <strong>Evidence:</strong> <code class="inline">delegation.csv</code> with type and risk.</span>
+  </div>
+<pre># ============================================================
+# Script 3.4 — Delegation Audit
+# Requires: PowerView.ps1 dot-sourced
+# Usage: .\delegation-audit.ps1 -OutputDir .\loot
+# ============================================================
+param([string]$OutputDir = ".\loot")
+$ErrorActionPreference = "Stop"
+if (-not (Test-Path $OutputDir)) { New-Item -ItemType Directory -Path $OutputDir | Out-Null }
+
+$results = @()
+
+Write-Host "[*] Unconstrained delegation (users)..." -ForegroundColor Cyan
+Get-DomainUser -UnconstrainedDelegation -Properties samaccountname,memberof,serviceprincipalname |
+    ForEach-Object {
+        $results += [PSCustomObject]@{
+            Type           = "Unconstrained-User"
+            Name           = $_.samaccountname
+            MemberOf       = ($_.memberof -join ";")
+            SPN            = ($_.serviceprincipalname -join ";")
+            Risk           = "CRITICAL"
+        }
+    }
+
+Write-Host "[*] Unconstrained delegation (computers)..." -ForegroundColor Cyan
+Get-DomainComputer -Unconstrained -Properties dnshostname,memberof,serviceprincipalname |
+    ForEach-Object {
+        $results += [PSCustomObject]@{
+            Type           = "Unconstrained-Computer"
+            Name           = $_.dnshostname
+            MemberOf       = ($_.memberof -join ";")
+            SPN            = ($_.serviceprincipalname -join ";")
+            Risk           = "CRITICAL"
+        }
+    }
+
+Write-Host "[*] Constrained delegation (users)..."
+Get-DomainUser -TrustedToAuth -Properties samaccountname,msds-allowedtodelegateto |
+    ForEach-Object {
+        $results += [PSCustomObject]@{
+            Type     = "Constrained-User"
+            Name     = $_.samaccountname
+            MemberOf = ""
+            SPN      = ($_.'msds-allowedtodelegateto' -join ";")
+            Risk     = "HIGH"
+        }
+    }
+
+Write-Host "[*] RBCD (computers with msDS-AllowedToActOnBehalfOfOtherIdentity)..."
+Get-DomainComputer -Properties dnshostname,msds-allowedtoactonbehalfofotheridentity |
+    Where-Object { $_.'msds-allowedtoactonbehalfofotheridentity' } |
+    ForEach-Object {
+        $results += [PSCustomObject]@{
+            Type     = "RBCD-Computer"
+            Name     = $_.dnshostname
+            MemberOf = ""
+            SPN      = "RBCD configured"
+            Risk     = "HIGH"
+        }
+    }
+
+$results | Export-Csv (Join-Path $OutputDir "delegation.csv") -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Delegation findings: $($results.Count)" -ForegroundColor Green
+$results | Group-Object Type | ForEach-Object { Write-Host "    $($_.Name): $($_.Count)" }
+Write-Host "[+] Saved: $OutputDir\delegation.csv" -ForegroundColor Green</pre>
+
+  <!-- SCRIPT 3.5 -->
+  <h3>Script 3.5 — Relatório de Risco Consolidado / Consolidated Risk Report</h3>
+  <div class="lang">
+    <span class="pt"><strong>Objetivo:</strong> juntar os resultados dos scripts 3.2, 3.3 e 3.4 num relatório Markdown com contagens e severidade, pronto a colar no relatório de pentest. <strong>Evidência:</strong> <code class="inline">risk-report.md</code>.</span>
+    <span class="en"><strong>Goal:</strong> merge results from scripts 3.2, 3.3, and 3.4 into a Markdown report with counts and severity, ready to paste into the pentest report. <strong>Evidence:</strong> <code class="inline">risk-report.md</code>.</span>
+  </div>
+<pre># ============================================================
+# Script 3.5 — Consolidated Risk Report
+# Usage: .\risk-report.ps1 -LootDir .\loot -OutFile .\loot\risk-report.md
+# ============================================================
+param(
+    [string]$LootDir = ".\loot",
+    [string]$OutFile = ".\loot\risk-report.md",
+    [string]$Domain  = $env:USERDNSDOMAIN
+)
+
+function Count-Csv($path) {
+    if (Test-Path $path) { (Import-Csv $path).Count } else { 0 }
+}
+
+$kerb  = Count-Csv (Join-Path $LootDir "kerberoastable.csv")
+$asrep = Count-Csv (Join-Path $LootDir "asrep.csv")
+$deleg = Count-Csv (Join-Path $LootDir "delegation.csv")
+
+$md = @"
+# AD Reconnaissance — Risk Report
+**Domain:** $Domain
+**Date:** $(Get-Date -Format "yyyy-MM-dd HH:mm")
+**Operator:** $env:USERNAME
+
+## Summary
+| Finding | Count | Severity |
+|---------|-------|----------|
+| Kerberoastable accounts | $kerb | High |
+| AS-REP roastable accounts | $asrep | High |
+| Delegation misconfigurations | $deleg | Critical |
+
+## Recommendations
+1. Rotate service account passwords; adopt gMSA.
+2. Enable Kerberos pre-auth where possible.
+3. Remove unnecessary delegation; prefer constrained/RBCD.
+4. Monitor Event ID 4662 and PowerShell 4104.
+"@
+
+$md | Out-File $OutFile -Encoding UTF8
+Write-Host "[+] Report saved: $OutFile" -ForegroundColor Green
+Write-Host $md</pre>
+
+  <!-- SCRIPT 3.6 -->
+  <h3>Script 3.6 — Verificação e Fallback Nativo / Availability Check &amp; Native Fallback</h3>
+  <div class="lang">
+    <span class="pt"><strong>Objetivo:</strong> verificar se o PowerView está carregado; se não estiver, usar <code class="inline">Get-ADUser</code> (RSAT) como fallback. Útil quando o PowerView é bloqueado por AV/AMSI. <strong>Evidência:</strong> indicação do método usado.</span>
+    <span class="en"><strong>Goal:</strong> check whether PowerView is loaded; if not, use <code class="inline">Get-ADUser</code> (RSAT) as fallback. Useful when PowerView is blocked by AV/AMSI. <strong>Evidence:</strong> which method was used.</span>
+  </div>
+<pre># ============================================================
+# Script 3.6 — PowerView availability check + native fallback
+# Usage: .\recon-fallback.ps1
+# ============================================================
+function Test-PowerView {
+    return [bool](Get-Command Get-DomainUser -ErrorAction SilentlyContinue)
+}
+
+function Test-RSAT {
+    return [bool](Get-Module -ListAvailable ActiveDirectory)
+}
+
+Write-Host "[*] PowerView available: $(Test-PowerView)" -ForegroundColor Cyan
+Write-Host "[*] RSAT available:      $(Test-RSAT)" -ForegroundColor Cyan
+
+if (Test-PowerView) {
+    Write-Host "[+] Using PowerView" -ForegroundColor Green
+    Get-DomainUser -SPN -Properties samaccountname,serviceprincipalname |
+        Select-Object samaccountname, serviceprincipalname
+}
+elseif (Test-RSAT) {
+    Write-Host "[!] PowerView missing — falling back to RSAT" -ForegroundColor Yellow
+    Import-Module ActiveDirectory
+    Get-ADUser -Filter * -Properties ServicePrincipalName |
+        Where-Object { $_.ServicePrincipalName } |
+        Select-Object SamAccountName, ServicePrincipalName
+}
+else {
+    Write-Host "[x] Neither PowerView nor RSAT available." -ForegroundColor Red
+    Write-Host "[i] Use native LDAP: dsquery * -filter ""(servicePrincipalName=*)"" -attr sAMAccountName servicePrincipalName" -ForegroundColor Cyan
+}</pre>
+
+  <div class="callout danger">
+    <strong>⚠️ Regras de uso / Usage rules:</strong>
+    <div class="lang">
+      <span class="pt">Estes scripts são para <strong>laboratório isolado e engagements autorizados</strong>. Registar sempre: data/hora, conta usada, host, hash dos ficheiros exportados. Nunca executar contra domínios sem autorização escrita.</span>
+      <span class="en">These scripts are for <strong>isolated labs and authorized engagements</strong>. Always log: date/time, account used, host, hash of exported files. Never run against domains without written authorization.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MITRE ===================== -->
+<section id="mitre">
+  <h2>7. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar / Complementary</span></h2>
+  <table>
+    <tr><th>Técnica / Technique</th><th>ID</th><th>Onde aparece / Where it appears</th></tr>
+    <tr><td>Account Discovery: Domain Account</td><td>T1087.002</td><td><code class="inline">Get-DomainUser</code>, Scripts 3.1–3.3</td></tr>
+    <tr><td>Permission Groups Discovery: Domain Groups</td><td>T1069.002</td><td><code class="inline">-Properties memberof</code></td></tr>
+    <tr><td>Remote System Discovery</td><td>T1018</td><td><code class="inline">Get-DomainDNSZone</code>, <code class="inline">Get-Domain</code></td></tr>
+    <tr><td>Steal or Forge Kerberos Tickets: Kerberoasting</td><td>T1558.003</td><td><code class="inline">-SPN</code>, Script 3.2</td></tr>
+    <tr><td>Steal or Forge Kerberos Tickets: AS-REP Roasting</td><td>T1558.004</td><td><code class="inline">-KerberosPreauthNotRequired</code>, Script 3.3</td></tr>
+    <tr><td>Use Alternate Authentication Material</td><td>T1550</td><td><code class="inline">-UnconstrainedDelegation</code>, Script 3.4</td></tr>
+    <tr><td>Credentials in Files</td><td>T1552.001</td><td><code class="inline">Description</code> field</td></tr>
+    <tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>Todo o capítulo / Whole chapter</td></tr>
+  </table>
+</section>
+
+<!-- ===================== MITIGAÇÕES ===================== -->
+<section id="mitig">
+  <h2>8. Mitigações Blue Team / Blue Team Mitigations <span class="badge comp">Complementar / Complementary</span></h2>
+  <ol>
+    <li><strong>Monitorizar PowerShell logging</strong> (4104) para strings <code class="inline">Get-DomainUser</code>, <code class="inline">PowerView</code>, <code class="inline">-SPN</code>, <code class="inline">-KerberosPreauthNotRequired</code>, <code class="inline">-UnconstrainedDelegation</code>. / Monitor 4104.</li>
+    <li><strong>Advanced Audit Policy → Directory Service Access</strong> (evento 4662) — deteta enumeração LDAP massiva, incluindo os scripts 3.1–3.4. / detects mass LDAP enumeration.</li>
+    <li><strong>Alertar sobre exportações</strong> para <code class="inline">*.csv</code>/<code class="inline">*.json</code> em diretórios de utilizador. / alert on exports.</li>
+    <li><strong>Remover <code class="inline">TRUSTED_FOR_DELEGATION</code></strong> desnecessário; preferir constrained/RBCD. / remove unnecessary.</li>
+    <li><strong>Desativar Kerberos pre-auth</strong> só quando exigido. / disable only when required.</li>
+    <li><strong>Auditar <code class="inline">PasswordNotRequired</code></strong> e <code class="inline">sidHistory</code>. / audit them.</li>
+    <li><strong>Política de não guardar segredos em <code class="inline">Description</code></strong> + DLP. / no secrets in Description + DLP.</li>
+    <li><strong>gMSA</strong> para contas de serviço com SPN. / for SPN service accounts.</li>
+    <li><strong>Honeytokens</strong> — contas/descrições falsas. / fake accounts/descriptions.</li>
+    <li><strong>AppLocker/WDAC + Constrained Language Mode</strong> — bloqueia dot-sourcing de <code class="inline">PowerView.ps1</code> e execução dos scripts 3.x. / blocks dot-sourcing and script execution.</li>
+  </ol>
+</section>
+
+<!-- ===================== LAB ===================== -->
+<section id="lab">
+  <h2>9. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar / Complementary</span></h2>
+  <div class="lang">
+    <span class="pt"><strong>Cenário:</strong> DC Windows Server (<code class="inline">lab.local</code>) + VM cliente加入 ao domínio. Obter <code class="inline">PowerView.ps1</code> do PowerSploit. Criar utilizadores de teste com SPN, sem pre-auth, PasswordNotRequired e delegação. Snapshot antes. <strong>Objetivo:</strong> executar os scripts 3.1–3.6 e produzir o relatório de risco.</span>
+    <span class="en"><strong>Scenario:</strong> Windows Server DC (<code class="inline">lab.local</code>) + domain-joined client VM. Get <code class="inline">PowerView.ps1</code> from PowerSploit. Create test users with SPN, no pre-auth, PasswordNotRequired, and delegation. Snapshot before. <strong>Goal:</strong> run scripts 3.1–3.6 and produce the risk report.</span>
+  </div>
+  <table>
+    <tr><th>#</th><th>Tarefa / Task</th><th>Comando / Command</th><th>Evidência / Evidence</th></tr>
+    <tr><td>1</td><td>Importar PowerView / Import PowerView</td><td><code class="inline">powershell -ep bypass</code> + <code class="inline">. .\PowerView.ps1</code></td><td>Funções disponíveis / Functions available</td></tr>
+    <tr><td>2</td><td>Verificar disponibilidade / Check availability</td><td><code class="inline">.\recon-fallback.ps1</code></td><td>Método usado / Method used</td></tr>
+    <tr><td>3</td><td>Enumeração completa / Full enumeration</td><td><code class="inline">.\enum-users.ps1 -OutputDir .\loot</code></td><td><code class="inline">users.csv</code>, <code class="inline">users.json</code></td></tr>
+    <tr><td>4</td><td>Kerberoastable hunt</td><td><code class="inline">.\kerberoast-hunt.ps1 -OutputDir .\loot</code></td><td><code class="inline">kerberoastable.csv/.txt</code></td></tr>
+    <tr><td>5</td><td>AS-REP hunt</td><td><code class="inline">.\asrep-hunt.ps1 -OutputDir .\loot</code></td><td><code class="inline">asrep.csv</code>, <code class="inline">asrep-users.txt</code></td></tr>
+    <tr><td>6</td><td>Delegation audit</td><td><code class="inline">.\delegation-audit.ps1 -OutputDir .\loot</code></td><td><code class="inline">delegation.csv</code></td></tr>
+    <tr><td>7</td><td>Relatório de risco / Risk report</td><td><code class="inline">.\risk-report.ps1 -LootDir .\loot</code></td><td><code class="inline">risk-report.md</code></td></tr>
+    <tr><td>8</td><td>(Opcional) Crack offline / (Optional) offline crack</td><td><code class="inline">hashcat -m 13100 hashes.txt wordlist.txt</code> / <code class="inline">-m 18200</code></td><td>Passwords recuperadas / Recovered passwords</td></tr>
+    <tr><td>9</td><td>(Defensivo) Evento 4662 / (Defensive) Event 4662</td><td><code class="inline">Get-WinEvent -LogName Security -MaxEvents 50 | ? Id -eq 4662</code></td><td>Eventos / Events</td></tr>
+    <tr><td>10</td><td>(Defensivo) Evento 4104 / (Defensive) Event 4104</td><td><code class="inline">Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 50 | ? Id -eq 4104</code></td><td>Eventos / Events</td></tr>
+  </table>
+  <h3>Checklist de evidências / Evidence checklist</h3>
+  <ul class="checklist">
+    <li>Snapshot inicial / Initial snapshot</li>
+    <li><code class="inline">users.csv</code> + <code class="inline">users.json</code></li>
+    <li><code class="inline">kerberoastable.csv</code> + <code class="inline">kerberoastable.txt</code></li>
+    <li><code class="inline">asrep.csv</code> + <code class="inline">asrep-users.txt</code></li>
+    <li><code class="inline">delegation.csv</code></li>
+    <li><code class="inline">risk-report.md</code></li>
+    <li>Eventos 4662 e 4104 capturados / Events 4662 and 4104 captured</li>
+    <li>Snapshot final / Final snapshot</li>
+  </ul>
+</section>
+
+<!-- ===================== REVISÃO ===================== -->
+<section id="revq">
+  <h2>10. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar / Complementary</span></h2>
+  <ol>
+    <li>Porque é que o PowerView é preferido em ambientes restritos? / Why is PowerView preferred in restricted environments?</li>
+    <li>Qual a diferença entre importar e executar um script? / What's the difference between importing and running a script?</li>
+    <li>O que faz <code class="inline">-SPN</code> e porque é relevante? / What does <code class="inline">-SPN</code> do and why does it matter?</li>
+    <li>O que faz <code class="inline">-KerberosPreauthNotRequired</code>? / What does it do?</li>
+    <li>O que significa <code class="inline">-UACFilter PASSWD_NOTREQD</code>? / What does it mean?</li>
+    <li>No Script 3.2, porque é que as contas Domain Admins são marcadas CRITICAL? / In Script 3.2, why are Domain Admins marked CRITICAL?</li>
+    <li>Como se deteta a execução dos scripts 3.1–3.4 no blue team? / How to detect scripts 3.1–3.4 on the blue team?</li>
+    <li>Qual a mitigação para contas com SPN? / What's the mitigation for SPN accounts?</li>
+  </ol>
+</section>
+
+<!-- ===================== RESUMO ===================== -->
+<section id="sum">
+  <h2>11. Resumo do Capítulo / Chapter Summary</h2>
+  <div class="lang">
+    <span class="pt">Este capítulo introduziu o PowerView como ferramenta de enumeração AD sem RSAT: importação por dot-sourcing, funções de domínio (<code class="inline">Get-Domain</code>, <code class="inline">Get-Forest</code>, <code class="inline">Get-DomainDNSZone</code>) e o poderoso <code class="inline">Get-DomainUser</code> com filtros para Kerberoasting, AS-REP Roasting, PasswordNotRequired, delegação, SID history e descrições com segredos. Acrescentámos <strong>seis scripts de impacto</strong> que automatizam enumeração, exportam para Hashcat, auditam delegação, geram relatório de risco e fazem fallback nativo — transformando comandos soltos em ferramentas de engagement. O Cap. 4 (Operational Scripts) entra na exfiltração e scripts operacionais.</span>
+    <span class="en">This chapter introduced PowerView as an AD enumeration tool without RSAT: dot-sourcing import, domain functions (<code class="inline">Get-Domain</code>, <code class="inline">Get-Forest</code>, <code class="inline">Get-DomainDNSZone</code>), and the powerful <code class="inline">Get-DomainUser</code> with filters for Kerberoasting, AS-REP Roasting, PasswordNotRequired, delegation, SID history, and descriptions with secrets. We added <strong>six impact scripts</strong> that automate enumeration, export to Hashcat, audit delegation, generate a risk report, and provide native fallback — turning loose commands into engagement tools. Ch. 4 (Operational Scripts) dives into exfiltration and operational scripts.</span>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div>Manual de Formação Ethical Hacker — Cap. 3 / Ethical Hacker Training Manual — Ch. 3</div>
+  <div style="margin-top:.6rem">
+    <a href="cap02.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+    <a href="#">Índice / Index</a> &nbsp;|&nbsp;
+    <a href="cap04.html">Cap. seguinte / Next →</a>
+  </div>
+</footer>
+
+</body>
+</html>

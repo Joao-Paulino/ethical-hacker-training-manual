@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 26 — Survival Edition Part 3: Know Your Enemy | Ch. 26</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 26 — Survival Edition Part 3</h1>
+<div class="sub">Ch. 26 — Know Your Enemy: Telemetria Defensiva</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Intermédio / Evasão</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#visibility">Visibilidade Defensiva</a></li><li><a href="#amsi">AMSI (1101)</a></li>
+<li><a href="#scriptblock">ScriptBlock (4104)</a></li><li><a href="#cmdline">Command-Line (400)</a></li>
+<li><a href="#module">Module (800/4103)</a></li><li><a href="#sysmon">Sysmon</a></li>
+<li><a href="#impact">Scripts de Impacto</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender as três formas de visibilidade defensiva (Process, Command, Network Monitoring); conhecer os Event IDs críticos (1101, 4104, 400, 800/4103); compreender o papel do Sysmon; saber como os defensores correlacionam telemetria; <strong>construir scripts de impacto nativos</strong> para validação de telemetria.</span>
+<span class="en">Understand the three forms of defensive visibility (Process, Command, Network Monitoring); know the critical Event IDs (1101, 4104, 400, 800/4103); understand Sysmon's role; know how defenders correlate telemetry; <strong>build native impact scripts</strong> for telemetry validation.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Nenhum sistema é perfeito e nenhuma empresa tem recursos ilimitados. Cada organização em crescimento precisa de analistas constantemente a ajustar alertas e gatilhos de segurança à medida que novo software e utilizadores são adicionados à rede. É trabalho tedioso e repetitivo. Demasiados alertas esgotam até os defensores mais afiados. Fadiga ocular, noites tardias e falsos positivos drenam a atenção. É aí que ganhas uma pequena janela para agir, ou uma chance de passar despercebido. Assumir que ninguém está a ver é um erro de principiante. Vimos muitos principiantes perder acesso a redes inteiras simplesmente porque subestimaram os mecanismos defensivos .</span>
+<span class="en">No system is perfect and no company has unlimited resources. Every growing organization needs analysts constantly tuning alerts and security triggers as new software and users are added to the network. It's tedious and repetitive work. Too many alerts exhaust even the sharpest defenders. Eye fatigue, late nights, and false positives all drain attention. That's where you get a small window to make a move, or a chance to slip through unnoticed. Assuming nobody is watching is a beginner's mistake. We've seen many beginners lose access to entire networks simply because they underestimated defensive mechanisms .</span>
+</div>
+</section>
+
+<section id="visibility">
+<h2>3. Visibilidade Defensiva <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Os defensores têm três formas principais de te detetar. Conhecer estas é crucial para sobreviver .</span>
+<span class="en">Defenders have three main ways to detect you. Knowing these is crucial to survive .</span>
+</div>
+<h3>3.1 Process Monitoring</h3>
+<div class="lang">
+<span class="pt">Permite aos defensores acompanhar que programas iniciam, param ou interagem entre si. Cada processo, incluindo PowerShell, deixa rastos da sua origem (parent) e dos seus filhos. Os analistas usam esta linhagem para detetar atividade invulgar. Por exemplo, um processo PowerShell lançado por um documento do Microsoft Word pode ser suspeito. As equipas de segurança usam ferramentas EDR para recolher estes dados, e alguns fornecedores, como a Red Canary, correlacionam-nos com outros eventos para encontrar padrões maliciosos .</span>
+<span class="en">Allows defenders to keep an eye on what programs start, stop, or interact with each other. Every process, PowerShell included, leaves traces of its origin (parent) and its children. Analysts use this lineage to spot unusual activity. For example, a PowerShell process launched by a Microsoft Word document might be suspicious. Security teams use EDR tools to gather this data, and some providers, like Red Canary, correlate it with other events to find malicious patterns .</span>
+</div>
+<h3>3.2 Command Monitoring</h3>
+<div class="lang">
+<span class="pt">Foca-se no que os comandos estão a ser executados dentro do processo. Para PowerShell, isto significa vigiar cmdlets, parâmetros ou comandos codificados específicos. Sozinho, um comando pode parecer inocente, mas em combinação com process monitoring e network telemetry, pode ser um forte indicador de compromisso .</span>
+<span class="en">Focuses on what commands are being run inside the process. For PowerShell, this means watching for specific cmdlets, parameters, or encoded commands. Alone, a command might look innocent, but in combination with process monitoring and network telemetry, it can be a strong indicator of compromise .</span>
+</div>
+<h3>3.3 Network Monitoring</h3>
+<div class="lang">
+<span class="pt">Os atacantes usam frequentemente PowerShell para descarregar ferramentas ou exfiltrar dados pela rede. Monitorizar conexões de saída e entrada é uma forma fiável de os defensores apanharem atividade maliciosa. Um exemplo comum é um comando <code class="inline">Invoke-Expression</code> que puxa conteúdo de um servidor externo via HTTP .</span>
+<span class="en">Attackers often use PowerShell to download tools or exfiltrate data over the network. Monitoring outgoing and incoming connections is a reliable way for defenders to catch malicious activity. A common example is an <code class="inline">Invoke-Expression</code> command that pulls content from an external server via HTTP .</span>
+</div>
+</section>
+
+<section id="amsi">
+<h2>4. AMSI — Event ID 1101 <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">AMSI significa Antimalware Scan Interface. Pensa nisto como um checkpoint de segurança dentro do Windows que vigia scripts a correr em memória, incluindo PowerShell, VBScript e WMI. O AMSI não armazena logs no Event Viewer padrão. Em vez disso, trabalha com Event Tracing for Windows (ETW), um sistema de logging de nível inferior. Se fizeres bypass do AMSI, podes executar código que normalmente dispararia scans de antivírus, como dump de LSASS ou correr malware, sem deteção imediata. Mas os bypasses de AMSI são arriscados. São frequentemente logados eles próprios, e a Microsoft patcheia-os ativamente. Bypasses públicos são uma armadilha para quem tenta sobreviver discretamente .</span>
+<span class="en">AMSI stands for Antimalware Scan Interface. Think of it as a security checkpoint inside Windows that watches scripts running in memory, including PowerShell, VBScript, and WMI. AMSI doesn't store logs in the standard Event Viewer. Instead, it works with Event Tracing for Windows (ETW), a lower-level logging system. If you bypass AMSI, you can execute code that normally would trigger antivirus scans, like dumping LSASS or running malware, without immediate detection. But AMSI bypasses are risky. They're often logged themselves, and Microsoft actively patches them. Publicly available bypasses are a trap for anyone trying to survive quietly .</span>
+</div>
+</section>
+
+<section id="scriptblock">
+<h2>5. ScriptBlock Logging — Event ID 4104 <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O ScriptBlock logging vigia o código real executado em scripts PowerShell. Há dois níveis: <strong>Automático</strong> (predefinido) — regista código que parece suspeito, com base na lista da Microsoft de cmdlets perigosos e APIs .NET; <strong>Global</strong> — regista tudo sem filtros. O Event ID 4104 recolhe esta informação. Podes tentar fazer bypass com downgrade para PowerShell v2, se existir, mas até esse downgrade pode ser logado. É necessária ofuscação subtil .</span>
+<span class="en">ScriptBlock logging watches the actual code executed in PowerShell scripts. There are two levels: <strong>Automatic</strong> (default) — logs script code that looks suspicious, based on Microsoft's list of dangerous cmdlets and .NET APIs; <strong>Global</strong> — logs everything with no filters. Event ID 4104 collects this information. You can try to bypass by downgrading to PowerShell v2, if it exists, but even that downgrade can be logged. Subtle obfuscation is necessary .</span>
+</div>
+<pre>PS > powershell -version 2</pre>
+<div class="callout info">
+<strong>Nota / Note:</strong>
+<div class="lang">
+<span class="pt">O ScriptBlock logging só funciona com PowerShell 5 e acima .</span>
+<span class="en">ScriptBlock logging only works with PowerShell 5 and above .</span>
+</div>
+</div>
+</section>
+
+<section id="cmdline">
+<h2>6. Command-Line Logging — Event ID 400 <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Mesmo versões mais antigas do PowerShell têm o Event ID 400, que regista quando um processo PowerShell inicia. Não mostra os comandos completos, mas o facto de um processo ter iniciado é registado .</span>
+<span class="en">Even older PowerShell versions have Event ID 400, which logs when a PowerShell process starts. It doesn't show full commands, but the fact that a process started is noted .</span>
+</div>
+</section>
+
+<section id="module">
+<h2>7. Module Logging — Event IDs 800 &amp; 4103 <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O module logging (Event ID 800) rastreia que módulos PowerShell são carregados, incluindo o código-fonte para comandos executados via <code class="inline">Add-Type</code>. Isto é importante porque <code class="inline">Add-Type</code> é usado para compilar e executar código C#. No PowerShell 5+, o Event ID 4103 também regista este contexto .</span>
+<span class="en">Module logging (Event ID 800) tracks which PowerShell modules are loaded, including the source code for commands run via <code class="inline">Add-Type</code>. This is important because <code class="inline">Add-Type</code> is used to compile and run C# code. In PowerShell 5+, Event ID 4103 also logs this context .</span>
+</div>
+</section>
+
+<section id="sysmon">
+<h2>8. Sysmon <span class="badge orig">Original</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O Sysmon é uma ferramenta especializada do Windows que dá aos defensores visibilidade adicional. Os defensores monitorizam tipicamente o Event ID 1 (Process Creation), que regista o processo pai, a linha de comando completa, hashes e GUID do processo. Esta é a base para análise de cadeia de execução, inspeção de linha de comando e threat hunting .</span>
+<span class="en">Sysmon is a specialized Windows tool that gives defenders additional visibility. Defenders typically monitor Event ID 1 (Process Creation), which logs the parent process, full command line, hashes, and process GUID. This is the foundation for execution chain analysis, command-line inspection, and threat hunting .</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>9. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam a validar a telemetria que os defensores veem, e a detetar configurações de logging.</span>
+<span class="en">The scripts below help validate the telemetry defenders see, and detect logging configurations.</span>
+</div>
+
+<h3>9.1 Script 26.1 — Verificação de Configuração de Logging / Logging Configuration Check</h3>
+<pre># Script 26.1 - Logging Configuration Check
+$out = ".\logging-config.csv"
+$checks = [ordered]@{
+  "ScriptBlockLogging (4104)" = (Get-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name "EnableScriptBlockLogging" -EA SilentlyContinue).EnableScriptBlockLogging
+  "ModuleLogging (800/4103)" = (Get-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging" -Name "EnableModuleLogging" -EA SilentlyContinue).EnableModuleLogging
+  "Transcription" = (Get-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\Transcription" -Name "EnableTranscripting" -EA SilentlyContinue).EnableTranscripting
+  "Sysmon Service" = [bool](Get-Service -Name Sysmon64,Sysmon -EA SilentlyContinue)
+}
+$results = foreach ($k in $checks.Keys) { [PSCustomObject]@{ Setting=$k; Value=$checks[$k] } }
+$results | Export-Csv $out -NoTypeInformation -Encoding UTF8
+$results | Format-Table -AutoSize</pre>
+
+<h3>9.2 Script 26.2 — Validação de Telemetria Pós-Execução / Post-Execution Telemetry Validation</h3>
+<pre># Script 26.2 - Post-Execution Telemetry Validation
+param([int]$MinutesBack = 5)
+$out = ".\telemetry-validation.csv"
+$since = (Get-Date).AddMinutes(-$MinutesBack)
+$logs = @(
+  @{ Name="ScriptBlock (4104)"; Log="Microsoft-Windows-PowerShell/Operational"; Id=4104 },
+  @{ Name="CommandLine (400)"; Log="Microsoft-Windows-PowerShell/Operational"; Id=400 },
+  @{ Name="Module (800)"; Log="Microsoft-Windows-PowerShell/Operational"; Id=800 },
+  @{ Name="AMSI (1101)"; Log="Microsoft-Windows-Windows Defender/Operational"; Id=1101 }
+)
+$results = foreach ($l in $logs) {
+  $count = (Get-WinEvent -LogName $l.Log -MaxEvents 100 -EA SilentlyContinue | Where-Object { $_.Id -eq $l.Id -and $_.TimeCreated -gt $since }).Count
+  [PSCustomObject]@{ Log=$l.Name; EventsLast5Min=$count; Expected=">0" }
+}
+$results | Export-Csv $out -NoTypeInformation -Encoding UTF8
+$results | Format-Table -AutoSize</pre>
+
+<h3>9.3 Script 26.3 — Deteção de Bypass AMSI / AMSI Bypass Detection</h3>
+<pre># Script 26.3 - AMSI Bypass Detection
+$out = ".\amsi-bypass.csv"
+$patterns = @("AmsiScanBuffer", "amsiInitFailed", "AmsiUtils", "amsiContext")
+$hits = @()
+Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 2000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4104 } | ForEach-Object {
+    foreach ($p in $patterns) {
+      if ($_.Message -match $p) { $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Pattern=$p } }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] AMSI bypass indicators: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+</section>
+
+<section id="mitre">
+<h2>10. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Impair Defenses: Disable or Modify Tools</td><td>T1562.001</td><td>AMSI Bypass </td></tr>
+<tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>Todo o capítulo</td></tr>
+<tr><td>Obfuscated Files or Information</td><td>T1027</td><td>Evasão de ScriptBlock Logging </td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>11. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Ativar Script Block Logging (4104)</strong> — obrigatório para deteção de PowerShell.</li>
+<li><strong>Ativar Module Logging (800/4103)</strong> — deteta <code class="inline">Add-Type</code> e módulos suspeitos.</li>
+<li><strong>Ativar Transcription</strong> — grava toda a sessão.</li>
+<li><strong>Implementar Sysmon</strong> — Event ID 1 para process creation com linha de comando.</li>
+<li><strong>Monitorizar 1101 (AMSI)</strong> — deteta tentativas de bypass.</li>
+<li><strong>Correlacionar telemetria</strong> — processo + comando + rede é mais forte que cada um isolado.</li>
+<li><strong>Alertar sobre downgrade para PowerShell v2</strong> — indicador de evasão.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>12. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows isolada com snapshot. Verificar a configuração de logging, executar um comando e validar a telemetria gerada. <strong>Objetivo:</strong> compreender o que os defensores veem.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows VM with snapshot. Check logging configuration, run a command, and validate generated telemetry. <strong>Goal:</strong> understand what defenders see.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Config logging</td><td><code class="inline">.\logging-config.ps1</code></td><td><code class="inline">logging-config.csv</code></td></tr>
+<tr><td>2</td><td>Executar comando</td><td><code class="inline">Write-Host "Teste 4104"</code></td><td>Output</td></tr>
+<tr><td>3</td><td>Validar telemetria</td><td><code class="inline">.\telemetry-validation.ps1</code></td><td><code class="inline">telemetry-validation.csv</code></td></tr>
+<tr><td>4</td><td>Ver 4104</td><td><code class="inline">Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 10 | ? Id -eq 4104</code></td><td>Evento</td></tr>
+<tr><td>5</td><td>Deteção AMSI</td><td><code class="inline">.\amsi-bypass.ps1</code></td><td><code class="inline">amsi-bypass.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li><code class="inline">logging-config.csv</code></li>
+<li><code class="inline">telemetry-validation.csv</code></li>
+<li>Evento 4104 capturado</li>
+<li><code class="inline">amsi-bypass.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>13. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Quais são as três formas de visibilidade defensiva? / What are the three forms of defensive visibility? </li>
+<li>O que é o AMSI e porque é arriscado fazer bypass? / What is AMSI and why is bypassing it risky? </li>
+<li>Qual a diferença entre ScriptBlock logging Automático e Global? / What's the difference between Automatic and Global ScriptBlock logging? </li>
+<li>O que regista o Event ID 400? / What does Event ID 400 log? </li>
+<li>Porque é que o Module Logging (800) é importante? / Why is Module Logging (800) important? </li>
+<li>O que mostra o Sysmon Event ID 1? / What does Sysmon Event ID 1 show? </li>
+<li>Porque é que a correlação de telemetria é mais forte que cada fonte isolada? / Why is telemetry correlation stronger than each source alone? </li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>14. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu a telemetria defensiva que os hackers precisam de conhecer: Process Monitoring (linhagem pai-filho), Command Monitoring (cmdlets, encoded commands) e Network Monitoring (Invoke-Expression, downloads). Os Event IDs críticos são 1101 (AMSI, via ETW), 4104 (ScriptBlock, níveis Automático/Global), 400 (Command-Line, início de processo), 800/4103 (Module, Add-Type), e Sysmon Event ID 1 (process creation com linha de comando). A premissa é que assumir que ninguém está a ver é um erro de principiante; a janela de oportunidade existe na fadiga dos analistas e nos falsos positivos. Acrescentámos <strong>três scripts de impacto</strong> (configuração de logging, validação de telemetria, deteção de bypass AMSI) que ajudam a compreender o que é visível. O Cap. 27 entra no dsquery e Finding Modules.</span>
+<span class="en">This chapter covered the defensive telemetry hackers need to know: Process Monitoring (parent-child lineage), Command Monitoring (cmdlets, encoded commands), and Network Monitoring (Invoke-Expression, downloads). The critical Event IDs are 1101 (AMSI, via ETW), 4104 (ScriptBlock, Automatic/Global levels), 400 (Command-Line, process start), 800/4103 (Module, Add-Type), and Sysmon Event ID 1 (process creation with command line). The premise is that assuming nobody is watching is a beginner's mistake; the window of opportunity exists in analyst fatigue and false positives. We added <strong>three impact scripts</strong> (logging configuration, telemetry validation, AMSI bypass detection) that help understand what is visible. Ch. 27 moves into dsquery and Finding Modules.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 26 / Ethical Hacker Training Manual — Ch. 26</div>
+<div style="margin-top:.6rem">
+<a href="cap25.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap27.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

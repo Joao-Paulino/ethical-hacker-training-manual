@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PowerShell for Hackers — Ethical Hacker Training Manual</title>
+<style>
+  :root{
+    --bg:#0a0e14; --bg2:#0d1117; --fg:#c9d1d9; --fg2:#8b949e;
+    --accent:#39d353; --accent2:#58a6ff; --warn:#d29922; --danger:#f85149;
+    --border:#30363d; --code:#7ee787;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:radial-gradient(circle at 20% 20%, #0d1117 0%, #0a0e14 70%);
+    color:var(--fg); font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; padding:2rem; overflow-x:hidden;
+  }
+  .grid-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(57,211,83,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(57,211,83,.04) 1px, transparent 1px);
+    background-size:40px 40px;
+    mask-image:radial-gradient(circle at center, black 30%, transparent 80%);
+  }
+  .scanline{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:repeating-linear-gradient(
+      0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
+      rgba(57,211,83,.015) 3px, rgba(0,0,0,0) 4px
+    );
+  }
+  .cover{
+    position:relative; z-index:2; max-width:1000px; width:100%;
+    text-align:center;
+  }
+  .terminal{
+    display:inline-block; text-align:left;
+    background:rgba(13,17,23,.85); border:1px solid var(--border);
+    border-radius:10px; padding:1.2rem 1.6rem; margin-bottom:2.5rem;
+    font-family:"Cascadia Code","Fira Code",Consolas,monospace;
+    font-size:.95rem; color:var(--accent); box-shadow:0 0 40px rgba(57,211,83,.08);
+  }
+  .terminal .prompt{color:var(--accent2)}
+  .terminal .cmd{color:var(--fg)}
+  .terminal .cursor{
+    display:inline-block; width:9px; height:1.1em; background:var(--accent);
+    vertical-align:text-bottom; animation:blink 1s step-end infinite;
+  }
+  @keyframes blink{50%{opacity:0}}
+  h1{
+    margin:0; font-size:clamp(2.4rem,7vw,5.5rem); line-height:1.05;
+    letter-spacing:-.02em; color:var(--fg);
+    text-shadow:0 0 60px rgba(57,211,83,.25);
+  }
+  h1 .accent{color:var(--accent)}
+  .subtitle{
+    margin:1.2rem 0 0; font-size:clamp(1rem,2.2vw,1.5rem);
+    color:var(--fg2); font-weight:400; letter-spacing:.02em;
+  }
+  .badge-row{
+    margin:2.2rem 0 2.5rem; display:flex; flex-wrap:wrap;
+    gap:.7rem; justify-content:center;
+  }
+  .badge{
+    display:inline-block; font-size:.78rem; font-weight:700;
+    letter-spacing:.08em; text-transform:uppercase;
+    padding:.45rem .9rem; border-radius:999px;
+    background:rgba(57,211,83,.1); color:var(--accent);
+    border:1px solid var(--accent);
+  }
+  .badge.blue{background:rgba(88,166,255,.1); color:var(--accent2); border-color:var(--accent2)}
+  .badge.warn{background:rgba(210,153,34,.1); color:var(--warn); border-color:var(--warn)}
+  .divider{
+    width:120px; height:2px; margin:0 auto 2.5rem;
+    background:linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+  .cta{
+    display:inline-block; margin-top:.5rem;
+    padding:1rem 2.4rem; font-size:1.05rem; font-weight:700;
+    letter-spacing:.05em; text-transform:uppercase;
+    color:var(--bg); background:var(--accent);
+    border:none; border-radius:8px; text-decoration:none;
+    cursor:pointer; transition:transform .12s, box-shadow .2s, background .2s;
+    box-shadow:0 0 30px rgba(57,211,83,.3);
+  }
+  .cta:hover{background:#4ae968; transform:translateY(-2px); box-shadow:0 0 45px rgba(57,211,83,.5)}
+  .cta:active{transform:translateY(0)}
+  .meta-line{
+    margin-top:2rem; font-size:.8rem; color:var(--fg2);
+    letter-spacing:.15em; text-transform:uppercase;
+  }
+  .meta-line span{margin:0 .6rem}
+  .glow-orb{
+    position:fixed; border-radius:50%; filter:blur(120px); z-index:0; pointer-events:none;
+  }
+  .orb1{width:400px; height:400px; background:rgba(57,211,83,.12); top:-100px; left:-100px}
+  .orb2{width:500px; height:500px; background:rgba(88,166,255,.08); bottom:-150px; right:-150px}
+  @media (max-width:600px){
+    .terminal{font-size:.8rem; padding:1rem}
+    .badge-row{gap:.5rem}
+    .badge{font-size:.68rem; padding:.35rem .7rem}
+  }
+</style>
+</head>
+<body>
+<div class="glow-orb orb1"></div>
+<div class="glow-orb orb2"></div>
+<div class="grid-bg"></div>
+<div class="scanline"></div>
+
+<main class="cover">
+
+  <div class="terminal">
+    <span class="prompt">PS C:\Manual&gt;</span>
+    <span class="cmd"> Get-Content .\manifesto.txt</span><br>
+    <span class="cmd">&gt; 34 chapters loaded. Red vs Blue. All labs isolated.</span><br>
+    <span class="prompt">PS C:\Manual&gt;</span>
+    <span class="cursor"></span>
+  </div>
+
+  <h1>PowerShell <span class="accent">for</span> Hackers</h1>
+  <p class="subtitle">Ethical Hacker Training Manual — Red Team, Blue Team &amp; DFIR</p>
+
+  <div class="badge-row">
+    <span class="badge">34 Chapters</span>
+    <span class="badge blue">Red Team</span>
+    <span class="badge blue">Blue Team</span>
+    <span class="badge warn">DFIR</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <a class="cta" href="index.html">Enter the Manual →</a>
+
+  <p class="meta-line">
+    <span>PT / EN</span> · <span>Hands-on Labs</span> · <span>MITRE ATT&amp;CK</span>
+  </p>
+
+</main>
+</body>
+</html>

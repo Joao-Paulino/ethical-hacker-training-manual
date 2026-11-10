@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 27 — dsquery e Finding Modules | Ch. 27</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 27 — dsquery e Finding Modules</h1>
+<div class="sub">Ch. 27 — Survival Edition, Part 2: Advanced Recon</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Intermédio / AD Recon</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#dsquery">dsquery</a></li><li><a href="#users">Users</a></li>
+<li><a href="#computers">Computers</a></li><li><a href="#groups">Groups</a></li>
+<li><a href="#nopass">PasswordNotRequired</a></li><li><a href="#dc">Domain Controllers</a></li>
+<li><a href="#remote">Invoke-Command</a></li><li><a href="#impact">Scripts de Impacto</a></li>
+<li><a href="#mitre">MITRE</a></li><li><a href="#mitig">Mitigações</a></li>
+<li><a href="#lab">Laboratório</a></li><li><a href="#revq">Revisão</a></li>
+<li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o <code class="inline">dsquery</code> como ferramenta nativa de LDAP para AD; enumerar utilizadores, computadores e grupos; identificar contas com <code class="inline">PASSWORD_NOT_REQUIRED</code>; localizar Domain Controllers; usar <code class="inline">Invoke-Command</code> para execução remota silenciosa; compreender as limitações de furtividade (queries amplas geram logs); <strong>construir scripts de impacto nativos</strong> para validação e deteção.</span>
+<span class="en">Understand <code class="inline">dsquery</code> as a native LDAP tool for AD; enumerate users, computers, and groups; identify accounts with <code class="inline">PASSWORD_NOT_REQUIRED</code>; locate Domain Controllers; use <code class="inline">Invoke-Command</code> for quiet remote execution; understand stealth limitations (broad queries generate logs); <strong>build native impact scripts</strong> for validation and detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O <code class="inline">dsquery</code> é uma ferramenta clássica do Windows: simples, rápida, e presente em máquinas de gestão de domínio ou workstations de admin. A alto nível, fala LDAP com o AD, aplica filtros, e devolve listas de objetos como utilizadores, computadores, OUs, grupos, e o que pedires. Em domínios bem configurados, corre rapidamente e dá output estruturado fácil de parsear. É conveniente quando não queres carregar ou depender de módulos ou ferramentas maiores .</span>
+<span class="en"><code class="inline">dsquery</code> is a classic Windows tool: simple, fast, and present on domain-managing machines or admin workstations. At a high level, it talks LDAP to AD, applies filters, and returns object lists like users, computers, OUs, groups, and whatever you ask for. On well-configured domains, it runs quickly and gives structured output that's easy to parse. It's convenient when you don't want to load or rely on larger modules or tools .</span>
+</div>
+<div class="callout info">
+<strong>Nota de furtividade / Stealth note:</strong>
+<div class="lang">
+<span class="pt">O <code class="inline">dsquery</code> é um binário de sistema (parte do tooling de AD do Windows), por isso é legítimo para monitorização de endpoint. Os defensores podem não sinalizar imediatamente uma invocação, mas queries amplas ou repetitivas contra o AD podem gerar logs e atrair atenção. Enumerações grandes, wildcards que devolvem milhares de objetos, ou uso repetido de um host invulgar são detetáveis. Favorece queries direcionadas .</span>
+<span class="en"><code class="inline">dsquery</code> is a system binary (part of Windows AD tooling), so it's legitimate for endpoint monitoring. Defenders may not immediately flag an invocation, but broad or repetitive queries against AD can still generate logs and attract attention. Large enumerations, wildcards returning thousands of objects, or repeated use from an unusual host are detectable. Favor targeted queries .</span>
+</div>
+</div>
+</section>
+
+<section id="dsquery">
+<h2>3. dsquery — Visão Geral <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">A sintaxe base é <code class="inline">dsquery <tipo> [filtros] [atributos]</code>. Os tipos principais são <code class="inline">user</code>, <code class="inline">computer</code>, <code class="inline">group</code>, <code class="inline">ou</code>, e o wildcard <code class="inline">*</code> para queries genéricas. Para propriedades específicas de um objeto, usa-se <code class="inline">dsget</code>.</span>
+<span class="en">The base syntax is <code class="inline">dsquery <type> [filters] [attributes]</code>. The main types are <code class="inline">user</code>, <code class="inline">computer</code>, <code class="inline">group</code>, <code class="inline">ou</code>, and the <code class="inline">*</code> wildcard for generic queries. For specific object properties, use <code class="inline">dsget</code>.</span>
+</div>
+</section>
+
+<section id="users">
+<h2>4. Find Users <span class="badge orig">Original</span></h2>
+<pre>PS > dsquery user</pre>
+<div class="lang">
+<span class="pt">Devolve contas de utilizador ativas e inativas. Útil para obter o âmbito inicial de identidades a investigar. Prioriza contas de serviço e admin primeiro. Padrões de nome comuns como <code class="inline">svc</code>, <code class="inline">adm</code>, e outros podem denunciá-las .</span>
+<span class="en">Returns user accounts both active and inactive. Useful to get the initial scope of identities to investigate. Prioritize service and admin accounts first. Common name patterns like <code class="inline">svc</code>, <code class="inline">adm</code>, and others may give them away .</span>
+</div>
+</section>
+
+<section id="computers">
+<h2>5. Find Computers <span class="badge orig">Original</span></h2>
+<pre>PS > dsquery computer</pre>
+<div class="lang">
+<span class="pt">Objetos de computador revelam nomes de servidores, hosts DEV, backups, SQL, EXCH, etc. Esta variedade dá-te vetores potenciais de compromisso. Ambientes bem geridos colocam servidores em OUs, o que te diz onde vive a infraestrutura crítica e ajuda a refinar o âmbito rapidamente .</span>
+<span class="en">Computer objects reveal server names, DEV hosts, backups, SQL, EXCH, etc. This variety gives you potential vectors of compromise. Well-managed environments place servers in OUs, which tells you where critical infrastructure lives and helps you refine scope quickly .</span>
+</div>
+</section>
+
+<section id="groups">
+<h2>6. Find Groups <span class="badge orig">Original</span></h2>
+<pre>PS > dsquery * "CN=Users,DC=DOMAIN,DC=LOCAL"</pre>
+<div class="lang">
+<span class="pt">Inspeciona grupos como Domain Admins, Enterprise Admins, Backup Operators e outros potencialmente valiosos. Apontam-te para alvos de alto valor e para pessoas que importam dentro da organização .</span>
+<span class="en">Inspect groups like Domain Admins, Enterprise Admins, Backup Operators, and other potentially valuable ones. They point you to high-value targets and to people who matter inside the organization .</span>
+</div>
+</section>
+
+<section id="nopass">
+<h2>7. Password-Not-Required Accounts <span class="badge orig">Original</span></h2>
+<pre>PS > dsquery * -filter "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=32))" -attr distinguishedName userAccountControl</pre>
+<div class="lang">
+<span class="pt">Procura utilizadores com a flag <code class="inline">PASSWORD_NOT_REQUIRED</code>. É invulgar em contas privilegiadas, mas de vez em quando encontras contas legacy ou mal configuradas que valem a pena investigar. Uma conta que parece não privilegiada à primeira vista pode ainda possuir ou receber direitos que a tornam um pivot para objetos mais interessantes. Ferramentas como o BloodHound ajudam a visualizar essas relações .</span>
+<span class="en">Searches for users with the <code class="inline">PASSWORD_NOT_REQUIRED</code> flag. It's uncommon on privileged accounts, but every once in a while you find legacy or misconfigured accounts worth investigating. An account that looks unprivileged at first can still own or be granted rights that make it a pivot to more interesting objects. Tools like BloodHound help visualize those relationships .</span>
+</div>
+</section>
+
+<section id="dc">
+<h2>8. Domain Controllers <span class="badge orig">Original</span></h2>
+<pre>PS > dsquery * -filter "(userAccountControl:1.2.840.113556.1.4.804:=8192)" -limit 5 -attr sAMAccountName</pre>
+<div class="lang">
+<span class="pt">Conhecer os nomes e IPs dos DCs é importante. São os guardiões. LDAP, Kerberos, e insights de replicação vêm deles, e hospedam as joias da coroa da autenticação de domínio .</span>
+<span class="en">Knowing DC names and their IPs is important. They're the gatekeepers. LDAP, Kerberos, and replication insights come from them, and they host the crown jewels of domain authentication .</span>
+</div>
+</section>
+
+<section id="remote">
+<h2>9. Invoke-Command — Execução Remota <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Existem muitas formas de executar comandos remotamente. Algumas requerem binários de terceiros, outras usam capacidades nativas. Ferramentas maliciosas de terceiros são ruidosas e têm assinatura; execução nativa pode ser mais silenciosa. O <code class="inline">Invoke-Command</code> é a forma canónica de execução remota em PowerShell, usando WinRM .</span>
+<span class="en">There are many ways to execute commands remotely. Some require third-party binaries, others use native capabilities. Malicious third-party tools are noisy and signatured; native execution can be quieter. <code class="inline">Invoke-Command</code> is the canonical PowerShell remote execution method, using WinRM .</span>
+</div>
+<pre>PS > Invoke-Command -ComputerName DC01 -ScriptBlock { Get-Process }</pre>
+<div class="lang">
+<span class="pt">Para múltiplos hosts, podes passar um array de nomes. Para credenciais diferentes, usa <code class="inline">-Credential</code>. Para sessões persistentes, usa <code class="inline">New-PSSession</code> e <code class="inline">Enter-PSSession</code>.</span>
+<span class="en">For multiple hosts, pass an array of names. For different credentials, use <code class="inline">-Credential</code>. For persistent sessions, use <code class="inline">New-PSSession</code> and <code class="inline">Enter-PSSession</code>.</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>10. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo consolidam o recon AD com dsquery e PowerShell nativo.</span>
+<span class="en">The scripts below consolidate AD recon with dsquery and native PowerShell.</span>
+</div>
+
+<h3>10.1 Script 27.1 — Recon AD Unificado / Unified AD Recon</h3>
+<pre># Script 27.1 - Unified AD Recon
+$out = ".\ad-recon.csv"
+$results = @()
+# Users
+$users = dsquery user 2>$null
+if ($users) { $users | ForEach-Object { $results += [PSCustomObject]@{ Type="User"; DN=$_ } } }
+# Computers
+$computers = dsquery computer 2>$null
+if ($computers) { $computers | ForEach-Object { $results += [PSCustomObject]@{ Type="Computer"; DN=$_ } } }
+# Groups
+$groups = dsquery group 2>$null
+if ($groups) { $groups | ForEach-Object { $results += [PSCustomObject]@{ Type="Group"; DN=$_ } } }
+$results | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] AD recon: $($results.Count) objects -> $out" -ForegroundColor Green</pre>
+
+<h3>10.2 Script 27.2 — Caça a PasswordNotRequired / PasswordNotRequired Hunt</h3>
+<pre># Script 27.2 - PasswordNotRequired Hunt
+$out = ".\nopass-accounts.csv"
+$results = @()
+$filter = "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=32))"
+$raw = dsquery * -filter $filter -attr distinguishedName userAccountControl 2>$null
+if ($raw) {
+  for ($i = 0; $i -lt $raw.Count; $i += 2) {
+    if ($raw[$i] -match "CN=") {
+      $results += [PSCustomObject]@{ DN=$raw[$i]; UAC=$raw[$i+1] }
+    }
+  }
+}
+$results | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] PasswordNotRequired accounts: $($results.Count) -> $out" -ForegroundColor Yellow</pre>
+
+<h3>10.3 Script 27.3 — Deteção de dsquery em Massa / Mass dsquery Detection</h3>
+<pre># Script 27.3 - Mass dsquery Detection
+$out = ".\dsquery-detect.csv"
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4688 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $cmd = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    if ($cmd -match "dsquery" -and $cmd -match "(\*|user$|computer$|group$)") {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Command=$cmd }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] dsquery invocations: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+</section>
+
+<section id="mitre">
+<h2>11. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Account Discovery: Domain Account</td><td>T1087.002</td><td><code class="inline">dsquery user</code></td></tr>
+<tr><td>Remote System Discovery</td><td>T1018</td><td><code class="inline">dsquery computer</code></td></tr>
+<tr><td>Permission Groups Discovery: Domain Groups</td><td>T1069.002</td><td><code class="inline">dsquery group</code></td></tr>
+<tr><td>Remote Services: Windows Remote Management</td><td>T1021.006</td><td><code class="inline">Invoke-Command</code></td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>12. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Monitorizar <code class="inline">dsquery</code> em massa</strong> — Script 27.3. Queries amplas geram eventos 4688.</li>
+<li><strong>Alertar sobre wildcards</strong> (<code class="inline">dsquery *</code>) — indicador de enumeração ampla .</li>
+<li><strong>Monitorizar <code class="inline">Invoke-Command</code></strong> — execução remota via WinRM.</li>
+<li><strong>Auditar <code class="inline">PasswordNotRequired</code></strong> — Script 27.2.</li>
+<li><strong>Restringir <code class="inline">dsquery</code></strong> a admin workstations via AppLocker.</li>
+<li><strong>Honeytokens</strong> — contas falsas com nomes <code class="inline">svc_</code> e <code class="inline">adm_</code>.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>13. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> DC Windows Server + VM cliente加入 ao domínio. Snapshot antes. <strong>Objetivo:</strong> executar dsquery, Invoke-Command, e correr os scripts de deteção.</span>
+<span class="en"><strong>Scenario:</strong> Windows Server DC + domain-joined client VM. Snapshot before. <strong>Goal:</strong> run dsquery, Invoke-Command, and detection scripts.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Users</td><td><code class="inline">dsquery user</code></td><td>Output</td></tr>
+<tr><td>2</td><td>Computers</td><td><code class="inline">dsquery computer</code></td><td>Output</td></tr>
+<tr><td>3</td><td>Groups</td><td><code class="inline">dsquery group</code></td><td>Output</td></tr>
+<tr><td>4</td><td>NoPass</td><td><code class="inline">dsquery * -filter "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=32))"</code></td><td>Output</td></tr>
+<tr><td>5</td><td>DC</td><td><code class="inline">dsquery * -filter "(userAccountControl:1.2.840.113556.1.4.804:=8192)" -limit 5</code></td><td>Output</td></tr>
+<tr><td>6</td><td>Invoke-Command</td><td><code class="inline">Invoke-Command -ComputerName DC01 -ScriptBlock { Get-Process }</code></td><td>Output</td></tr>
+<tr><td>7</td><td>Recon unificado</td><td><code class="inline">.\ad-recon.ps1</code></td><td><code class="inline">ad-recon.csv</code></td></tr>
+<tr><td>8</td><td>Deteção dsquery</td><td><code class="inline">.\dsquery-detect.ps1</code></td><td><code class="inline">dsquery-detect.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Output dsquery (users/computers/groups)</li>
+<li>Output NoPass e DC</li>
+<li>Output Invoke-Command</li>
+<li><code class="inline">ad-recon.csv</code></li>
+<li><code class="inline">dsquery-detect.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>14. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>O que é o dsquery e como fala com o AD? / What is dsquery and how does it talk to AD? </li>
+<li>Porque é que queries amplas são detetáveis? / Why are broad queries detectable? </li>
+<li>O que revela o <code class="inline">dsquery computer</code>? / What does <code class="inline">dsquery computer</code> reveal? </li>
+<li>Qual a flag de <code class="inline">userAccountControl</code> para PasswordNotRequired? / Which <code class="inline">userAccountControl</code> flag is PasswordNotRequired? </li>
+<li>Como se localizam Domain Controllers com dsquery? / How to locate Domain Controllers with dsquery? </li>
+<li>O que faz o <code class="inline">Invoke-Command</code>? / What does <code class="inline">Invoke-Command</code> do? </li>
+<li>Como se deteta enumeração dsquery no blue team? / How to detect dsquery enumeration on the blue team? </li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>15. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu o <code class="inline">dsquery</code> como ferramenta nativa de recon AD: users, computers, groups, password-not-required, e Domain Controllers. O <code class="inline">dsquery</code> é legítimo mas queries amplas ou repetitivas geram logs e atraem atenção, por isso favorece queries direcionadas. A execução remota com <code class="inline">Invoke-Command</code> (WinRM) é a forma canónica e mais silenciosa que ferramentas de terceiros. Acrescentámos <strong>três scripts de impacto</strong> (recon unificado, caça a PasswordNotRequired, deteção de dsquery em massa) que consolidam a recolha e ajudam o blue team. O Cap. 28 entra no Group Policy Basics.</span>
+<span class="en">This chapter covered <code class="inline">dsquery</code> as a native AD recon tool: users, computers, groups, password-not-required, and Domain Controllers. <code class="inline">dsquery</code> is legitimate but broad or repetitive queries generate logs and attract attention, so favor targeted queries. Remote execution with <code class="inline">Invoke-Command</code> (WinRM) is the canonical and quieter form than third-party tools. We added <strong>three impact scripts</strong> (unified recon, PasswordNotRequired hunt, mass dsquery detection) that consolidate collection and help the blue team. Ch. 28 moves into Group Policy Basics.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 27 / Ethical Hacker Training Manual — Ch. 27</div>
+<div style="margin-top:.6rem">
+<a href="cap26.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap28.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

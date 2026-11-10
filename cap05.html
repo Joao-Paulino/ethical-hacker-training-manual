@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 5 — Crash and Burn | Ch. 5</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--danger);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--danger)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--danger);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--danger)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--danger);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--warn);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--danger);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.danger{background:rgba(248,81,73,.15);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 5 — Crash and Burn</h1>
+<div class="sub">Ch. 5 — How to Crash and Burn Windows with PowerShell</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>⚠️ Nível: Avançado / Destrutivo</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#ram">RAM Overload</a></li><li><a href="#cpu">CPU Overload</a></li>
+<li><a href="#license">License Killer</a></li><li><a href="#killer">USB/Network Killer</a></li>
+<li><a href="#critical">Set-CriticalProcess</a></li><li><a href="#mbr">Set-MasterBootRecord</a></li>
+<li><a href="#mitre">MITRE</a></li><li><a href="#mitig">Mitigações</a></li>
+<li><a href="#lab">Laboratório</a></li><li><a href="#revq">Revisão</a></li>
+<li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o potencial destrutivo do PowerShell sem restrições; executar sobrecarga de RAM e CPU como tática de DoS ou distração; apagar chaves de licença Windows; desativar adaptadores de rede e controladores USB; forçar BSOD com <code class="inline">Set-CriticalProcess</code>; corromper o Master Boot Record com <code class="inline">Set-MasterBootRecord</code>; compreender porque o <strong>Restricted Language Mode</strong> é essencial.</span>
+<span class="en">Understand PowerShell's destructive potential when unrestricted; execute RAM and CPU overload as DoS or distraction; wipe Windows license keys; disable network adapters and USB controllers; force BSOD with <code class="inline">Set-CriticalProcess</code>; corrupt the Master Boot Record with <code class="inline">Set-MasterBootRecord</code>; understand why <strong>Restricted Language Mode</strong> is essential.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span> <span class="badge danger">Destrutivo</span></h2>
+<div class="lang">
+<span class="pt">O PowerShell pode ser usado para disrupção máxima. Pode apagar licenças, desativar hardware e corromper o Master Boot Record. O objetivo do artigo não é apenas mostrar que deves monitorizar execução de comandos, mas também <strong>experimentar Language Modes</strong> para limitar a superfície de ataque se uma workstation for comprometida. Se estes scripts forem mal usados no contexto errado, os resultados podem ser irreversíveis.</span>
+<span class="en">PowerShell can be used for maximum disruption. It can wipe licenses, disable hardware, and corrupt the Master Boot Record. The article's goal is not just to show you should monitor command execution, but also to <strong>experiment with Language Modes</strong> to limit the attack surface if a workstation is compromised. If these scripts are misused in the wrong context, the results can be irreversible.</span>
+</div>
+<div class="callout danger">
+<strong>⚠️ AVISO / WARNING:</strong>
+<div class="lang">
+<span class="pt">Estas técnicas são <strong>destrutivas</strong>. Executa-as <strong>apenas em VMs isoladas com snapshots</strong>. O MBR pode ficar permanentemente corrompido. Nunca em sistemas de produção ou sem autorização escrita.</span>
+<span class="en">These techniques are <strong>destructive</strong>. Run them <strong>only in isolated VMs with snapshots</strong>. The MBR can be permanently corrupted. Never on production systems or without written authorization.</span>
+</div>
+</div>
+</section>
+
+<section id="ram">
+<h2>3. Sobrecarga de RAM / Overloading RAM <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O script <code class="inline">loadram.ps1</code> consome agressivamente memória do sistema. Aloca arrays grandes até quase toda a RAM disponível estar esgotada, deixando apenas um pequeno buffer para o OS não colapsar imediatamente. A máquina torna-se inutilizável e as aplicações deixam de responder. Pode ser usado como tática de DoS ou como distração enquanto outras atividades ocorrem.</span>
+<span class="en">The <code class="inline">loadram.ps1</code> script aggressively consumes system memory. It allocates large arrays until nearly all available RAM is exhausted, leaving only a small buffer so the OS doesn't immediately collapse. The machine becomes unusable and applications stop responding. It can be used as a DoS tactic or as a distraction while other activities take place.</span>
+</div>
+<pre>PS > .\loadram.ps1</pre>
+</section>
+
+<section id="cpu">
+<h2>4. Sobrecarga de CPU / Overloading CPU <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O script <code class="inline">loadcpu.ps1</code> aplica o mesmo princípio aos núcleos do processador, fixando o uso em 100% até o script ser terminado. Tal como a exaustão de RAM, pode servir de cobertura enquanto os hackers fazem outra coisa.</span>
+<span class="en">The <code class="inline">loadcpu.ps1</code> script applies the same principle to processor cores, pinning usage at 100% until the script is terminated. Just like RAM exhaustion, it can serve as cover while hackers do something else.</span>
+</div>
+<pre>PS > .\loadcpu.ps1</pre>
+</section>
+
+<section id="license">
+<h2>5. Windows License Killer <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O script <code class="inline">license.ps1</code> limpa as chaves de produto Windows, apagando entradas OEM, retail e volume license do registo. O sistema fica sem dados de ativação. Após reiniciar o Software Protection Service, o Windows fica sem licença e pode recusar validar contra os servidores da Microsoft.</span>
+<span class="en">The <code class="inline">license.ps1</code> script clears Windows product keys by wiping OEM, retail, and volume license entries from the registry. The system is stripped of activation data. After restarting the Software Protection Service, Windows will be unlicensed and may refuse to validate against Microsoft servers.</span>
+</div>
+<h3>5.1 Usage</h3>
+<pre>PS > .\license.ps1</pre>
+<h3>5.2 Verificar chave apagada / Verify key wiped</h3>
+<pre>PS > (Get-WmiObject -query 'select * from SoftwareLicensingService').OA3xOriginalProductKey</pre>
+<div class="lang">
+<span class="pt">O resultado deve estar vazio.</span>
+<span class="en">The result should be empty.</span>
+</div>
+</section>
+
+<section id="killer">
+<h2>6. USB e Network Killer <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Podes matar adaptadores de rede e controladores USB com o script <code class="inline">killer.ps1</code>. Depois de o executar, o rato e o teclado deixam de funcionar. Não haverá forma de transferir ficheiros, ligar à rede ou sequer ligar um dispositivo de recuperação sem intervenção significativa.</span>
+<span class="en">You can kill network adapters and USB controllers with the <code class="inline">killer.ps1</code> script. Once you run it, the mouse and keyboard will stop working. There will be no way to transfer files, connect to the network, or even plug in a recovery device without significant intervention.</span>
+</div>
+<pre>PS > .\killer.ps1</pre>
+</section>
+
+<section id="critical">
+<h2>7. Mayhem — Set-CriticalProcess <span class="badge orig">Original</span> <span class="badge danger">Destrutivo</span></h2>
+<div class="lang">
+<span class="pt">O PowerSploit inclui um módulo chamado <strong>Mayhem</strong> com duas funções destrutivas. O Windows protege <code class="inline">smss.exe</code> e <code class="inline">csrss.exe</code> marcando-os como críticos. Se forem terminados, o sistema desencadeia um Blue Screen of Death. <code class="inline">Set-CriticalProcess</code> pode marcar qualquer processo com este estatuto crítico. Matá-lo força imediatamente um crash do sistema.</span>
+<span class="en">PowerSploit includes a module called <strong>Mayhem</strong> with two destructive functions. Windows protects <code class="inline">smss.exe</code> and <code class="inline">csrss.exe</code> by marking them as critical. If they are terminated, the system triggers a Blue Screen of Death. <code class="inline">Set-CriticalProcess</code> can tag any process with this critical status. Killing it immediately forces a system crash.</span>
+</div>
+<h3>7.1 Setup</h3>
+<div class="lang">
+<span class="pt">Copiar o módulo Mayhem do repositório para <code class="inline">C:\Program Files\WindowsPowerShell\Modules\</code>.</span>
+<span class="en">Copy the Mayhem module from the repository to <code class="inline">C:\Program Files\WindowsPowerShell\Modules\</code>.</span>
+</div>
+<h3>7.2 Executar / Run</h3>
+<pre>PS > Set-CriticalProcess</pre>
+<div class="lang">
+<span class="pt">Confirmar com <strong>Y</strong> e esperar que a máquina faça BSOD em momentos.</span>
+<span class="en">Confirm with <strong>Y</strong> and expect the machine to blue screen in moments.</span>
+</div>
+</section>
+
+<section id="mbr">
+<h2>8. Mayhem — Set-MasterBootRecord <span class="badge orig">Original</span> <span class="badge danger">Irreversível</span></h2>
+<div class="lang">
+<span class="pt">Esta é a mais destrutiva de todas. Ao contrário do <code class="inline">Set-CriticalProcess</code>, este ataque corrompe o <strong>Master Boot Record (MBR)</strong>, que é o primeiro setor do disco rígido. O MBR contém o bootloader e a tabela de partições; sem ele, o Windows não consegue carregar. Quando é sobrescrito, o sistema pode apenas mostrar a tua mensagem personalizada e recusar arrancar para o OS. O OS só funcionará se reparares o MBR, mas as chances são de teres de reinstalar o sistema.</span>
+<span class="en">This is the most destructive of all. Unlike <code class="inline">Set-CriticalProcess</code>, this attack corrupts the <strong>Master Boot Record (MBR)</strong>, which is the first sector of the hard drive. The MBR has the bootloader and partition table; without it, Windows cannot load. When overwritten, the system may only display your custom message and refuse to boot into the OS. The OS will only work if you fix the MBR, but chances are you will have to reinstall the OS.</span>
+</div>
+<h3>8.1 Usage</h3>
+<pre>PS > Set-MasterBootRecord -BootMessage 'Pwned'</pre>
+<h3>8.2 Forçar reboot imediato / Force immediate reboot</h3>
+<pre>PS > Set-MasterBootRecord -BootMessage 'Pwned' -Force -RebootImmediately</pre>
+<div class="lang">
+<span class="pt">O sistema deixa de arrancar para o Windows.</span>
+<span class="en">It will no longer boot into Windows.</span>
+</div>
+</section>
+
+<section id="mitre">
+<h2>9. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Endpoint Denial of Service: OS Exhaustion Flood</td><td>T1499.001</td><td>loadram.ps1, loadcpu.ps1</td></tr>
+<tr><td>Impair Defenses: Disable or Modify Tools</td><td>T1562.001</td><td>license.ps1, killer.ps1</td></tr>
+<tr><td>Data Destruction</td><td>T1485</td><td>Set-MasterBootRecord</td></tr>
+<tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>Todo o capítulo</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>10. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Restricted Language Mode</strong> — bloquear chamadas .NET/WMI arbitrárias; essencial em workstations onde os utilizadores não precisam de PowerShell. / blocks arbitrary .NET/WMI calls; essential on workstations where users don't need PowerShell.</li>
+<li><strong>AppLocker/WDAC</strong> — bloquear execução de <code class="inline">loadram.ps1</code>, <code class="inline">loadcpu.ps1</code>, <code class="inline">license.ps1</code>, <code class="inline">killer.ps1</code>. / block execution of these scripts.</li>
+<li><strong>Desativar PowerShell 2.0</strong> — evita downgrade. / prevents downgrade.</li>
+<li><strong>Monitorizar criação de ficheiros <code class="inline">.ps1</code></strong> e execução com <code class="inline">-ep bypass</code>. / monitor <code class="inline">.ps1</code> creation and <code class="inline">-ep bypass</code> execution.</li>
+<li><strong>Proteger o MBR</strong> — firmware/UEFI Secure Boot, discos com proteção contra escrita no setor 0. / firmware/UEFI Secure Boot, write-protected sector 0.</li>
+<li><strong>Backups e snapshots</strong> regulares — única defesa real contra MBR corruption. / regular backups and snapshots — the only real defense against MBR corruption.</li>
+<li><strong>AMSI + Script Block Logging (4104)</strong> — deteta strings como <code class="inline">Set-MasterBootRecord</code>, <code class="inline">Set-CriticalProcess</code>, <code class="inline">loadram</code>. / detects these strings.</li>
+<li><strong>Desativar USB storage</strong> via GPO onde não é necessário. / disable USB storage via GPO where not needed.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>11. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows 10/11 isolada (host-only), <strong>snapshot obrigatório antes de cada passo</strong>. Não usar a VM para mais nada durante o lab. Kali na mesma rede apenas para observer (opcional). <strong>Objetivo:</strong> executar cada técnica, observar o efeito e reverter o snapshot.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows 10/11 VM (host-only), <strong>mandatory snapshot before each step</strong>. Don't use the VM for anything else during the lab. Kali on the same network only as observer (optional). <strong>Goal:</strong> run each technique, observe the effect, and revert the snapshot.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Efeito esperado</th></tr>
+<tr><td>1</td><td>RAM Overload</td><td><code class="inline">.\loadram.ps1</code></td><td>Sistema lento/inutilizável</td></tr>
+<tr><td>2</td><td>CPU Overload</td><td><code class="inline">.\loadcpu.ps1</code></td><td>CPU a 100%, ventoinhas</td></tr>
+<tr><td>3</td><td>License Killer</td><td><code class="inline">.\license.ps1</code> + verificação</td><td>Chave vazia</td></tr>
+<tr><td>4</td><td>USB/Network Killer</td><td><code class="inline">.\killer.ps1</code></td><td>Rato/teclado/rede mortos</td></tr>
+<tr><td>5</td><td>Set-CriticalProcess</td><td><code class="inline">Set-CriticalProcess</code> (Y)</td><td>BSOD</td></tr>
+<tr><td>6</td><td>Set-MasterBootRecord</td><td><code class="inline">Set-MasterBootRecord -BootMessage 'Pwned'</code></td><td>Não arranca</td></tr>
+<tr><td>7</td><td>(Defensivo) Evento 4104</td><td><code class="inline">Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 50 | ? Id -eq 4104</code></td><td>Comandos registados</td></tr>
+<tr><td>8</td><td>(Defensivo) Language Mode</td><td><code class="inline">$ExecutionContext.SessionState.LanguageMode</code></td><td>FullLanguage / ConstrainedLanguage</td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot antes de cada passo / Snapshot before each step</li>
+<li>Screenshot do efeito de cada técnica / Screenshot of each technique's effect</li>
+<li>Evento 4104 capturado / Event 4104 captured</li>
+<li>Language Mode registado / Language Mode recorded</li>
+<li>Snapshot revertido no fim / Snapshot reverted at the end</li>
+</ul>
+<div class="callout danger">
+<strong>⚠️ Limpeza / Cleanup:</strong>
+<div class="lang">
+<span class="pt">Reverter <strong>sempre</strong> o snapshot. Se o MBR foi corrompido, a VM pode não arrancar — o snapshot é a única recuperação garantida.</span>
+<span class="en"><strong>Always</strong> revert the snapshot. If the MBR was corrupted, the VM may not boot — the snapshot is the only guaranteed recovery.</span>
+</div>
+</div>
+</section>
+
+<section id="revq">
+<h2>12. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Porque é que <code class="inline">loadram.ps1</code> deixa um pequeno buffer de RAM livre? / Why does <code class="inline">loadram.ps1</code> leave a small RAM buffer free?</li>
+<li>O que acontece ao Windows depois de <code class="inline">license.ps1</code>? / What happens to Windows after <code class="inline">license.ps1</code>?</li>
+<li>Porque é que <code class="inline">killer.ps1</code> torna a recuperação difícil? / Why does <code class="inline">killer.ps1</code> make recovery hard?</li>
+<li>Qual a diferença entre <code class="inline">Set-CriticalProcess</code> e <code class="inline">Set-MasterBootRecord</code>? / What's the difference between them?</li>
+<li>Porque é que o MBR corruption é considerado irreversível na prática? / Why is MBR corruption considered practically irreversible?</li>
+<li>Porque é que o artigo recomenda <strong>Restricted Language Mode</strong>? / Why does the article recommend <strong>Restricted Language Mode</strong>?</li>
+<li>Como se deteta a execução destes scripts no blue team? / How to detect these script executions on the blue team?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>13. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo mostrou até onde o PowerShell pode ser levado como arma: sobrecarga de RAM e CPU, apagamento de licenças Windows, desativação de USB e rede, BSOD forçado com <code class="inline">Set-CriticalProcess</code> e corrupção do MBR com <code class="inline">Set-MasterBootRecord</code>. A conclusão do artigo é clara: <strong>não basta monitorizar execução de comandos</strong> — é preciso restringir o PowerShell com Language Modes, especialmente em workstations onde os utilizadores não precisam dele. O Cap. 6 (DFIR) entra na defesa e investigação forense.</span>
+<span class="en">This chapter showed how far PowerShell can be pushed as a weapon: RAM and CPU overload, Windows license wiping, USB and network disabling, forced BSOD with <code class="inline">Set-CriticalProcess</code>, and MBR corruption with <code class="inline">Set-MasterBootRecord</code>. The article's conclusion is clear: <strong>monitoring command execution is not enough</strong> — you must restrict PowerShell with Language Modes, especially on workstations where users don't need it. Ch. 6 (DFIR) moves into defense and forensic investigation.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 5 / Ethical Hacker Training Manual — Ch. 5</div>
+<div style="margin-top:.6rem">
+<a href="cap04.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap06.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

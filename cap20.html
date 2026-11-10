@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 20 — DeadMatter: Evasão de AV/EDR | Ch. 20</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 20 — DeadMatter</h1>
+<div class="sub">Ch. 20 — Evasão de AV/EDR na Extração de Credenciais</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🛡️ Nível: Avançado / DFIR Ofensivo</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#what">O que é DeadMatter</a></li><li><a href="#guard">Credential Guard</a></li>
+<li><a href="#capture">Captura de RAM</a></li><li><a href="#extract">Extração Offline</a></li>
+<li><a href="#impact">Scripts de Impacto</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender a abordagem de dois estágios (captura legítima + análise offline); verificar o estado do Credential Guard; capturar RAM com FTK Imager ou DumpIt; compilar e executar o DeadMatter em modo <code class="inline">carve</code>; extrair NTLM hashes e DPAPI keys de dumps de memória sem offsets fixos; compreender porque isto evade EDR que monitoriza LSASS; <strong>construir scripts de impacto nativos</strong> para deteção.</span>
+<span class="en">Understand the two-stage approach (legitimate capture + offline analysis); check Credential Guard status; capture RAM with FTK Imager or DumpIt; compile and run DeadMatter in <code class="inline">carve</code> mode; extract NTLM hashes and DPAPI keys from memory dumps without fixed offsets; understand why this evades EDR monitoring LSASS; <strong>build native impact scripts</strong> for detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Em ambientes protegidos por EDR, o dump direto do LSASS é rapidamente bloqueado ou sinalizado. O DeadMatter propõe uma mudança de abordagem: em vez de lutar contra as proteções, captura uma imagem completa de memória com uma ferramenta DFIR legítima (FTK Imager, DumpIt) e analisa-a <strong>offline</strong>, onde o EDR não vê. O que fica no alvo é um artefacto de "captura de memória" — que em muitos ambientes é interpretado como resposta a incidentes legítima, não como ataque.</span>
+<span class="en">In EDR-protected environments, direct LSASS dumping is quickly blocked or flagged. DeadMatter proposes a shift in approach: instead of fighting protections, it captures a full memory image with a legitimate DFIR tool (FTK Imager, DumpIt) and analyzes it <strong>offline</strong>, where the EDR can't see. What remains on the target is a "memory capture" artifact — which in many environments is interpreted as legitimate incident response, not attack.</span>
+</div>
+</section>
+
+<section id="what">
+<h2>3. O que é DeadMatter <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O DeadMatter é uma ferramenta C# que extrai credenciais de dumps de memória <strong>sem depender de offsets fixos</strong>. Em vez de apenas parsing estruturado (como o Mimikatz faz), faz também <strong>signature carving</strong>: procura padrões de credenciais nos bytes brutos, mesmo que o dump esteja incompleto ou não siga o formato esperado. Inputs suportados: raw dumps, minidumps de LSASS, ficheiros de hibernação descomprimidos, e ficheiros de memória de VMs. Outputs: NTLM hashes, DPAPI master/pre-keys, e metadados de sessões de logon.</span>
+<span class="en">DeadMatter is a C# tool that extracts credentials from memory dumps <strong>without relying on fixed offsets</strong>. Instead of only structured parsing (like Mimikatz), it also performs <strong>signature carving</strong>: it searches for credential patterns in raw bytes, even if the dump is incomplete or doesn't follow the expected format. Supported inputs: raw dumps, LSASS minidumps, decompressed hibernation files, and VM memory files. Outputs: NTLM hashes, DPAPI master/pre-keys, and logon session metadata.</span>
+</div>
+<h3>3.1 Compilar / Build</h3>
+<pre>PS > git clone https://github.com/qsecure-labs/DeadMatter.git
+PS > cd DeadMatter
+PS > dotnet build -c release</pre>
+<div class="lang">
+<span class="pt">O executável fica em <code class="inline">bin\Release\Deadmatter.exe</code>. O repositório não inclui binário pré-compilado — compila sempre a partir do código para evitar riscos de supply chain.</span>
+<span class="en">The executable ends up in <code class="inline">bin\Release\Deadmatter.exe</code>. The repository doesn't include a precompiled binary — always build from source to avoid supply chain risks.</span>
+</div>
+</section>
+
+<section id="guard">
+<h2>4. Credential Guard <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Antes de capturar memória, verifica o estado do Credential Guard. Se estiver ativo, as credenciais são isoladas em <code class="inline">LsaIso.exe</code> (VTL1) e não ficam acessíveis no dump de memória padrão. Em muitas empresas, Windows 10 Pro e Windows Server anteriores a 2025 ainda têm o Credential Guard desativado, pelo que esta verificação é rápida e frequentemente favorável.</span>
+<span class="en">Before capturing memory, check Credential Guard status. If enabled, credentials are isolated in <code class="inline">LsaIso.exe</code> (VTL1) and aren't accessible in a standard memory dump. In many enterprises, Windows 10 Pro and Windows Server versions prior to 2025 still have Credential Guard disabled, so this check is quick and often favorable.</span>
+</div>
+<pre>PS > Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard</pre>
+<div class="lang">
+<span class="pt">Se o resultado indicar <code class="inline">{0}</code> (desativado), podes prosseguir. Caso contrário, esta técnica não funcionará nesse alvo.</span>
+<span class="en">If the result indicates <code class="inline">{0}</code> (disabled), you can proceed. Otherwise, this technique won't work on that target.</span>
+</div>
+</section>
+
+<section id="capture">
+<h2>5. Captura de RAM <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">A captura é feita com ferramentas DFIR legítimas, que o EDR trata com menos suspeita do que um dump direto de LSASS.</span>
+<span class="en">Capture is done with legitimate DFIR tools, which EDR treats with less suspicion than a direct LSASS dump.</span>
+</div>
+<h3>5.1 FTK Imager (GUI)</h3>
+<pre># Abrir FTK Imager
+# Clicar em "Capture Memory"
+# Especificar nome e caminho de destino
+# Aguardar a conclusão do dump</pre>
+<h3>5.2 DumpIt (CLI)</h3>
+<pre># Executar DumpIt na linha de comando
+DumpIt.exe /O C:\temp\memory.raw</pre>
+<div class="lang">
+<span class="pt">Após a captura, o dump é comprimido e exfiltrado para uma máquina controlada pelo atacante, onde a análise será feita offline.</span>
+<span class="en">After capture, the dump is compressed and exfiltrated to an attacker-controlled machine, where analysis will be done offline.</span>
+</div>
+</section>
+
+<section id="extract">
+<h2>6. Extração Offline <span class="badge orig">Original</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Com o dump na máquina de análise, o DeadMatter pode correr sem risco de deteção. O modo <code class="inline">carve</code> procura credenciais em bruto, sem depender de estruturas de memória intactas.</span>
+<span class="en">With the dump on the analysis machine, DeadMatter can run without detection risk. <code class="inline">carve</code> mode searches for credentials in raw form, without relying on intact memory structures.</span>
+</div>
+<h3>6.1 Modos de execução / Execution modes</h3>
+<pre># Extração com parsing estruturado (mimikatz-like)
+Deadmatter.exe -f memory.raw
+
+# Apenas carving (para dumps incompletos ou não padrão)
+Deadmatter.exe -f memory.raw -m carve
+
+# Fingerprint do OS (sem extração)
+Deadmatter.exe -f memory.raw -m none -i</pre>
+<div class="lang">
+<span class="pt">O modo <code class="inline">carve</code> é particularmente útil quando o dump não segue o layout esperado ou está fragmentado. O DeadMatter procura assinaturas de estruturas MSV e DPAPI diretamente nos bytes.</span>
+<span class="en"><code class="inline">carve</code> mode is particularly useful when the dump doesn't follow the expected layout or is fragmented. DeadMatter searches for MSV and DPAPI structure signatures directly in the bytes.</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>7. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam o blue team a detetar a cadeia de dois estágios do DeadMatter: captura de memória e execução offline.</span>
+<span class="en">The scripts below help the blue team detect DeadMatter's two-stage chain: memory capture and offline execution.</span>
+</div>
+
+<h3>7.1 Script 20.1 — Deteção de Captura de Memória / Memory Capture Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar execução de FTK Imager, DumpIt, ou WinPmem (ferramentas de captura de memória) fora de contexto de IR autorizado. <strong>Evidência:</strong> <code class="inline">memcapture-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect FTK Imager, DumpIt, or WinPmem execution (memory capture tools) outside authorized IR context. <strong>Evidence:</strong> <code class="inline">memcapture-detect.csv</code>.</span>
+</div>
+<pre># Script 20.1 - Memory Capture Tool Detection
+$out = ".\memcapture-detect.csv"
+$patterns = @("FTK Imager", "DumpIt", "winpmem", "Memoryze", "Belkasoft")
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4688 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $proc = ($xml.Event.EventData.Data | Where-Object Name -eq "NewProcessName").'#text'
+    $cmd  = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    foreach ($p in $patterns) {
+      if ($proc -match $p -or $cmd -match $p) {
+        $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Tool=$p; Command=$cmd }
+      }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Memory capture tools: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>7.2 Script 20.2 — Deteção de Dumps Grandes em Disco / Large Dump File Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar ficheiros <code class="inline">.raw</code>, <code class="inline">.dmp</code> ou <code class="inline">.mem</code> de tamanho anormalmente grande (acima de 1 GB) em diretórios de utilizador ou Temp. <strong>Evidência:</strong> <code class="inline">large-dumps.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect <code class="inline">.raw</code>, <code class="inline">.dmp</code>, or <code class="inline">.mem</code> files of abnormally large size (over 1 GB) in user or Temp directories. <strong>Evidence:</strong> <code class="inline">large-dumps.csv</code>.</span>
+</div>
+<pre># Script 20.2 - Large Dump File Detection
+$out = ".\large-dumps.csv"
+$hits = @()
+$searchPaths = @("C:\Users", "C:\Windows\Temp", "C:\Temp")
+foreach ($base in $searchPaths) {
+  Get-ChildItem $base -Recurse -Include "*.raw","*.dmp","*.mem" -File -EA SilentlyContinue |
+    Where-Object { $_.Length -gt 1GB } |
+    ForEach-Object {
+      $hits += [PSCustomObject]@{ Path=$_.FullName; SizeGB=[math]::Round($_.Length/1GB,2); LastWrite=$_.LastWriteTime }
+    }
+}
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Large dumps: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+
+<h3>7.3 Script 20.3 — Verificação de Credential Guard / Credential Guard Check</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> verificar se o Credential Guard está ativo (se estiver, o DeadMatter não consegue extrair credenciais do dump). <strong>Evidência:</strong> output no ecrã.</span>
+<span class="en"><strong>Goal:</strong> check if Credential Guard is enabled (if so, DeadMatter can't extract credentials from the dump). <strong>Evidence:</strong> on-screen output.</span>
+</div>
+<pre># Script 20.3 - Credential Guard Status Check
+$dg = Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard -EA SilentlyContinue
+if ($dg) {
+  $status = $dg.SecurityServicesRunning
+  if ($status -contains 1 -or $status -contains 2) {
+    Write-Host "[!] Credential Guard is ENABLED (VBS running)" -ForegroundColor Red
+    Write-Host "    DeadMatter extraction will likely FAIL on this host." -ForegroundColor Red
+  } else {
+    Write-Host "[+] Credential Guard is DISABLED - extraction feasible" -ForegroundColor Green
+  }
+  Write-Host "VirtualizationBasedSecurityStatus: $($dg.VirtualizationBasedSecurityStatus)"
+  Write-Host "SecurityServicesRunning: $($status -join ',')"
+} else {
+  Write-Host "[?] Could not query DeviceGuard (may not be available)" -ForegroundColor Yellow
+}</pre>
+</section>
+
+<section id="mitre">
+<h2>8. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>OS Credential Dumping: LSASS Memory</td><td>T1003.001</td><td>DeadMatter (via dump offline)</td></tr>
+<tr><td>OS Credential Dumping: Security Account Manager</td><td>T1003.002</td><td>NTLM hashes extraídos</td></tr>
+<tr><td>Unsecured Credentials: Credentials in Files</td><td>T1552.001</td><td>DPAPI keys</td></tr>
+<tr><td>Data from Local System</td><td>T1005</td><td>Captura de memória</td></tr>
+<tr><td>Exfiltration Over C2 Channel</td><td>T1041</td><td>Dump exfiltrado para análise offline</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>9. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Ativar Credential Guard</strong> — torna a extração impossível em muitos casos.</li>
+<li><strong>Monitorizar execução de ferramentas DFIR</strong> (FTK, DumpIt, WinPmem) — Script 20.1.</li>
+<li><strong>Alertar sobre dumps grandes em disco</strong> — Script 20.2.</li>
+<li><strong>Monitorizar criação de ficheiros <code class="inline">.raw</code>/<code class="inline">.dmp</code>/<code class="inline">.mem</code></strong> em diretórios de utilizador.</li>
+<li><strong>Restringir execução de binários não assinados</strong> — AppLocker/WDAC.</li>
+<li><strong>Egress filtering</strong> — bloquear exfiltração de dumps para fora da rede.</li>
+<li><strong>Honeytokens</strong> — ficheiros de dump falsos com credenciais isca.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>10. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows 10 isolada com snapshot. Verificar Credential Guard, capturar RAM com FTK Imager (ou DumpIt), transferir para uma máquina de análise offline, compilar e correr o DeadMatter. <strong>Objetivo:</strong> executar a cadeia de dois estágios e correr os scripts de deteção.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows 10 VM with snapshot. Check Credential Guard, capture RAM with FTK Imager (or DumpIt), transfer to an offline analysis machine, compile and run DeadMatter. <strong>Goal:</strong> execute the two-stage chain and run detection scripts.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Verificar Credential Guard</td><td><code class="inline">.\cg-check.ps1</code></td><td>Output</td></tr>
+<tr><td>2</td><td>Capturar RAM</td><td>FTK Imager → Capture Memory (ou <code class="inline">DumpIt.exe /O memory.raw</code>)</td><td><code class="inline">memory.raw</code></td></tr>
+<tr><td>3</td><td>Compilar DeadMatter</td><td><code class="inline">dotnet build -c release</code></td><td><code class="inline">Deadmatter.exe</code></td></tr>
+<tr><td>4</td><td>Extrair (carve)</td><td><code class="inline">Deadmatter.exe -f memory.raw -m carve</code></td><td>Hashes/keys</td></tr>
+<tr><td>5</td><td>Deteção captura</td><td><code class="inline">.\memcapture-detect.ps1</code></td><td><code class="inline">memcapture-detect.csv</code></td></tr>
+<tr><td>6</td><td>Deteção dumps grandes</td><td><code class="inline">.\large-dumps.ps1</code></td><td><code class="inline">large-dumps.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Output do CG check</li>
+<li><code class="inline">memory.raw</code> capturado</li>
+<li><code class="inline">Deadmatter.exe</code> compilado</li>
+<li>Hashes/keys extraídos</li>
+<li><code class="inline">memcapture-detect.csv</code></li>
+<li><code class="inline">large-dumps.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>11. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Porque é que o dump direto de LSASS é problemático em ambientes com EDR? / Why is direct LSASS dumping problematic in EDR environments?</li>
+<li>Qual é a abordagem de dois estágios do DeadMatter? / What is DeadMatter's two-stage approach?</li>
+<li>O que faz o modo <code class="inline">carve</code>? / What does <code class="inline">carve</code> mode do?</li>
+<li>Porque é que o Credential Guard bloqueia a extração? / Why does Credential Guard block extraction?</li>
+<li>Que ferramentas DFIR podem ser usadas para capturar RAM? / Which DFIR tools can capture RAM?</li>
+<li>Como se deteta a captura de memória no blue team? / How to detect memory capture on the blue team?</li>
+<li>Porque é que o DeadMatter é considerado "offset-independent"? / Why is DeadMatter considered "offset-independent"?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>12. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu o DeadMatter e a sua abordagem de dois estágios: (1) captura de memória com ferramentas DFIR legítimas (FTK Imager, DumpIt), que o EDR trata com menos suspeita; (2) análise offline com DeadMatter, que extrai NTLM hashes e DPAPI keys de raw dumps, minidumps e ficheiros de hibernação, sem depender de offsets fixos. O Credential Guard é o principal obstáculo — se estiver ativo, a extração falha. Acrescentámos <strong>três scripts de impacto</strong> (deteção de ferramentas de captura, dumps grandes em disco, verificação de Credential Guard) que ajudam o blue team a detetar esta cadeia. O Cap. 21 entra noutras ferramentas DFIR (Nyx).</span>
+<span class="en">This chapter covered DeadMatter and its two-stage approach: (1) memory capture with legitimate DFIR tools (FTK Imager, DumpIt), which EDR treats with less suspicion; (2) offline analysis with DeadMatter, which extracts NTLM hashes and DPAPI keys from raw dumps, minidumps, and hibernation files, without relying on fixed offsets. Credential Guard is the main obstacle — if enabled, extraction fails. We added <strong>three impact scripts</strong> (memory capture tool detection, large dump files on disk, Credential Guard check) that help the blue team detect this chain. Ch. 21 moves into other DFIR tools (Nyx).</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 20 / Ethical Hacker Training Manual — Ch. 20</div>
+<div style="margin-top:.6rem">
+<a href="cap19.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap21.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

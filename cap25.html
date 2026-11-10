@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 25 — Survival Edition Part 1: Basic Recon | Ch. 25</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 25 — Survival Edition Part 1</h1>
+<div class="sub">Ch. 25 — Basic Recon: AV, Logging, Users, Network</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Intermédio / Recon</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#av">Antivírus</a></li><li><a href="#logging">Script Logging</a></li>
+<li><a href="#users">Utilizadores</a></li><li><a href="#network">Rede</a></li>
+<li><a href="#netcmd">Net Commands</a></li><li><a href="#impact">Scripts de Impacto</a></li>
+<li><a href="#mitre">MITRE</a></li><li><a href="#mitig">Mitigações</a></li>
+<li><a href="#lab">Laboratório</a></li><li><a href="#revq">Revisão</a></li>
+<li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Identificar produtos AV instalados; verificar o estado do Script Block Logging; enumerar utilizadores e sessões; mapear a rede (ARP, rotas, interfaces, known_hosts); usar net commands para política de passwords, grupos e computadores; compreender o modo "survival" (tratar cada movimento como observado); <strong>construir scripts de impacto nativos</strong> para validação.</span>
+<span class="en">Identify installed AV products; check Script Block Logging status; enumerate users and sessions; map the network (ARP, routes, interfaces, known_hosts); use net commands for password policy, groups, and computers; understand "survival" mode (treat every move as observed); <strong>build native impact scripts</strong> for validation.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Podes ter a sorte de encontrar um servidor sem antivírus, mas deves tratar isso como exceção e não como regra. O modo "survival" significa que, mesmo que o logging não esteja a ser recolhido ativamente, deves comportar-te como se cada movimento fosse observado. A falta de proteção endpoint não te permite fazer tudo. Vimos pessoas a instalar Gsocket em máquinas Linux a pensar que garantiriam acesso, mas na realidade a monitorização de rede rapidamente detetou esses sockets e os defensores desligaram-nos. O mesmo se aplica ao Windows.</span>
+<span class="en">You might be lucky to find a server with no antivirus at all, but you should treat that as the exception rather than the rule. Survival mode means that, even if logging is not actively collected, you must treat survival mode as if every move is observed. The lack of endpoint protection does not let you do everything. We saw people install Gsocket on Linux boxes thinking it would secure access, but in reality network monitoring quickly spotted those sockets and defenders shut them down. Same applies to Windows.</span>
+</div>
+</section>
+
+<section id="av">
+<h2>3. Antivírus <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Para identificar o produto AV em uso (não apenas o Microsoft Defender), usa:</span>
+<span class="en">To identify the AV product in use (not just Microsoft Defender), use:</span>
+</div>
+<pre>PS > Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntivirusProduct</pre>
+<div class="lang">
+<span class="pt">Para detalhes adicionais, como frescura de assinaturas e histórico de scans:</span>
+<span class="en">For additional details, such as signature freshness and scan history:</span>
+</div>
+<pre>PS > Get-MpComputerStatus</pre>
+</section>
+
+<section id="logging">
+<h2>4. Script Logging <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Talvez a verificação mais importante seja determinar se o script logging está ativo. Esta funcionalidade regista cada comando PowerShell executado.</span>
+<span class="en">Perhaps the most important check is determining whether script logging is enabled. This feature records every executed PowerShell command.</span>
+</div>
+<pre>PS > Get-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"</pre>
+<div class="lang">
+<span class="pt">Se <code class="inline">EnableScriptBlockLogging</code> estiver definido como 1, toda a tua atividade está a ser armazenada no log PowerShell Operational. Mais tarde veremos estratégias para operar nestas condições.</span>
+<span class="en">If <code class="inline">EnableScriptBlockLogging</code> is set to 1, all your activity is being stored in the PowerShell Operational log. Later we will show strategies for operating under such conditions.</span>
+</div>
+</section>
+
+<section id="users">
+<h2>5. Utilizadores <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Identificar quem mais está presente no sistema é outro passo crítico. O <code class="inline">quser</code> é focado no utilizador, mostrando utilizadores com sessão iniciada, tempos de inatividade e detalhes da sessão:</span>
+<span class="en">Identifying who else is present on the system is another critical step. <code class="inline">quser</code> is user-focused, showing logged-in users, idle times, and session details:</span>
+</div>
+<pre>PS > quser</pre>
+<div class="lang">
+<span class="pt">O <code class="inline">qwinsta</code> é focado na sessão, mostrando sessões ativas e inativas. É particularmente útil ao preparar um dump de LSASS, pois credenciais de sessões passadas frequentemente permanecem em memória. Também mostra o tipo de conexão (consola ou RDP):</span>
+<span class="en"><code class="inline">qwinsta</code> is session-focused, showing both active and inactive sessions. It's particularly useful when preparing to dump LSASS, as credentials from past sessions often remain in memory. It also shows the connection type (console or RDP):</span>
+</div>
+<pre>PS > qwinsta</pre>
+</section>
+
+<section id="network">
+<h2>6. Enumeração de Rede <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Navegar numa rede hostil pode ser desafiante. Por vezes ficas baixo e observas, por vezes sondas o terreno. Aqui estão os comandos essenciais para te manteres vivo.</span>
+<span class="en">Finding your way through a hostile network can be challenging. Sometimes you stay low and watch, sometimes you poke around to test the ground. Here are the essential commands to keep you alive.</span>
+</div>
+<h3>6.1 ARP Cache</h3>
+<pre>PS > arp -a</pre>
+<div class="lang">
+<span class="pt">As entradas ARP podem revelar sub-redes e hosts ativos. Se acabaste de aterrar num host, isto pode ser valioso. Nota: uma convenção informal comum é que organizações pequenas usam 192.168.x.x, médias usam 172.16.x.x–172.31.x.x, e grandes empresas operam em 10.0.0.0/8. Não é uma regra, mas é frequentemente verdade na prática.</span>
+<span class="en">ARP entries can reveal subnets and active hosts. If you just landed on a host, this could be valuable. Note: a common informal convention is that smaller organizations use 192.168.x.x, mid-sized use 172.16.x.x–172.31.x.x, and larger enterprises operate within 10.0.0.0/8. This is not a rule, but it is often true in practice.</span>
+</div>
+<h3>6.2 Known Hosts</h3>
+<pre>PS > cat %USERPROFILE%\.ssh\known_hosts</pre>
+<div class="lang">
+<span class="pt">O SSH é nativamente suportado em Windows moderno mas menos usado, já que ferramentas como PuTTY são mais comuns. Ainda assim, vale a pena verificar known hosts, pois podem dar insights sobre segmentação de rede e sub-redes.</span>
+<span class="en">SSH is natively supported on modern Windows but less frequently used, since tools like PuTTY are more common. Still, it is worth checking for known hosts, as they might give you insights about network segmentation and subnets.</span>
+</div>
+<h3>6.3 Rotas</h3>
+<pre>PS > route print</pre>
+<div class="lang">
+<span class="pt">A tabela de rotas expõe que redes o host conhece, incluindo VLANs, VPNs e rotas estáticas. É inestimável para mapear topologia interna e planear pivots. Aprender a ler o output pode levar algum tempo, mas vale definitivamente a pena.</span>
+<span class="en">The route table exposes which networks the host is aware of, including VLANs, VPNs, and static routes. It's invaluable for mapping internal topology and planning pivots. Learning how to read the output can take some time, but it's definitely worth it.</span>
+</div>
+<h3>6.4 Interfaces</h3>
+<pre>PS > ipconfig /all</pre>
+<div class="lang">
+<span class="pt">Conhecer as interfaces de rede instaladas ajuda a compreender conectividade e planear próximos passos. Mantém um registo de interfaces em hosts comprometidos para evitar tentativas de autenticação redundantes.</span>
+<span class="en">Knowing the network interfaces installed helps you understand connectivity and plan next steps. Maintain a record of interfaces across compromised hosts to prevent redundant authentication attempts.</span>
+</div>
+</section>
+
+<section id="netcmd">
+<h2>7. Net Commands <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">A família de comandos <code class="inline">net</code> continua altamente útil, embora sejam frequentemente monitorizados.</span>
+<span class="en">The <code class="inline">net</code> family of commands remains highly useful, though they are often monitored.</span>
+</div>
+<h3>7.1 Política de Passwords</h3>
+<pre>PS > net accounts /domain</pre>
+<h3>7.2 Grupos Locais</h3>
+<pre>PS > net localgroup
+PS > net localgroup Administrators</pre>
+<h3>7.3 Grupos de Domínio</h3>
+<pre>PS > net group /domain
+PS > net group <group_name> /domain</pre>
+<div class="lang">
+<span class="pt">Adicionar contas diretamente a grupos altamente privilegiados como Domain Admins é imprudente — estes grupos são closely monitored. Hackers experientes procuram contas esquecidas, como utilizadores com o atributo "password not required" ou credenciais expostas em campos LDAP.</span>
+<span class="en">Directly adding accounts to highly privileged groups like Domain Admins is reckless — these groups are closely monitored. Experienced hackers instead look for overlooked accounts, such as users with the "password not required" attribute or exposed credentials in LDAP fields.</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>8. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo consolidam a verificação de postura defensiva e reconhecimento básico numa única execução.</span>
+<span class="en">The scripts below consolidate defensive posture check and basic recon into a single run.</span>
+</div>
+
+<h3>8.1 Script 25.1 — Verificação de Postura Defensiva / Defensive Posture Check</h3>
+<pre># Script 25.1 - Defensive Posture Check
+$out = ".\posture-check.csv"
+$results = @()
+# AV
+$av = Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntivirusProduct -EA SilentlyContinue
+foreach ($a in $av) { $results += [PSCustomObject]@{ Check="AV"; Value=$a.displayName } }
+# Script Block Logging
+$sbl = (Get-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name "EnableScriptBlockLogging" -EA SilentlyContinue).EnableScriptBlockLogging
+$results += [PSCustomObject]@{ Check="ScriptBlockLogging"; Value=$sbl }
+# Defender status
+$mp = Get-MpComputerStatus -EA SilentlyContinue
+if ($mp) { $results += [PSCustomObject]@{ Check="DefenderRealtime"; Value=$mp.RealTimeProtectionEnabled } }
+$results | Export-Csv $out -NoTypeInformation -Encoding UTF8
+$results | Format-Table -AutoSize</pre>
+
+<h3>8.2 Script 25.2 — Recon de Rede Rápido / Quick Network Recon</h3>
+<pre># Script 25.2 - Quick Network Recon
+$out = ".\net-recon.csv"
+$results = @()
+# ARP
+Get-NetNeighbor -AddressFamily IPv4 -EA SilentlyContinue | Where-Object { $_.State -ne "Unreachable" } | ForEach-Object {
+  $results += [PSCustomObject]@{ Type="ARP"; IP=$_.IPAddress; MAC=$_.LinkLayerAddress }
+}
+# Routes
+Get-NetRoute -AddressFamily IPv4 -EA SilentlyContinue | ForEach-Object {
+  $results += [PSCustomObject]@{ Type="Route"; IP=$_.DestinationPrefix; MAC=$_.NextHop }
+}
+# Interfaces
+Get-NetIPAddress -AddressFamily IPv4 -EA SilentlyContinue | ForEach-Object {
+  $results += [PSCustomObject]@{ Type="Interface"; IP=$_.IPAddress; MAC=$_.InterfaceAlias }
+}
+$results | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Network recon: $($results.Count) entries -> $out" -ForegroundColor Green</pre>
+
+<h3>8.3 Script 25.3 — Enumeração de Sessões e Utilizadores / Session Enumeration</h3>
+<pre># Script 25.3 - Session Enumeration
+$out = ".\sessions.csv"
+$results = @()
+try {
+  $quser = quser 2>$null
+  if ($quser) { $quser | ForEach-Object { $results += [PSCustomObject]@{ Output=$_ } } }
+} catch {}
+try {
+  $qwinsta = qwinsta 2>$null
+  if ($qwinsta) { $qwinsta | ForEach-Object { $results += [PSCustomObject]@{ Output=$_ } } }
+} catch {}
+$results | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Sessions captured -> $out" -ForegroundColor Green
+Get-Content $out</pre>
+</section>
+
+<section id="mitre">
+<h2>9. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>System Information Discovery</td><td>T1082</td><td>AV, logging, rede</td></tr>
+<tr><td>System Owner/User Discovery</td><td>T1033</td><td>quser, qwinsta</td></tr>
+<tr><td>Remote System Discovery</td><td>T1018</td><td>ARP, rotas, interfaces</td></tr>
+<tr><td>Permission Groups Discovery: Domain Groups</td><td>T1069.002</td><td>net group</td></tr>
+<tr><td>Account Discovery: Domain Account</td><td>T1087.002</td><td>net accounts, net group</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>10. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Ativar Script Block Logging (4104)</strong> — deteta recon via PowerShell.</li>
+<li><strong>Monitorizar <code class="inline">net</code> commands</strong> — eventos 4688 com <code class="inline">net accounts</code>, <code class="inline">net group</code>.</li>
+<li><strong>Alertar sobre enumeração massiva de ARP/rotas</strong> — comportamento de recon.</li>
+<li><strong>Monitorizar <code class="inline">quser</code> e <code class="inline">qwinsta</code></strong> — recon de sessões.</li>
+<li><strong>Restringir <code class="inline">Get-CimInstance</code> a utilizadores não-admin</strong> — limita enumeração de AV.</li>
+<li><strong>Honeytokens</strong> — contas falsas em grupos, registos de rede canário.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>11. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows isolada com snapshot. Executar os comandos de recon manualmente e depois os scripts de impacto. <strong>Objetivo:</strong> mapear a postura defensiva e a rede.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows VM with snapshot. Run recon commands manually and then the impact scripts. <strong>Goal:</strong> map defensive posture and network.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>AV</td><td><code class="inline">Get-CimInstance ... AntivirusProduct</code></td><td>Output</td></tr>
+<tr><td>2</td><td>Script Logging</td><td><code class="inline">Get-ItemProperty ... ScriptBlockLogging</code></td><td>Output</td></tr>
+<tr><td>3</td><td>Utilizadores</td><td><code class="inline">quser</code> / <code class="inline">qwinsta</code></td><td>Output</td></tr>
+<tr><td>4</td><td>Rede</td><td><code class="inline">arp -a</code> / <code class="inline">route print</code> / <code class="inline">ipconfig /all</code></td><td>Output</td></tr>
+<tr><td>5</td><td>Net commands</td><td><code class="inline">net accounts /domain</code> / <code class="inline">net group /domain</code></td><td>Output</td></tr>
+<tr><td>6</td><td>Postura defensiva</td><td><code class="inline">.\posture-check.ps1</code></td><td><code class="inline">posture-check.csv</code></td></tr>
+<tr><td>7</td><td>Recon de rede</td><td><code class="inline">.\net-recon.ps1</code></td><td><code class="inline">net-recon.csv</code></td></tr>
+<tr><td>8</td><td>Sessões</td><td><code class="inline">.\session-enum.ps1</code></td><td><code class="inline">sessions.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Output AV / logging</li>
+<li>Output quser / qwinsta</li>
+<li>Output arp / route / ipconfig</li>
+<li>Output net commands</li>
+<li><code class="inline">posture-check.csv</code></li>
+<li><code class="inline">net-recon.csv</code></li>
+<li><code class="inline">sessions.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>12. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Porque é que o modo "survival" assume que cada movimento é observado? / Why does survival mode assume every move is observed?</li>
+<li>Como se identifica o AV instalado além do Defender? / How to identify installed AV beyond Defender?</li>
+<li>O que faz o Script Block Logging e como se verifica? / What does Script Block Logging do and how to check it?</li>
+<li>Qual a diferença entre quser e qwinsta? / What's the difference between quser and qwinsta?</li>
+<li>O que pode revelar a ARP cache? / What can the ARP cache reveal?</li>
+<li>Porque é que adicionar contas a Domain Admins é imprudente? / Why is adding accounts to Domain Admins reckless?</li>
+<li>O que mostra o <code class="inline">route print</code> e porque é útil? / What does <code class="inline">route print</code> show and why is it useful?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>13. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu o recon básico em modo "survival": identificação de AV (<code class="inline">Get-CimInstance</code>, <code class="inline">Get-MpComputerStatus</code>), verificação de Script Block Logging, enumeração de utilizadores (<code class="inline">quser</code>, <code class="inline">qwinsta</code>), mapeamento de rede (<code class="inline">arp -a</code>, <code class="inline">route print</code>, <code class="inline">ipconfig /all</code>, <code class="inline">known_hosts</code>), e net commands (<code class="inline">net accounts /domain</code>, <code class="inline">net group /domain</code>, <code class="inline">net localgroup</code>). A premissa central é que, mesmo sem AV ou logging ativo, deves operar como se cada movimento fosse observado. Acrescentámos <strong>três scripts de impacto</strong> (postura defensiva, recon de rede, enumeração de sessões) que consolidam a recolha. O Cap. 26 entra no Survival Edition Part 3 (Know Your Enemy).</span>
+<span class="en">This chapter covered basic recon in survival mode: AV identification (<code class="inline">Get-CimInstance</code>, <code class="inline">Get-MpComputerStatus</code>), Script Block Logging check, user enumeration (<code class="inline">quser</code>, <code class="inline">qwinsta</code>), network mapping (<code class="inline">arp -a</code>, <code class="inline">route print</code>, <code class="inline">ipconfig /all</code>, <code class="inline">known_hosts</code>), and net commands (<code class="inline">net accounts /domain</code>, <code class="inline">net group /domain</code>, <code class="inline">net localgroup</code>). The central premise is that, even without AV or active logging, you must operate as if every move is observed. We added <strong>three impact scripts</strong> (defensive posture, network recon, session enumeration) that consolidate collection. Ch. 26 moves into Survival Edition Part 3 (Know Your Enemy).</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 25 / Ethical Hacker Training Manual — Ch. 25</div>
+<div style="margin-top:.6rem">
+<a href="cap24.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap26.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

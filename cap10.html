@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 10 — Timeroasting Users | Ch. 10</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 10 — Timeroasting Users</h1>
+<div class="sub">Ch. 10 — Targeted Timeroasting</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Avançado / AD</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#what">O que é Timeroasting</a></li><li><a href="#targeted">Targeted Timeroasting</a></li>
+<li><a href="#exploit">Exploração</a></li><li><a href="#impact">Scripts de Impacto</a></li>
+<li><a href="#mitre">MITRE</a></li><li><a href="#mitig">Mitigações</a></li>
+<li><a href="#lab">Laboratório</a></li><li><a href="#revq">Revisão</a></li>
+<li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o Timeroasting original (contas de computador) e as suas limitações; compreender o <strong>Targeted Timeroasting</strong> (contas de utilizador); saber que requer Domain Admin; entender a manipulação de <code class="inline">userAccountControl</code> e <code class="inline">sAMAccountName</code>; conhecer o warning operacional (perda temporária de logon); saber crackear com Hashcat modo 31300; <strong>construir scripts de impacto nativos</strong> para deteção.</span>
+<span class="en">Understand original Timeroasting (computer accounts) and its limitations; understand <strong>Targeted Timeroasting</strong> (user accounts); know it requires Domain Admin; understand manipulation of <code class="inline">userAccountControl</code> and <code class="inline">sAMAccountName</code>; know the operational warning (temporary logon loss); know how to crack with Hashcat mode 31300; <strong>build native impact scripts</strong> for detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Este ataque depende da modificação de propriedades de contas de utilizador no Active Directory, pelo que <strong>precisas de privilégios de Domain Admin</strong>. Normalmente, quando um atacante compromete uma conta de Domain Admin, o jogo acabou para a organização. Mas mesmo com esse nível de privilégio, há alturas em que queres credenciais de um utilizador específico sem acionar ações de alto risco óbvias. Os defensores monitorizam NTDS dump, LSASS e DCSync. Há situações em que esses métodos estão bloqueados, monitorizados ou simplesmente não são ideais. Este script existe exatamente para esses casos: obtém hashes de forma mais silenciosa, misturando-se com o comportamento normal do domínio.</span>
+<span class="en">This attack relies on modifying user account properties in Active Directory, so <strong>you need Domain Admin privileges</strong>. Normally, when an attacker compromises a Domain Admin account, the game is over for the organization. But even with that level of privilege, there are times when you want credentials for a specific user without triggering obvious high-risk actions. Defenders monitor NTDS dump, LSASS, and DCSync. There are situations where those methods are blocked, monitored, or simply not ideal. This script exists exactly for those cases: it retrieves hashes more quietly, blending into normal domain behavior.</span>
+</div>
+</section>
+
+<section id="what">
+<h2>3. O que é Timeroasting <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O Timeroasting foi originalmente desenhado para obter hashes de <strong>computadores de domínio</strong>, não de utilizadores. Abusa de uma fraqueza na forma como certas contas de computador e de trust armazenam passwords no AD. Essas passwords de máquina são depois usadas para calcular material de autenticação MS-SNTP, que os atacantes podem recolher e tentar crackear offline. Normalmente, as contas de computador têm passwords longas e aleatórias, tornando o cracking impraticável. Mas sistemas antigos (Pre-Windows 2000 Computers) armazenavam por vezes passwords fracas ou previsíveis. Foi descoberto e documentado por <strong>Tom Tervoort</strong> (Secura).</span>
+<span class="en">Timeroasting was originally designed to obtain hashes from <strong>domain computers</strong>, not users. It abuses a weakness in how certain computer and trust accounts store passwords in AD. These machine passwords are then used to compute MS-SNTP authentication material, which attackers can collect and attempt to crack offline. Normally, computer accounts have long, random passwords, making cracking impractical. But older systems (Pre-Windows 2000 Computers) sometimes stored weak or predictable passwords. It was discovered and documented by <strong>Tom Tervoort</strong> (Secura).</span>
+</div>
+<div class="callout info">
+<strong>Limitação / Limitation:</strong>
+<div class="lang">
+<span class="pt">Para sistemas modernos, as passwords de máquina são longas e complexas. Correr esses hashes por wordlists poderosas pode levar muito tempo e falhar. Por isso, o uso do Timeroasting original era bastante limitado.</span>
+<span class="en">For modern systems, machine passwords are long and complex. Running those hashes through powerful wordlists can take a very long time and fail. That's why original Timeroasting use was quite limited.</span>
+</div>
+</div>
+</section>
+
+<section id="targeted">
+<h2>4. Targeted Timeroasting <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Esta limitação foi resolvida por <strong>Giulio Pierantoni</strong>, que demonstrou que contas de utilizador de domínio também podiam ser abusadas de forma semelhante. Como os Domain Admins podem modificar atributos de contas de utilizador, podes temporariamente converter uma conta de utilizador em algo que parece uma conta de máquina de domínio, convencer o DC a tratá-la como tal e devolver um hash. O DC acredita que a conta é um computador, expondo material de autenticação normalmente associado a contas de máquina — mas agora pertence a um utilizador humano.</span>
+<span class="en">This limitation was addressed by <strong>Giulio Pierantoni</strong>, who demonstrated that domain user accounts could also be abused similarly. Since Domain Admins can modify user account attributes, you can temporarily convert a user account into something that looks like a domain machine account, convince the DC to treat it as such, and return a hash. The DC believes the account is a computer, exposing authentication material normally associated with machine accounts — but now it belongs to a human user.</span>
+</div>
+
+<h3>4.1 Mecânica / Mechanics</h3>
+<div class="lang">
+<span class="pt">Cada objeto de utilizador AD tem um campo <code class="inline">sAMAccountType</code> que define o tipo de conta. Utilizadores normais e contas de máquina têm valores diferentes. Não podes modificar diretamente este campo, mas há outro atributo: <code class="inline">userAccountControl</code>. Quando o valor é alterado para a flag que representa uma <strong>workstation trust account</strong>, o <code class="inline">sAMAccountType</code> é atualizado automaticamente. O DC passa a acreditar que está a lidar com uma conta de máquina.</span>
+<span class="en">Every AD user object has an <code class="inline">sAMAccountType</code> field defining the account type. Normal users and machine accounts have different values. You can't modify this field directly, but there's another attribute: <code class="inline">userAccountControl</code>. When the value is changed to the flag representing a <strong>workstation trust account</strong>, <code class="inline">sAMAccountType</code> is automatically updated. The DC then believes it's dealing with a machine account.</span>
+</div>
+<div class="lang">
+<span class="pt">Antes de calcular o hash, o DC também verifica que o <code class="inline">sAMAccountName</code> termina com um cifrão (<code class="inline">$</code>). Para Domain Admins, alterar isto é trivial, a menos que já exista outra conta com o mesmo nome. Depois de modificados <code class="inline">userAccountControl</code> e <code class="inline">sAMAccountName</code>, o DC está disposto a entregar o hash MS-SNTP a quem pedir apropriadamente.</span>
+<span class="en">Before computing the hash, the DC also checks that <code class="inline">sAMAccountName</code> ends with a dollar sign (<code class="inline">$</code>). For Domain Admins, changing this is trivial unless another account with the same name exists. Once <code class="inline">userAccountControl</code> and <code class="inline">sAMAccountName</code> are modified, the DC is willing to hand out the MS-SNTP hash to anyone asking appropriately.</span>
+</div>
+
+<div class="callout danger">
+<strong>⚠️ Warning operacional / Operational warning:</strong>
+<div class="lang">
+<span class="pt">Quando uma conta de utilizador é convertida em workstation trust account, o utilizador <strong>perde a capacidade de fazer logon em workstations</strong>. Isto não afeta sessões ativas existentes. Se reverteres os atributos imediatamente após extrair o hash, o utilizador provavelmente nunca notará nada.</span>
+<span class="en">When a user account is converted into a workstation trust account, the user <strong>loses the ability to log into workstations</strong>. This doesn't affect existing active sessions. If you immediately revert the attributes after extracting the hash, the user will likely never notice anything.</span>
+</div>
+</div>
+</section>
+
+<section id="exploit">
+<h2>5. Exploração <span class="badge orig">Original</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Foi criado um script proof-of-concept modificando o script PowerShell original de Timeroasting de Jacopo Scannella. Para o usar, precisas de ser Domain Admin, correr de um sistema加入 ao domínio, com o módulo ActiveDirectory do PowerShell instalado.</span>
+<span class="en">A proof-of-concept script was created by modifying Jacopo Scannella's original PowerShell Timeroasting script. To use it, you need to be a Domain Admin, running from a domain-joined system with the ActiveDirectory PowerShell module installed.</span>
+</div>
+
+<h3>5.1 Passos lógicos do script / Script's logical steps <span class="badge orig">Original</span></h3>
+<div class="lang">
+<span class="pt">O script funciona em vários passos lógicos: (1) obtém <code class="inline">objectSid</code> e <code class="inline">userAccountControl</code> da conta alvo; (2) altera <code class="inline">userAccountControl</code> para workstation trust account; (3) acrescenta <code class="inline">$</code> ao <code class="inline">sAMAccountName</code>; (4) extrai o RID, envia pedido MS-SNTP ao DC e obtém o hash; (5) restaura os valores originais.</span>
+<span class="en">The script works in several logical steps: (1) retrieves <code class="inline">objectSid</code> and <code class="inline">userAccountControl</code> of the target account; (2) changes <code class="inline">userAccountControl</code> to workstation trust account; (3) appends <code class="inline">$</code> to <code class="inline">sAMAccountName</code>; (4) extracts the RID, sends MS-SNTP request to the DC and retrieves the hash; (5) restores original values.</span>
+</div>
+
+<h3>5.2 Implementação de referência / Reference implementation <span class="badge comp">Complementar</span></h3>
+<div class="lang">
+<span class="pt">O artigo não inclui o código-fonte. Abaixo está uma implementação de referência da lógica descrita, para fins de formação.</span>
+<span class="en">The article doesn't include the source. Below is a reference implementation of the described logic, for training purposes.</span>
+</div>
+<pre># Targeted-Timeroast.ps1 (reference implementation - lab use only)
+param(
+  [Parameter(Mandatory)][string]$TargetUser,
+  [string]$DomainController = $env:LOGONSERVER.TrimStart('\\')
+)
+Import-Module ActiveDirectory -EA Stop
+
+# 1. Save original values
+$u = Get-ADUser -Identity $TargetUser -Properties objectSid,userAccountControl,sAMAccountName
+$origUAC = $u.userAccountControl
+$origName = $u.sAMAccountName
+$rid = ($u.objectSid.Value -split '-')[-1]
+
+Write-Host "[*] Target: $TargetUser (RID: $rid, UAC: $origUAC)" -ForegroundColor Cyan
+
+# 2. Convert to workstation trust account (0x1000 = WORKSTATION_TRUST_ACCOUNT)
+$newUAC = ($origUAC -band (-bnot 0xFFFF)) -bor 0x1000
+Set-ADUser -Identity $TargetUser -Replace @{userAccountControl=$newUAC}
+
+# 3. Append $ to sAMAccountName
+Set-ADUser -Identity $TargetUser -Replace @{sAMAccountName="$origName$"}
+
+# 4. Send MS-SNTP request and capture hash
+# (Use the original Timeroast.ps1 function - omitted here)
+# $hash = Invoke-Timeroast -DC $DomainController -RID $rid
+
+# 5. Restore original values
+Set-ADUser -Identity $TargetUser -Replace @{sAMAccountName=$origName}
+Set-ADUser -Identity $TargetUser -Replace @{userAccountControl=$origUAC}
+Write-Host "[+] Restored original attributes" -ForegroundColor Green
+
+# 6. Crack (on attacker host)
+# hashcat -m 31300 -a 0 hashes.txt wordlist.txt --username</pre>
+</section>
+
+<section id="impact">
+<h2>6. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam o blue team a detetar atividade compatível com Targeted Timeroasting.</span>
+<span class="en">The scripts below help the blue team detect Targeted Timeroasting-compatible activity.</span>
+</div>
+
+<h3>6.1 Script 10.1 — Deteção de Alterações a userAccountControl / UAC Change Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar alterações a <code class="inline">userAccountControl</code> em contas de utilizador que as convertam em workstation trust accounts. <strong>Evidência:</strong> <code class="inline">uac-changes.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect <code class="inline">userAccountControl</code> changes on user accounts that convert them to workstation trust accounts. <strong>Evidence:</strong> <code class="inline">uac-changes.csv</code>.</span>
+</div>
+<pre># Script 10.1 - UAC Anomaly Detection (requires AD module)
+Import-Module ActiveDirectory -EA Stop
+$out = ".\uac-changes.csv"
+$hits = @()
+# Find users with WORKSTATION_TRUST_ACCOUNT flag (0x1000) - unusual for users
+Get-ADUser -Filter * -Properties userAccountControl,sAMAccountName,whenChanged |
+  Where-Object {
+    ($_.userAccountControl -band 0x1000) -and
+    -not $_.sAMAccountName.EndsWith("$") -and
+    $_.whenChanged -gt (Get-Date).AddDays(-7)
+  } |
+  ForEach-Object {
+    $hits += [PSCustomObject]@{ User=$_.sAMAccountName; UAC=$_.userAccountControl; Changed=$_.whenChanged }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] UAC anomalies: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>6.2 Script 10.2 — Deteção de sAMAccountName com $ em Users / $ Suffix Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar contas de utilizador cujo <code class="inline">sAMAccountName</code> termina em <code class="inline">$</code> (comportamento de máquina) mas que são, de facto, utilizadores. <strong>Evidência:</strong> <code class="inline">dollar-users.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect user accounts whose <code class="inline">sAMAccountName</code> ends with <code class="inline">$</code> (machine behavior) but are actually users. <strong>Evidence:</strong> <code class="inline">dollar-users.csv</code>.</span>
+</div>
+<pre># Script 10.2 - $ Suffix User Detection (requires AD module)
+Import-Module ActiveDirectory -EA Stop
+$out = ".\dollar-users.csv"
+$hits = @()
+Get-ADUser -Filter * -Properties sAMAccountName,objectClass,whenChanged |
+  Where-Object { $_.sAMAccountName.EndsWith("$") -and $_.objectClass -eq "user" } |
+  ForEach-Object {
+    $hits += [PSCustomObject]@{ User=$_.sAMAccountName; Changed=$_.whenChanged }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Users with `$ suffix: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+
+<h3>6.3 Script 10.3 — Auditoria de Contas de Computador com Password Antiga / Legacy Computer Audit</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> identificar contas de computador com <code class="inline">PasswordLastSet</code> antigo (potencialmente vulneráveis ao Timeroasting original). <strong>Evidência:</strong> <code class="inline">legacy-computers.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> identify computer accounts with stale <code class="inline">PasswordLastSet</code> (potentially vulnerable to original Timeroasting). <strong>Evidence:</strong> <code class="inline">legacy-computers.csv</code>.</span>
+</div>
+<pre># Script 10.3 - Legacy Computer Account Audit (requires AD module)
+Import-Module ActiveDirectory -EA Stop
+$out = ".\legacy-computers.csv"
+$threshold = (Get-Date).AddDays(-30)
+$hits = @()
+Get-ADComputer -Filter * -Properties PasswordLastSet,OperatingSystem,whenCreated |
+  Where-Object { $_.PasswordLastSet -lt $threshold -or -not $_.PasswordLastSet } |
+  ForEach-Object {
+    $hits += [PSCustomObject]@{ Computer=$_.Name; OS=$_.OperatingSystem; PwdLastSet=$_.PasswordLastSet; Created=$_.whenCreated }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Legacy computers (>30d): $($hits.Count) -> $out" -ForegroundColor Red</pre>
+</section>
+
+<section id="mitre">
+<h2>7. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Steal or Forge Kerberos Tickets: AS-REP Roasting</td><td>T1558.004</td><td>Timeroasting (variante NTP)</td></tr>
+<tr><td>Account Manipulation</td><td>T1098</td><td>Alteração de userAccountControl/sAMAccountName</td></tr>
+<tr><td>Domain Account</td><td>T1087.002</td><td>Enumeração de contas</td></tr>
+<tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>Todo o capítulo</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>8. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Monitorizar alterações a <code class="inline">userAccountControl</code></strong> em contas de utilizador (evento 4738) — qualquer alteração para workstation trust é suspeita.</li>
+<li><strong>Alertar sobre <code class="inline">sAMAccountName</code> terminado em <code class="inline">$</code></strong> em contas de utilizador.</li>
+<li><strong>Auditar contas de computador com passwords antigas</strong> (>30 dias) — usar Script 10.3.</li>
+<li><strong>Restringir Domain Admin</strong> — usar Tier 0 e Protected Users.</li>
+<li><strong>Monitorizar tráfego NTP</strong> para pedidos anómalos (RIDs sequenciais).</li>
+<li><strong>Ativar auditoria de Directory Service Access</strong> (evento 4662) para alterações a atributos.</li>
+<li><strong>Honeytokens</strong> — conta de utilizador com nome semelhante a computador.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>9. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> DC Windows Server + VM cliente加入 ao domínio, com uma conta de utilizador de teste (<code class="inline">target_user</code>). Snapshot antes. <strong>Objetivo:</strong> executar os passos lógicos do Targeted Timeroasting (simulado) e correr os scripts de deteção.</span>
+<span class="en"><strong>Scenario:</strong> Windows Server DC + domain-joined client VM, with a test user account (<code class="inline">target_user</code>). Snapshot before. <strong>Goal:</strong> execute the logical steps of Targeted Timeroasting (simulated) and run detection scripts.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Guardar atributos originais</td><td><code class="inline">Get-ADUser target_user -Properties objectSid,userAccountControl,sAMAccountName</code></td><td>Output</td></tr>
+<tr><td>2</td><td>Alterar UAC (simulação)</td><td><code class="inline">Set-ADUser target_user -Replace @{userAccountControl=4096}</code></td><td>Output</td></tr>
+<tr><td>3</td><td>Acrescentar $</td><td><code class="inline">Set-ADUser target_user -Replace @{sAMAccountName="target_user$"}</code></td><td>Output</td></tr>
+<tr><td>4</td><td>Deteção UAC</td><td><code class="inline">.\uac-detect.ps1</code></td><td><code class="inline">uac-changes.csv</code></td></tr>
+<tr><td>5</td><td>Deteção $</td><td><code class="inline">.\dollar-detect.ps1</code></td><td><code class="inline">dollar-users.csv</code></td></tr>
+<tr><td>6</td><td>Reverter</td><td><code class="inline">Set-ADUser target_user -Replace @{sAMAccountName="target_user"}; Set-ADUser target_user -Replace @{userAccountControl=512}</code></td><td>Output</td></tr>
+<tr><td>7</td><td>Auditoria legacy</td><td><code class="inline">.\legacy-audit.ps1</code></td><td><code class="inline">legacy-computers.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Atributos originais guardados</li>
+<li><code class="inline">uac-changes.csv</code></li>
+<li><code class="inline">dollar-users.csv</code></li>
+<li><code class="inline">legacy-computers.csv</code></li>
+<li>Atributos revertidos</li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>10. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Qual a diferença entre Timeroasting original e Targeted Timeroasting? / What's the difference between original and Targeted Timeroasting?</li>
+<li>Porque é que o Targeted Timeroasting requer Domain Admin? / Why does Targeted Timeroasting require Domain Admin?</li>
+<li>O que acontece ao <code class="inline">sAMAccountType</code> quando alteras <code class="inline">userAccountControl</code>? / What happens to <code class="inline">sAMAccountType</code> when you change <code class="inline">userAccountControl</code>?</li>
+<li>Porque é que o DC verifica o sufixo <code class="inline">$</code>? / Why does the DC check the <code class="inline">$</code> suffix?</li>
+<li>Qual o warning operacional ao converter um utilizador? / What's the operational warning when converting a user?</li>
+<li>Como se crackeia o hash MS-SNTP? / How to crack the MS-SNTP hash?</li>
+<li>Como se deteta Targeted Timeroasting no blue team? / How to detect Targeted Timeroasting on the blue team?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>11. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu o Timeroasting e a sua evolução para <strong>Targeted Timeroasting</strong>. O Timeroasting original (Tervoort) visava contas de computador e tinha limitações em ambientes modernos. Giulio Pierantoni demonstrou que contas de utilizador podiam ser abusadas: alterando <code class="inline">userAccountControl</code> para workstation trust e acrescentando <code class="inline">$</code> ao <code class="inline">sAMAccountName</code>, o DC devolve um hash MS-SNTP crackeável offline (Hashcat 31300). Requer Domain Admin e reverte os atributos no fim. Acrescentámos <strong>três scripts de impacto</strong> (deteção de UAC anómalo, deteção de sufixo <code class="inline">$</code>, auditoria de computadores legados) que ajudam o blue team a detetar esta técnica.</span>
+<span class="en">This chapter covered Timeroasting and its evolution to <strong>Targeted Timeroasting</strong>. Original Timeroasting (Tervoort) targeted computer accounts and had limitations in modern environments. Giulio Pierantoni demonstrated that user accounts could be abused: by changing <code class="inline">userAccountControl</code> to workstation trust and appending <code class="inline">$</code> to <code class="inline">sAMAccountName</code>, the DC returns an MS-SNTP hash crackable offline (Hashcat 31300). Requires Domain Admin and reverts attributes at the end. We added <strong>three impact scripts</strong> (anomalous UAC detection, <code class="inline">$</code> suffix detection, legacy computer audit) that help the blue team detect this technique.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 10 / Ethical Hacker Training Manual — Ch. 10</div>
+<div style="margin-top:.6rem">
+<a href="cap09.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap11.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

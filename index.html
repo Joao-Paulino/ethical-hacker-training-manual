@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Index — PowerShell for Hackers</title>
+<style>
+:root{
+  --bg:#0d1117; --bg2:#161b22; --bg3:#1c2128; --fg:#c9d1d9; --fg2:#8b949e;
+  --accent:#39d353; --accent2:#58a6ff; --warn:#d29922; --danger:#f85149;
+  --border:#30363d; --code-bg:#0b0f14; --code-fg:#7ee787;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.65; font-size:16px;
+}
+header{
+  background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);
+  border-bottom:2px solid var(--accent); padding:2rem 1.5rem 1.5rem;
+  text-align:center;
+}
+header h1{margin:0 0 .3rem; font-size:2rem; color:var(--accent)}
+header .sub{color:var(--fg2); font-size:.95rem}
+header .meta{margin-top:.8rem; font-size:.85rem; color:var(--fg2)}
+header .meta span{margin:0 .6rem}
+header .nav-buttons{margin-top:1.2rem; display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap}
+header .nav-buttons a{
+  display:inline-block; padding:.5rem 1.1rem; border-radius:6px;
+  font-weight:700; font-size:.85rem; text-decoration:none; letter-spacing:.03em;
+  transition:transform .1s, background .2s;
+}
+header .nav-buttons a.primary{background:var(--accent); color:#0d1117}
+header .nav-buttons a.primary:hover{background:#4ae968; transform:translateY(-1px)}
+header .nav-buttons a.secondary{background:var(--bg3); color:var(--accent2); border:1px solid var(--accent2)}
+header .nav-buttons a.secondary:hover{background:var(--bg2); transform:translateY(-1px)}
+.search-box{
+  max-width:1100px; margin:1.5rem auto 0; padding:0 1.5rem;
+}
+.search-box input{
+  width:100%; padding:.9rem 1.1rem; border-radius:8px;
+  background:var(--bg2); border:1px solid var(--border); color:var(--fg);
+  font-size:1rem; font-family:inherit; outline:none;
+  transition:border-color .2s, box-shadow .2s;
+}
+.search-box input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(57,211,83,.15)}
+.search-box input::placeholder{color:var(--fg2)}
+main{max-width:1100px; margin:0 auto; padding:1.5rem 1.5rem 3rem}
+.part{
+  background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+  padding:1.4rem 1.6rem; margin:1.5rem 0;
+}
+.part h2{
+  margin:0 0 1rem; color:var(--accent2); font-size:1.2rem;
+  border-bottom:1px solid var(--border); padding-bottom:.5rem;
+  display:flex; align-items:center; gap:.6rem;
+}
+.part h2 .part-icon{font-size:1.1rem}
+.chapter-list{list-style:none; margin:0; padding:0}
+.chapter-list li{
+  border-bottom:1px solid var(--border); padding:.6rem 0;
+  transition:background .15s;
+}
+.chapter-list li:last-child{border-bottom:none}
+.chapter-list li:hover{background:rgba(57,211,83,.04); border-radius:4px; padding-left:.4rem}
+.chapter-list a{
+  display:flex; align-items:baseline; gap:.8rem;
+  color:var(--fg); text-decoration:none;
+}
+.chapter-list a:hover .chapter-title{color:var(--accent)}
+.chapter-num{
+  display:inline-block; min-width:2.4rem; text-align:center;
+  font-family:Consolas,monospace; font-size:.85rem; font-weight:700;
+  color:var(--accent); background:rgba(57,211,83,.1);
+  border:1px solid rgba(57,211,83,.3); border-radius:4px;
+  padding:.15rem .4rem;
+}
+.chapter-title{font-weight:600; flex:1; transition:color .15s}
+.chapter-title .en{display:block; font-weight:400; font-size:.85rem; color:var(--fg2); margin-top:.1rem}
+.chapter-theme{
+  font-size:.75rem; text-transform:uppercase; letter-spacing:.06em;
+  color:var(--fg2); white-space:nowrap;
+}
+.no-results{
+  text-align:center; color:var(--fg2); padding:2rem;
+  font-style:italic; display:none;
+}
+footer{
+  border-top:1px solid var(--border); margin-top:2rem; padding:1.5rem;
+  text-align:center; color:var(--fg2); font-size:.85rem;
+}
+footer a{color:var(--accent2); text-decoration:none}
+footer a:hover{color:var(--accent)}
+@media (max-width:720px){
+  header h1{font-size:1.5rem}
+  .chapter-list a{flex-wrap:wrap}
+  .chapter-theme{width:100%; margin-top:.3rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Index — PowerShell for Hackers</h1>
+  <div class="sub">Ethical Hacker Training Manual · 34 Chapters</div>
+  <div class="meta">
+    <span>📖 PT / EN</span>
+    <span>🎯 Red Team</span>
+    <span>🛡️ Blue Team</span>
+    <span>🔍 DFIR</span>
+  </div>
+  <div class="nav-buttons">
+    <a class="secondary" href="cover.html">← Cover</a>
+    <a class="primary" href="cap00.html">Start Reading →</a>
+    <a class="secondary" href="cap31.html">MITRE Consolidated →</a>
+  </div>
+</header>
+
+<div class="search-box">
+  <input type="text" id="searchInput" placeholder="Search chapters by title or theme… / Pesquisar capítulos por título ou tema…" oninput="filterChapters()">
+</div>
+
+<main id="chapterIndex">
+
+  <div class="part">
+    <h2><span class="part-icon">🧱</span> Part I — Fundamentals</h2>
+    <ol class="chapter-list">
+      <li><a href="cap00.html"><span class="chapter-num">00</span><span class="chapter-title">Introdução: PowerShell para Hackers<span class="en">Introduction: PowerShell for Hackers</span></span><span class="chapter-theme">Fundamentals</span></a></li>
+      <li><a href="cap01.html"><span class="chapter-num">01</span><span class="chapter-title">PowerShell: The Basics<span class="en">The Basics</span></span><span class="chapter-theme">Fundamentals</span></a></li>
+      <li><a href="cap24.html"><span class="chapter-num">24</span><span class="chapter-title">Moving from Bash to PowerShell<span class="en">Bash → PowerShell Transition</span></span><span class="chapter-theme">Transition</span></a></li>
+    </ol>
+  </div>
+
+  <div class="part">
+    <h2><span class="part-icon">🔎</span> Part II — AD Reconnaissance</h2>
+    <ol class="chapter-list">
+      <li><a href="cap02.html"><span class="chapter-num">02</span><span class="chapter-title">LDAP Filters para AD Recon<span class="en">LDAP Filters for AD Recon</span></span><span class="chapter-theme">AD Recon</span></a></li>
+      <li><a href="cap03.html"><span class="chapter-num">03</span><span class="chapter-title">Exploring PowerView<span class="en">PowerView</span></span><span class="chapter-theme">AD Recon</span></a></li>
+      <li><a href="cap27.html"><span class="chapter-num">27</span><span class="chapter-title">dsquery e Finding Modules<span class="en">dsquery &amp; Finding Modules</span></span><span class="chapter-theme">AD Recon</span></a></li>
+      <li><a href="cap28.html"><span class="chapter-num">28</span><span class="chapter-title">Group Policy Basics<span class="en">GPO &amp; cpassword</span></span><span class="chapter-theme">AD</span></a></li>
+    </ol>
+  </div>
+
+  <div class="part">
+    <h2><span class="part-icon">⚙️</span> Part III — Operations &amp; Exfiltration</h2>
+    <ol class="chapter-list">
+      <li><a href="cap04.html"><span class="chapter-num">04</span><span class="chapter-title">Operational Scripts<span class="en">Exfiltration &amp; Impact Scripts</span></span><span class="chapter-theme">Operations</span></a></li>
+      <li><a href="cap05.html"><span class="chapter-num">05</span><span class="chapter-title">Crash and Burn<span class="en">Destructive Techniques</span></span><span class="chapter-theme">Destructive</span></a></li>
+    </ol>
+  </div>
+
+  <div class="part">
+    <h2><span class="part-icon">🏢</span> Part IV — Advanced AD</h2>
+    <ol class="chapter-list">
+      <li><a href="cap09.html"><span class="chapter-num">09</span><span class="chapter-title">PsMapExec<span class="en">AD Enumeration &amp; Exploitation</span></span><span class="chapter-theme">AD Advanced</span></a></li>
+      <li><a href="cap10.html"><span class="chapter-num">10</span><span class="chapter-title">Timeroasting Users<span class="en">Targeted Timeroasting</span></span><span class="chapter-theme">AD Advanced</span></a></li>
+      <li><a href="cap13.html"><span class="chapter-num">13</span><span class="chapter-title">Impacket Framework<span class="en">Windows Network Exploitation</span></span><span class="chapter-theme">AD Advanced</span></a></li>
+      <li><a href="cap14.html"><span class="chapter-num">14</span><span class="chapter-title">Sliver C2: Lateral Movement<span class="en">C2 &amp; Pivoting</span></span><span class="chapter-theme">C2</span></a></li>
+    </ol>
+  </div>
+
+  <div class="part">
+    <h2><span class="part-icon">🛡️</span> Part V — Evasion &amp; Persistence</h2>
+    <ol class="chapter-list">
+      <li><a href="cap12.html"><span class="chapter-num">12</span><span class="chapter-title">Tenebris-Gate<span class="en">AV/EDR Evasion</span></span><span class="chapter-theme">Evasion</span></a></li>
+      <li><a href="cap15.html"><span class="chapter-num">15</span><span class="chapter-title">PowerSploit<span class="en">Post-Exploitation Framework</span></span><span class="chapter-theme">Post-Exploitation</span></a></li>
+      <li><a href="cap16.html"><span class="chapter-num">16</span><span class="chapter-title">Evading Detection<span class="en">Obfuscation (psobf, ArgFuscator, Jakoby)</span></span><span class="chapter-theme">Evasion</span></a></li>
+      <li><a href="cap17.html"><span class="chapter-num">17</span><span class="chapter-title">Advanced Persistence<span class="en">Sapphire, DCShadow, DSRM, Skeleton Key</span></span><span class="chapter-theme">Persistence</span></a></li>
+      <li><a href="cap20.html"><span class="chapter-num">20</span><span class="chapter-title">DeadMatter<span class="en">AV/EDR Evasion in Credential Extraction</span></span><span class="chapter-theme">Evasion</span></a></li>
+      <li><a href="cap21.html"><span class="chapter-num">21</span><span class="chapter-title">Nyx<span class="en">Anti-Forensics</span></span><span class="chapter-theme">Anti-Forensics</span></a></li>
+      <li><a href="cap22.html"><span class="chapter-num">22</span><span class="chapter-title">Advanced Windows Persistence<span class="en">IFEO, GFLAGS, WMI, AppInit, LSASS</span></span><span class="chapter-theme">Persistence</span></a></li>
+      <li><a href="cap23.html"><span class="chapter-num">23</span><span class="chapter-title">AMSI Bypass + Mimikatz + LOLBAS<span class="en">Complementary Techniques</span></span><span class="chapter-theme">Post-Exploitation</span></a></li>
+      <li><a href="cap29.html"><span class="chapter-num">29</span><span class="chapter-title">Backdooring Installers with DFMI<span class="en">MSI Weaponization</span></span><span class="chapter-theme">Red Team</span></a></li>
+    </ol>
+  </div>
+
+  <div class="part">
+    <h2><span class="part-icon">🔍</span> Part VI — DFIR &amp; Detection</h2>
+    <ol class="chapter-list">
+      <li><a href="cap06.html"><span class="chapter-num">06</span><span class="chapter-title">DFIR: Logs, Persistência, ACLs<span class="en">DeepBlueCLI, PersistenceSniper, ACL Scanner</span></span><span class="chapter-theme">DFIR</span></a></li>
+      <li><a href="cap07.html"><span class="chapter-num">07</span><span class="chapter-title">Live-Forensicator<span class="en">AI-Assisted Live Forensics</span></span><span class="chapter-theme">DFIR</span></a></li>
+      <li><a href="cap08.html"><span class="chapter-num">08</span><span class="chapter-title">DFIR: AnyDesk, DeadMatter, Nyx, HTA, APTs<span class="en">Tooling &amp; Artifacts</span></span><span class="chapter-theme">DFIR</span></a></li>
+      <li><a href="cap18.html"><span class="chapter-num">18</span><span class="chapter-title">DFIR Tools<span class="en">AnyDesk, DeadMatter, Nyx</span></span><span class="chapter-theme">DFIR</span></a></li>
+      <li><a href="cap19.html"><span class="chapter-num">19</span><span class="chapter-title">HTA Compromise<span class="en">Tracing an HTA-Based Compromise</span></span><span class="chapter-theme">DFIR</span></a></li>
+      <li><a href="cap25.html"><span class="chapter-num">25</span><span class="chapter-title">Survival Edition Part 1<span class="en">Basic Recon</span></span><span class="chapter-theme">Recon</span></a></li>
+      <li><a href="cap26.html"><span class="chapter-num">26</span><span class="chapter-title">Survival Edition Part 3<span class="en">Know Your Enemy — Telemetry</span></span><span class="chapter-theme">Telemetry</span></a></li>
+      <li><a href="cap30.html"><span class="chapter-num">30</span><span class="chapter-title">Hunting Chinese APTs<span class="en">LOLBAS Abuse</span></span><span class="chapter-theme">DFIR</span></a></li>
+    </ol>
+  </div>
+
+  <div class="part">
+    <h2><span class="part-icon">🧪</span> Part VII — Purple Team &amp; Integration</h2>
+    <ol class="chapter-list">
+      <li><a href="cap11.html"><span class="chapter-num">11</span><span class="chapter-title">Dropping Nukes<span class="en">Atomic Red Team</span></span><span class="chapter-theme">Purple Team</span></a></li>
+      <li><a href="cap32.html"><span class="chapter-num">32</span><span class="chapter-title">Kill Chain: Um Ataque Completo<span class="en">End-to-End Integrated Case</span></span><span class="chapter-theme">Integration</span></a></li>
+    </ol>
+  </div>
+
+  <div class="part">
+    <h2><span class="part-icon">📡</span> Part VIII — Extras &amp; Reference</h2>
+    <ol class="chapter-list">
+      <li><a href="cap33.html"><span class="chapter-num">33</span><span class="chapter-title">Wireless/WPA3<span class="en">Transition Mode, Dragonblood, Wacker</span></span><span class="chapter-theme">Wireless</span></a></li>
+      <li><a href="cap31.html"><span class="chapter-num">31</span><span class="chapter-title">Consolidação Final<span class="en">Final Consolidation — Index, MITRE, Checklist</span></span><span class="chapter-theme">Reference</span></a></li>
+    </ol>
+  </div>
+
+  <div class="no-results" id="noResults">No chapters match your search. / Nenhum capítulo corresponde à pesquisa.</div>
+
+</main>
+
+<footer>
+  <div>PowerShell for Hackers — Ethical Hacker Training Manual · 34 Chapters</div>
+  <div style="margin-top:.6rem">
+    <a href="cover.html">← Cover</a> &nbsp;|&nbsp;
+    <a href="cap00.html">Start Reading →</a> &nbsp;|&nbsp;
+    <a href="cap31.html">MITRE Consolidated →</a>
+  </div>
+</footer>
+
+<script>
+function filterChapters() {
+  const query = document.getElementById('searchInput').value.toLowerCase().trim();
+  const parts = document.querySelectorAll('.part');
+  const noResults = document.getElementById('noResults');
+  let visibleChapters = 0;
+
+  parts.forEach(part => {
+    let partVisible = false;
+    const items = part.querySelectorAll('.chapter-list li');
+
+    items.forEach(item => {
+      const text = item.textContent.toLowerCase();
+      if (query === '' || text.includes(query)) {
+        item.style.display = '';
+        partVisible = true;
+        visibleChapters++;
+      } else {
+        item.style.display = 'none';
+      }
+    });
+
+    part.style.display = partVisible ? '' : 'none';
+  });
+
+  noResults.style.display = visibleChapters === 0 ? 'block' : 'none';
+}
+</script>
+
+</body>
+</html>

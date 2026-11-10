@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 2 — LDAP Filters para Recon AD | Ch. 2 — LDAP Filters for AD Recon</title>
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#161b22; --bg3:#1c2128; --fg:#c9d1d9; --fg2:#8b949e;
+    --accent:#39d353; --accent2:#58a6ff; --warn:#d29922; --danger:#f85149;
+    --border:#30363d; --code-bg:#0b0f14; --code-fg:#7ee787;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65; font-size:16px;
+  }
+  header{
+    background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);
+    border-bottom:2px solid var(--accent);
+    padding:2rem 1.5rem 1.5rem;
+  }
+  header h1{margin:0 0 .3rem; font-size:1.9rem; color:var(--accent)}
+  header .sub{color:var(--fg2); font-size:.95rem}
+  header .meta{margin-top:.8rem; font-size:.85rem; color:var(--fg2)}
+  header .meta span{margin-right:1.2rem}
+  nav.toc{
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+    padding:1rem 1.2rem; margin:1.5rem auto; max-width:1100px;
+  }
+  nav.toc h2{margin:0 0 .6rem; font-size:1rem; color:var(--accent2); text-transform:uppercase; letter-spacing:.05em}
+  nav.toc ol{margin:0; padding-left:1.3rem; columns:2; column-gap:2rem}
+  nav.toc a{color:var(--fg); text-decoration:none}
+  nav.toc a:hover{color:var(--accent)}
+  main{max-width:1100px; margin:0 auto; padding:0 1.5rem 3rem}
+  section{
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+    padding:1.4rem 1.6rem; margin:1.5rem 0;
+  }
+  section h2{
+    margin-top:0; color:var(--accent2); font-size:1.3rem;
+    border-bottom:1px solid var(--border); padding-bottom:.5rem;
+  }
+  section h3{color:var(--accent); font-size:1.05rem; margin-top:1.4rem}
+  .lang{display:block; margin:.4rem 0}
+  .lang .pt::before{content:"🇵🇹 PT "; color:var(--accent); font-weight:600; font-size:.8rem; letter-spacing:.05em}
+  .lang .en::before{content:"🇬🇧 EN "; color:var(--accent2); font-weight:600; font-size:.8rem; letter-spacing:.05em}
+  .lang .pt,.lang .en{display:block; margin:.25rem 0 .25rem 0}
+  pre{
+    background:var(--code-bg); border:1px solid var(--border); border-left:3px solid var(--accent);
+    border-radius:6px; padding:1rem 1.1rem; overflow-x:auto;
+    font-family:"Cascadia Code","Fira Code",Consolas,monospace; font-size:.9rem;
+    color:var(--code-fg); line-height:1.5;
+  }
+  code.inline{
+    background:var(--bg3); border:1px solid var(--border); border-radius:4px;
+    padding:.1rem .4rem; font-family:Consolas,monospace; font-size:.88rem; color:var(--accent);
+  }
+  table{width:100%; border-collapse:collapse; margin:1rem 0; font-size:.92rem}
+  th,td{border:1px solid var(--border); padding:.55rem .7rem; text-align:left; vertical-align:top}
+  th{background:var(--bg3); color:var(--accent2)}
+  tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+  .callout{
+    border-left:4px solid var(--warn); background:rgba(210,153,34,.08);
+    padding:.8rem 1rem; border-radius:0 6px 6px 0; margin:1rem 0;
+  }
+  .callout.danger{border-left-color:var(--danger); background:rgba(248,81,73,.08)}
+  .callout.info{border-left-color:var(--accent2); background:rgba(88,166,255,.08)}
+  .callout.complement{border-left-color:var(--accent); background:rgba(57,211,83,.06)}
+  .callout strong{color:var(--fg)}
+  .badge{
+    display:inline-block; font-size:.7rem; font-weight:700; letter-spacing:.05em;
+    padding:.15rem .5rem; border-radius:999px; margin-left:.4rem; vertical-align:middle;
+  }
+  .badge.orig{background:rgba(88,166,255,.15); color:var(--accent2); border:1px solid var(--accent2)}
+  .badge.comp{background:rgba(57,211,83,.12); color:var(--accent); border:1px solid var(--accent)}
+  .badge.part{background:rgba(210,153,34,.15); color:var(--warn); border:1px solid var(--warn)}
+  ul.checklist{list-style:none; padding-left:0}
+  ul.checklist li::before{content:"☐ "; color:var(--accent); font-weight:700; margin-right:.3rem}
+  footer{
+    border-top:1px solid var(--border); margin-top:3rem; padding:1.5rem;
+    text-align:center; color:var(--fg2); font-size:.85rem;
+  }
+  footer a{color:var(--accent2); text-decoration:none}
+  footer a:hover{color:var(--accent)}
+  @media (max-width:720px){ nav.toc ol{columns:1} header h1{font-size:1.4rem} }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Cap. 2 — LDAP Filters para Recon AD</h1>
+  <div class="sub">Ch. 2 — LDAP Filters for Active Directory Reconnaissance</div>
+  <div class="meta">
+    <span>📖 Manual de Formação Ethical Hacker</span>
+    <span>🎯 Nível: Intermédio / Intermediate</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <h2>Índice / Table of Contents</h2>
+  <ol>
+    <li><a href="#obj">Objetivos / Objectives</a></li>
+    <li><a href="#ctx">Contexto / Context</a></li>
+    <li><a href="#psfilters">Filtros PowerShell / PowerShell Filters</a></li>
+    <li><a href="#ldapfilters">Filtros LDAP / LDAP Filters</a></li>
+    <li><a href="#mitre">MITRE ATT&amp;CK</a></li>
+    <li><a href="#mitig">Mitigações / Mitigations</a></li>
+    <li><a href="#lab">Laboratório / Lab</a></li>
+    <li><a href="#revq">Revisão / Review</a></li>
+    <li><a href="#sum">Resumo / Summary</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ===================== OBJETIVOS ===================== -->
+<section id="obj">
+  <h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+  <div class="lang">
+    <span class="pt">Compreender o que é o LDAP e como o PowerShell o usa para consultar Active Directory; dominar filtros PowerShell (<code class="inline">Get-ADUser</code>, <code class="inline">Get-ADComputer</code>, <code class="inline">Get-ADGroup</code>, <code class="inline">Get-ADGroupMember</code>); dominar filtros LDAP nativos (<code class="inline">-LDAPFilter</code>) com operadores lógicos e OID bitwise; identificar contas AS-REP e Kerberoastable; enumerar delegação, SO legado, Domain Admins e passwords antigas; mapear técnicas a MITRE ATT&amp;CK e propor mitigações.</span>
+    <span class="en">Understand what LDAP is and how PowerShell uses it to query Active Directory; master PowerShell filters (<code class="inline">Get-ADUser</code>, <code class="inline">Get-ADComputer</code>, <code class="inline">Get-ADGroup</code>, <code class="inline">Get-ADGroupMember</code>); master native LDAP filters (<code class="inline">-LDAPFilter</code>) with logical operators and bitwise OID; identify AS-REP and Kerberoastable accounts; enumerate delegation, legacy OS, Domain Admins, and stale passwords; map techniques to MITRE ATT&amp;CK and propose mitigations.</span>
+  </div>
+</section>
+
+<!-- ===================== CONTEXTO ===================== -->
+<section id="ctx">
+  <h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+  <div class="lang">
+    <span class="pt">O LDAP é um protocolo para consultar serviços de diretório, permitindo obter detalhes sobre contas de utilizador, computadores, grupos ou políticas. Ao usar filtros LDAP em scripts PowerShell, podes recolher informação detalhada de um domínio <strong>sem alertar imediatamente os defensores</strong>. Como o LDAP é <em>read-only</em> e usa protocolos legítimos, passa frequentemente despercebido — é uma forma discreta de mapear o ambiente, descobrir relações de confiança e planear ações futuras.</span>
+    <span class="en">LDAP is a protocol for querying directory services, retrieving details about user accounts, computers, groups, or policies. By using LDAP filters in PowerShell scripts, you can quietly gather detailed domain information <strong>without immediately alerting defenders</strong>. Since LDAP is <em>read-only</em> and uses legitimate protocols, it often goes unnoticed — a discreet way to map the environment, uncover trust relationships, and plan further actions.</span>
+  </div>
+  <div class="callout info">
+    <strong>Nota do formador / Trainer's note:</strong>
+    <div class="lang">
+      <span class="pt">O artigo assume um domínio complexo com múltiplas trusts e milhares de computadores. Os comandos <code class="inline">Get-AD*</code> requerem o módulo <strong>ActiveDirectory</strong> (RSAT) e uma conta de domínio. Para laboratório, usa um DC Windows Server + uma VM cliente加入 ao domínio.</span>
+      <span class="en">The article assumes a complex domain with multiple trusts and thousands of computers. <code class="inline">Get-AD*</code> commands require the <strong>ActiveDirectory</strong> module (RSAT) and a domain account. For the lab, use a Windows Server DC + a domain-joined client VM.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== POWERSHELL FILTERS ===================== -->
+<section id="psfilters">
+  <h2>3. Filtros PowerShell / PowerShell Filters <span class="badge orig">Original</span></h2>
+
+  <h3>3.1 Listar Software Instalado / List Installed Software</h3>
+<pre>Get-CimInstance win32_product -Filter "NOT Vendor like '%Microsoft%'" | fl</pre>
+  <div class="lang">
+    <span class="pt">Consulta a classe WMI <code class="inline">Win32_Product</code>, excluindo software Microsoft, e mostra em lista (<code class="inline">fl</code>). Ajuda a identificar o propósito do host e misconfigurations para escalada. <strong>Nota:</strong> <code class="inline">Win32_Product</code> é lento e pode disparar reparações MSI — em produção prefere ler as chaves <code class="inline">Uninstall</code> do registo.</span>
+    <span class="en">Queries WMI class <code class="inline">Win32_Product</code>, excluding Microsoft software, and lists output (<code class="inline">fl</code>). Helps identify host purpose and privilege-escalation misconfigurations. <strong>Note:</strong> <code class="inline">Win32_Product</code> is slow and can trigger MSI reconfiguration — in production prefer reading the registry <code class="inline">Uninstall</code> keys.</span>
+  </div>
+
+  <h3>3.2 Filtrar Utilizadores / Filter Users</h3>
+<pre>Get-ADUser -Filter {name -like "adm*"}</pre>
+  <div class="lang">
+    <span class="pt">Devolve contas cujo <code class="inline">name</code> começa por "adm" — candidatos a contas administrativas em domínios antigos com contas legadas.</span>
+    <span class="en">Returns accounts whose <code class="inline">name</code> starts with "adm" — candidates for administrative accounts in legacy domains with stale accounts.</span>
+  </div>
+
+  <h3>3.3 Filtrar Computadores / Filter Computers</h3>
+<pre>Get-ADComputer -Filter "DNSHostName -like '*SQL*'"</pre>
+  <div class="lang">
+    <span class="pt">Localiza hosts cujo <code class="inline">DNSHostName</code> contém "SQL" — útil para priorizar servidores de base de dados.</span>
+    <span class="en">Finds hosts whose <code class="inline">DNSHostName</code> contains "SQL" — useful to prioritize database servers.</span>
+  </div>
+
+  <h3>3.4 Filtrar Grupos Administrativos / Filter Administrative Groups</h3>
+<pre>Get-ADGroup -Filter "adminCount -eq 1" | Select-Object Name</pre>
+  <div class="lang">
+    <span class="pt"><code class="inline">adminCount = 1</code> marca objetos protegidos pelo <strong>AdminSDHolder</strong> (tipicamente controlados por Domain Admins). Têm permissões elevadas e são alvos de alto valor.</span>
+    <span class="en"><code class="inline">adminCount = 1</code> flags objects protected by <strong>AdminSDHolder</strong> (typically controlled by Domain Admins). They hold elevated permissions and are high-value targets.</span>
+  </div>
+
+  <h3>3.5 Filtrar Admins AS-REP Roastable / Filter AS-REP Roastable Admins</h3>
+<pre>Get-ADUser -Filter {adminCount -eq 1 -and DoesNotRequirePreAuth -eq $true}</pre>
+  <div class="lang">
+    <span class="pt">Contas com <strong>Kerberos pre-authentication desativada</strong> devolvem um AS-REP cifrado sem credenciais válidas. Se forem também admins (<code class="inline">adminCount = 1</code>), o impacto é máximo: o blob pode ser crackeado offline (Hashcat modo 18200) para recuperar a password.</span>
+    <span class="en">Accounts with <strong>Kerberos pre-authentication disabled</strong> return an encrypted AS-REP without valid credentials. If they are also admins (<code class="inline">adminCount = 1</code>), impact is maximal: the blob can be cracked offline (Hashcat mode 18200) to recover the password.</span>
+  </div>
+
+  <h3>3.6 Filtrar Admins Kerberoastable / Filter Kerberoastable Admins</h3>
+<pre>Get-ADUser -Filter "adminCount -eq '1'" -Properties * | where servicePrincipalName -ne $null | select SamAccountName,MemberOf,ServicePrincipalName | fl</pre>
+  <div class="lang">
+    <span class="pt">Filtra admins (<code class="inline">adminCount = 1</code>) com <strong>SPN</strong> registado. Qualquer conta com SPN recebe TGS cifrado com o hash da password — um utilizador de domínio normal pode pedir o ticket e crackeá-lo offline (Hashcat modo 13100). O <code class="inline">select</code> mostra SamAccountName, grupos e SPNs.</span>
+    <span class="en">Filters admins (<code class="inline">adminCount = 1</code>) with a registered <strong>SPN</strong>. Any account with an SPN receives a TGS encrypted with its password hash — a normal domain user can request the ticket and crack it offline (Hashcat mode 13100). The <code class="inline">select</code> shows SamAccountName, groups, and SPNs.</span>
+  </div>
+
+  <h3>3.7 Filtrar um Utilizador / Filter a User</h3>
+<pre>Get-ADUser -Identity sql_service -Properties * | Select-Object * | Format-List</pre>
+  <div class="lang">
+    <span class="pt">Extrai <strong>todos os atributos</strong> da conta <code class="inline">sql_service</code> e lista-os. Serve para aprofundar reconhecimento após identificar uma conta vulnerável (ver <code class="inline">MemberOf</code>, <code class="inline">Description</code>, <code class="inline">PasswordLastSet</code>).</span>
+    <span class="en">Pulls <strong>all attributes</strong> of the <code class="inline">sql_service</code> account and lists them. Used to deepen reconnaissance after spotting a vulnerable account (check <code class="inline">MemberOf</code>, <code class="inline">Description</code>, <code class="inline">PasswordLastSet</code>).</span>
+  </div>
+
+  <h3>3.8 Contas PasswordNotRequired / PasswordNotRequired Accounts</h3>
+<pre>Get-ADUser -Filter * -Properties PasswordNotRequired | Where-Object { $_.PasswordNotRequired } | Select-Object SamAccountName, Name</pre>
+  <div class="lang">
+    <span class="pt">Identifica contas com a flag <strong>PasswordNotRequired</strong>, que podem ter password em branco — permitindo autenticação sem credenciais. Raro, mas crítico quando existe.</span>
+    <span class="en">Identifies accounts with the <strong>PasswordNotRequired</strong> flag, which may have blank passwords — allowing credential-less authentication. Rare, but critical when present.</span>
+  </div>
+
+  <h3>3.9 Filtrar Descrições de Utilizador / Filter User Descriptions</h3>
+<pre>Get-ADUser -Filter * -Properties Description | Select-Object SamAccountName, Name, Description</pre>
+  <div class="lang">
+    <span class="pt">O campo <code class="inline">Description</code> é frequentemente mal configurado e pode conter <strong>credenciais ou informação sensível</strong> em texto claro — um clássico achado de auditoria.</span>
+    <span class="en">The <code class="inline">Description</code> field is often misconfigured and may contain <strong>plaintext credentials or sensitive info</strong> — a classic audit finding.</span>
+  </div>
+
+  <h3>3.10 Filtrar Domain Admins / Filter Domain Admins</h3>
+<pre>Get-ADGroupMember -Identity "Domain Admins" -Recursive | Where-Object { $_.objectClass -eq 'user' } | Select-Object Name, SamAccountName</pre>
+  <div class="lang">
+    <span class="pt">Lista <strong>recursivamente</strong> membros do grupo Domain Admins, filtrando apenas objetos <code class="inline">user</code> (exclui grupos aninhados e computadores). Domain Admins/Enterprise Admins têm controlo total do domínio — são os "gems" do AD.</span>
+    <span class="en"><strong>Recursively</strong> lists Domain Admins members, keeping only <code class="inline">user</code> objects (excludes nested groups and computers). Domain Admins/Enterprise Admins have full domain control — the "gems" of AD.</span>
+  </div>
+
+  <h3>3.11 Filtrar PasswordLastChanged / Filter PasswordLastChanged</h3>
+<pre>Get-ADUser -Identity username -Properties PasswordLastSet | Select-Object SamAccountName, Name, @{Name='PasswordLastChanged';Expression={$_.PasswordLastSet}}
+
+Get-ADUser -Filter "samAccountName -like 'Adm*'" -Properties PasswordLastSet | Where-Object { -not $_.PasswordLastSet -or $_.PasswordLastSet -lt (Get-Date).AddMonths(-1) } | Select-Object samAccountName, @{Name='PasswordLastChanged';Expression={$_.PasswordLastSet}}</pre>
+  <div class="lang">
+    <span class="pt"><strong>1.º comando:</strong> consulta <code class="inline">PasswordLastSet</code> e cria uma propriedade calculada (<code class="inline">@{Name=...;Expression={...}}</code>) renomeada para <code class="inline">PasswordLastChanged</code>. <strong>2.º comando:</strong> encontra contas <code class="inline">Adm*</code> cuja password <strong>nunca foi definida</strong> (<code class="inline">-not $_.PasswordLastSet</code>) ou <strong>não muda há mais de um mês</strong> (<code class="inline">-lt (Get-Date).AddMonths(-1)</code>). Isto permite encontrar contas ainda válidas após uma resposta a incidente em que o blue team forçou resets.</span>
+    <span class="en"><strong>1st command:</strong> reads <code class="inline">PasswordLastSet</code> and creates a calculated property (<code class="inline">@{Name=...;Expression={...}}</code>) renamed to <code class="inline">PasswordLastChanged</code>. <strong>2nd command:</strong> finds <code class="inline">Adm*</code> accounts whose password was <strong>never set</strong> (<code class="inline">-not $_.PasswordLastSet</code>) or <strong>not changed in over a month</strong> (<code class="inline">-lt (Get-Date).AddMonths(-1)</code>). This surfaces accounts still valid after an incident response where the blue team forced resets.</span>
+  </div>
+
+  <h3>3.12 Contar Utilizadores / Counting Users</h3>
+<pre>(Get-ADUser -SearchBase "OU=Employees,DC=DOMAIN,DC=LOCAL" -Filter *).Count</pre>
+  <div class="lang">
+    <span class="pt">Conta utilizadores dentro de uma <strong>OU específica</strong> (<code class="inline">-SearchBase</code>) — dimensiona o ambiente e estima a superfície de misconfigurations. Substituir <code class="inline">Employees</code> e <code class="inline">DOMAIN/LOCAL</code> pelos valores reais.</span>
+    <span class="en">Counts users inside a <strong>specific OU</strong> (<code class="inline">-SearchBase</code>) — sizes the environment and estimates the misconfiguration surface. Replace <code class="inline">Employees</code> and <code class="inline">DOMAIN/LOCAL</code> with real values.</span>
+  </div>
+</section>
+
+<!-- ===================== LDAP FILTERS ===================== -->
+<section id="ldapfilters">
+  <h2>4. Filtros LDAP / LDAP Filters <span class="badge orig">Original</span> <span class="badge comp">Complementar / Complementary</span></h2>
+  <div class="lang">
+    <span class="pt">Os filtros LDAP são expressões textuais entre parênteses que especificam que objetos do AD recuperar. Usam a sintaxe LDAP: operadores lógicos <code class="inline">&amp;</code> (AND), <code class="inline">|</code> (OR), <code class="inline">!</code> (NOT). A regra <strong>OID 1.2.840.113556.1.4.803</strong> é um <em>bitwise AND</em> sobre <code class="inline">userAccountControl</code> — permite testar flags individuais.</span>
+    <span class="en">LDAP filters are text expressions in parentheses specifying which AD objects to retrieve. They use LDAP syntax: logical operators <code class="inline">&amp;</code> (AND), <code class="inline">|</code> (OR), <code class="inline">!</code> (NOT). Rule <strong>OID 1.2.840.113556.1.4.803</strong> is a <em>bitwise AND</em> on <code class="inline">userAccountControl</code> — lets you test individual flags.</span>
+  </div>
+
+  <h3>4.1 Filtrar Descrições via LDAP / Filter Descriptions via LDAP</h3>
+<pre>Get-ADUser -Properties * -LDAPFilter '(&(objectCategory=user)(description=*))' | select samaccountname, description</pre>
+  <div class="lang">
+    <span class="pt"><code class="inline">(&amp;(...)(...))</code> = AND. Devolve utilizadores (<code class="inline">objectCategory=user</code>) que tenham <strong>qualquer</strong> descrição (<code class="inline">description=*</code>). Equivalente LDAP ao filtro PowerShell anterior, mas potencialmente mais rápido no DC.</span>
+    <span class="en"><code class="inline">(&amp;(...)(...))</code> = AND. Returns users (<code class="inline">objectCategory=user</code>) that have <strong>any</strong> description (<code class="inline">description=*</code>). LDAP equivalent of the previous PowerShell filter, potentially faster on the DC.</span>
+  </div>
+
+  <h3>4.2 Filtrar Contas Trusted for Delegation / Filter Trusted Accounts</h3>
+<pre># trusted users
+Get-ADUser -Properties * -LDAPFilter '(userAccountControl:1.2.840.113556.1.4.803:=524288)' | select Name, memberof, servicePrincipalName, TrustedForDelegation | fl
+
+# trusted computers
+Get-ADComputer -Properties * -LDAPFilter '(userAccountControl:1.2.840.113556.1.4.803:=524288)' | select DistinguishedName, servicePrincipalName, TrustedForDelegation | fl</pre>
+  <div class="lang">
+    <span class="pt">O valor <strong>524288</strong> corresponde à flag <code class="inline">TRUSTED_FOR_DELEGATION</code> em <code class="inline">userAccountControl</code> (delegação <strong>irrestrita</strong>). Estas contas/máquinas podem ser abusadas para <strong>impersonar utilizadores de altos privilégios sem conhecer as suas passwords</strong> (ataques de delegação, ex.: S4U2Self/S4U2Proxy). O 1.º comando lista utilizadores; o 2.º, computadores.</span>
+    <span class="en">Value <strong>524288</strong> is the <code class="inline">TRUSTED_FOR_DELEGATION</code> flag in <code class="inline">userAccountControl</code> (<strong>unconstrained</strong> delegation). These accounts/computers can be abused to <strong>impersonate high-privilege users without knowing their passwords</strong> (delegation attacks, e.g., S4U2Self/S4U2Proxy). 1st command lists users; 2nd lists computers.</span>
+  </div>
+
+  <h3>4.3 Filtrar Distribuições Windows / Filter Windows Distributions</h3>
+<pre># Windows Server 2012
+Get-ADComputer -LDAPFilter '(samAccountType=805306369)(!(primaryGroupId=516))(objectCategory=computer)(operatingSystem=Windows Server 2012*)' -Properties OperatingSystem | Select Name, OperatingSystem
+
+# Windows Server 2008
+Get-ADComputer -LDAPFilter '(samAccountType=805306369)(!(primaryGroupId=516))(objectCategory=computer)(operatingSystem=Windows Server 2008*)' -Properties OperatingSystem | Select Name, OperatingSystem
+
+# Windows Server 2003
+Get-ADComputer -LDAPFilter '(samAccountType=805306369)(!(primaryGroupId=516))(objectCategory=computer)(operatingSystem=Windows Server 2003*)' -Properties OperatingSystem | Select Name, OperatingSystem</pre>
+  <div class="lang">
+    <span class="pt"><code class="inline">samAccountType=805306369</code> = tipo de conta <strong>computador</strong>. <code class="inline">!(primaryGroupId=516)</code> = <strong>exclui Domain Controllers</strong> (grupo 516). <code class="inline">objectCategory=computer</code> restringe a computadores. <code class="inline">operatingSystem=Windows Server XXXX*</code> filtra pela versão do SO. Objetivo: identificar servidores <strong>legados/desatualizados</strong> (2012, 2008, 2003) — alvos prioritários porque permitem múltiplas sessões sem fechar as ativas e têm menos proteções. <strong>Nota técnica:</strong> o artigo encadeia os sub-filtros sem um <code class="inline">&amp;</code> externo; na prática, o <code class="inline">Get-ADComputer</code> aplica-os implicitamente, mas a forma canónica seria <code class="inline">(&amp;(samAccountType=805306369)(!(primaryGroupId=516))(objectCategory=computer)(operatingSystem=...))</code>.</span>
+    <span class="en"><code class="inline">samAccountType=805306369</code> = <strong>computer</strong> account type. <code class="inline">!(primaryGroupId=516)</code> = <strong>excludes Domain Controllers</strong> (group 516). <code class="inline">objectCategory=computer</code> restricts to computers. <code class="inline">operatingSystem=Windows Server XXXX*</code> filters by OS version. Goal: identify <strong>legacy/outdated</strong> servers (2012, 2008, 2003) — priority targets because they allow multiple sessions without closing active ones and have fewer protections. <strong>Technical note:</strong> the article chains sub-filters without an outer <code class="inline">&amp;</code>; in practice <code class="inline">Get-ADComputer</code> applies them implicitly, but the canonical form would be <code class="inline">(&amp;(...)(...)(...)(...))</code>.</span>
+  </div>
+</section>
+
+<!-- ===================== MITRE ===================== -->
+<section id="mitre">
+  <h2>5. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar / Complementary</span></h2>
+  <table>
+    <tr><th>Técnica / Technique</th><th>ID</th><th>Onde aparece / Where it appears</th></tr>
+    <tr><td>Account Discovery: Domain Account</td><td>T1087.002</td><td>3.2, 3.7, 3.12</td></tr>
+    <tr><td>Remote System Discovery</td><td>T1018</td><td>3.3, 4.3</td></tr>
+    <tr><td>Permission Groups Discovery: Domain Groups</td><td>T1069.002</td><td>3.4, 3.10</td></tr>
+    <tr><td>Steal or Forge Kerberos Tickets: AS-REP Roasting</td><td>T1558.004</td><td>3.5</td></tr>
+    <tr><td>Steal or Forge Kerberos Tickets: Kerberoasting</td><td>T1558.003</td><td>3.6</td></tr>
+    <tr><td>Credentials in Files</td><td>T1552.001</td><td>3.9, 4.1</td></tr>
+    <tr><td>Use Alternate Authentication Material</td><td>T1550</td><td>4.2 (delegação)</td></tr>
+    <tr><td>System Information Discovery</td><td>T1082</td><td>3.1, 4.3</td></tr>
+  </table>
+</section>
+
+<!-- ===================== MITIGAÇÕES ===================== -->
+<section id="mitig">
+  <h2>6. Mitigações Blue Team / Blue Team Mitigations <span class="badge comp">Complementar / Complementary</span></h2>
+  <ol>
+    <li><strong>Advanced Audit Policy → Directory Service Access</strong> — ativar e monitorizar evento <strong>4662</strong> (acesso a objetos AD). / enable and monitor event 4662.</li>
+    <li><strong>Alertar</strong> sobre consultas LDAP com <code class="inline">userAccountControl</code> bitwise, <code class="inline">DoesNotRequirePreAuth</code>, <code class="inline">servicePrincipalName=*</code>, enumeração massiva de <code class="inline">Description</code>. / Alert on these.</li>
+    <li><strong>Honeytokens</strong> — contas/descrições falsas com "password" para detetar enumeração. / fake accounts/descriptions with "password".</li>
+    <li><strong>Remover <code class="inline">TRUSTED_FOR_DELEGATION</code></strong> desnecessário; preferir <em>constrained</em> ou <em>resource-based</em> delegation. / remove unnecessary; prefer constrained or RBCD.</li>
+    <li><strong>Desativar Kerberos pre-auth</strong> só quando exigido; auditar contas com <code class="inline">DoesNotRequirePreAuth</code>. / disable only when required; audit such accounts.</li>
+    <li><strong>Auditar <code class="inline">PasswordNotRequired</code></strong> e <code class="inline">PasswordLastSet</code> antigos; forçar rotação. / audit and force rotation.</li>
+    <li><strong>gMSA</strong> (group Managed Service Accounts) para serviços com SPN — passwords longas e rotativas. / for SPN services — long rotating passwords.</li>
+    <li><strong>Limitar <code class="inline">adminCount=1</code></strong> ao mínimo; rever AdminSDHolder. / minimize; review AdminSDHolder.</li>
+    <li><strong>Proteger <code class="inline">Description</code></strong> — política de não guardar segredos; DLP. / policy against secrets; DLP.</li>
+    <li><strong>Remover SO legado</strong> (2003/2008/2012) ou isolar em VLANs restritas. / remove or isolate in restricted VLANs.</li>
+    <li><strong>Monitorizar <code class="inline">Get-AD*</code></strong> em endpoints não-admin via PowerShell logging (4104). / monitor via 4104.</li>
+  </ol>
+</section>
+
+<!-- ===================== LAB ===================== -->
+<section id="lab">
+  <h2>7. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar / Complementary</span></h2>
+  <div class="lang">
+    <span class="pt"><strong>Cenário:</strong> DC Windows Server (domínio <code class="inline">lab.local</code>) + VM cliente加入 ao domínio, com RSAT/ActiveDirectory module. Criar utilizadores de teste: <code class="inline">adm_test</code> (com SPN), <code class="inline">sql_service</code> (com SPN e delegação), <code class="inline">old_user</code> (PasswordLastSet antigo), <code class="inline">nopass</code> (PasswordNotRequired). Snapshot antes.</span>
+    <span class="en"><strong>Scenario:</strong> Windows Server DC (domain <code class="inline">lab.local</code>) + domain-joined client VM with RSAT/ActiveDirectory module. Create test users: <code class="inline">adm_test</code> (with SPN), <code class="inline">sql_service</code> (SPN + delegation), <code class="inline">old_user</code> (stale PasswordLastSet), <code class="inline">nopass</code> (PasswordNotRequired). Snapshot before.</span>
+  </div>
+  <table>
+    <tr><th>#</th><th>Tarefa / Task</th><th>Comando / Command</th><th>Evidência / Evidence</th></tr>
+    <tr><td>1</td><td>Confirmar módulo / Confirm module</td><td><code class="inline">Get-Module -ListAvailable ActiveDirectory</code></td><td>Output</td></tr>
+    <tr><td>2</td><td>Contas "adm*" / "adm*" accounts</td><td><code class="inline">Get-ADUser -Filter {name -like "adm*"}</code></td><td>Lista / List</td></tr>
+    <tr><td>3</td><td>Computadores SQL / SQL computers</td><td><code class="inline">Get-ADComputer -Filter "DNSHostName -like '*SQL*'"</code></td><td>Lista / List</td></tr>
+    <tr><td>4</td><td>Grupos adminCount=1 / adminCount=1 groups</td><td><code class="inline">Get-ADGroup -Filter "adminCount -eq 1" | Select Name</code></td><td>Lista / List</td></tr>
+    <tr><td>5</td><td>AS-REP roastable admins</td><td><code class="inline">Get-ADUser -Filter {adminCount -eq 1 -and DoesNotRequirePreAuth -eq $true}</code></td><td>Lista / List</td></tr>
+    <tr><td>6</td><td>Kerberoastable admins</td><td><code class="inline">Get-ADUser -Filter "adminCount -eq '1'" -Properties * | where servicePrincipalName -ne $null | select SamAccountName,ServicePrincipalName</code></td><td>Lista / List</td></tr>
+    <tr><td>7</td><td>PasswordNotRequired</td><td><code class="inline">Get-ADUser -Filter * -Properties PasswordNotRequired | ? { $_.PasswordNotRequired } | select SamAccountName</code></td><td>Lista / List</td></tr>
+    <tr><td>8</td><td>Descrições com segredos / Descriptions with secrets</td><td><code class="inline">Get-ADUser -Filter * -Properties Description | select SamAccountName, Description</code></td><td>Lista / List</td></tr>
+    <tr><td>9</td><td>Domain Admins recursivo / Recursive</td><td><code class="inline">Get-ADGroupMember -Identity "Domain Admins" -Recursive | ? { $_.objectClass -eq 'user' } | select Name, SamAccountName</code></td><td>Lista / List</td></tr>
+    <tr><td>10</td><td>Passwords antigas / Stale passwords</td><td><code class="inline">Get-ADUser -Filter "samAccountName -like 'Adm*'" -Properties PasswordLastSet | ? { -not $_.PasswordLastSet -or $_.PasswordLastSet -lt (Get-Date).AddMonths(-1) } | select samAccountName, PasswordLastSet</code></td><td>Lista / List</td></tr>
+    <tr><td>11</td><td>LDAP: descrições / descriptions</td><td><code class="inline">Get-ADUser -Properties * -LDAPFilter '(&amp;(objectCategory=user)(description=*))' | select samaccountname, description</code></td><td>Lista / List</td></tr>
+    <tr><td>12</td><td>LDAP: trusted for delegation</td><td><code class="inline">Get-ADUser -Properties * -LDAPFilter '(userAccountControl:1.2.840.113556.1.4.803:=524288)' | select Name, TrustedForDelegation</code></td><td>Lista / List</td></tr>
+    <tr><td>13</td><td>LDAP: SO legado / legacy OS</td><td><code class="inline">Get-ADComputer -LDAPFilter '(&amp;(samAccountType=805306369)(!(primaryGroupId=516))(objectCategory=computer)(operatingSystem=Windows Server 2012*))' -Properties OperatingSystem | select Name, OperatingSystem</code></td><td>Lista / List</td></tr>
+    <tr><td>14</td><td>(Defensivo) Ver evento 4662 / (Defensive) view 4662</td><td><code class="inline">Get-WinEvent -LogName Security -MaxEvents 50 | ? Id -eq 4662</code></td><td>Eventos / Events</td></tr>
+  </table>
+  <div class="callout danger">
+    <strong>⚠️ Limpeza / Cleanup:</strong>
+    <div class="lang">
+      <span class="pt">Reverter snapshot. Se criaste objetos, remove-os: <code class="inline">Remove-ADUser -Identity adm_test -Confirm:$false</code> (idem para os outros).</span>
+      <span class="en">Revert snapshot. If you created objects, remove them: <code class="inline">Remove-ADUser -Identity adm_test -Confirm:$false</code> (same for the others).</span>
+    </div>
+  </div>
+  <h3>Checklist de evidências / Evidence checklist</h3>
+  <ul class="checklist">
+    <li>Snapshot inicial / Initial snapshot</li>
+    <li>Output de cada um dos 14 comandos / Output of all 14 commands</li>
+    <li>Lista de contas AS-REP e Kerberoastable / AS-REP and Kerberoastable lists</li>
+    <li>Lista de TrustedForDelegation / TrustedForDelegation list</li>
+    <li>Evento 4662 capturado / Event 4662 captured</li>
+    <li>Snapshot final / Final snapshot</li>
+  </ul>
+</section>
+
+<!-- ===================== REVISÃO ===================== -->
+<section id="revq">
+  <h2>8. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar / Complementary</span></h2>
+  <ol>
+    <li>Qual a diferença entre <code class="inline">-Filter</code> e <code class="inline">-LDAPFilter</code>? / What's the difference between them?</li>
+    <li>O que significa <code class="inline">adminCount=1</code> e porque é relevante? / What does it mean and why does it matter?</li>
+    <li>Porque é que uma conta AS-REP roastable é vulnerável sem credenciais? / Why is an AS-REP roastable account vulnerable without credentials?</li>
+    <li>O que é um SPN e porque torna uma conta Kerberoastable? / What is an SPN and why does it make an account Kerberoastable?</li>
+    <li>O que significa o valor 524288 em <code class="inline">userAccountControl</code>? / What does 524288 mean?</li>
+    <li>Porque é que <code class="inline">!(primaryGroupId=516)</code> exclui DCs? / Why does it exclude DCs?</li>
+    <li>Como se deteta enumeração LDAP anómala? / How to detect anomalous LDAP enumeration?</li>
+    <li>Qual a mitigação para contas com SPN? / What's the mitigation for SPN accounts?</li>
+  </ol>
+</section>
+
+<!-- ===================== RESUMO ===================== -->
+<section id="sum">
+  <h2>9. Resumo do Capítulo / Chapter Summary</h2>
+  <div class="lang">
+    <span class="pt">Este capítulo cobriu o reconhecimento de Active Directory com PowerShell e LDAP: filtros <code class="inline">Get-AD*</code> (utilizadores, computadores, grupos, Domain Admins, PasswordNotRequired, PasswordLastSet), filtros LDAP nativos com operadores lógicos e OID bitwise (descrições, delegação, SO legado), e as técnicas AS-REP Roasting e Kerberoasting. O Cap. 3 (PowerView) encapsula estas operações em comandos mais simples e rápidos.</span>
+    <span class="en">This chapter covered Active Directory reconnaissance with PowerShell and LDAP: <code class="inline">Get-AD*</code> filters (users, computers, groups, Domain Admins, PasswordNotRequired, PasswordLastSet), native LDAP filters with logical operators and bitwise OID (descriptions, delegation, legacy OS), and AS-REP Roasting and Kerberoasting techniques. Ch. 3 (PowerView) wraps these operations into simpler, faster commands.</span>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div>Manual de Formação Ethical Hacker — Cap. 2 / Ethical Hacker Training Manual — Ch. 2</div>
+  <div style="margin-top:.6rem">
+    <a href="cap01.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+    <a href="#">Índice / Index</a> &nbsp;|&nbsp;
+    <a href="cap03.html">Cap. seguinte / Next →</a>
+  </div>
+</footer>
+
+</body>
+</html>

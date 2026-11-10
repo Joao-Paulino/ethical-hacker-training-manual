@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 6 — DFIR com PowerShell | Ch. 6</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 6 — DFIR com PowerShell</h1>
+<div class="sub">Ch. 6 — DFIR with PowerShell</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🛡️ Nível: Defensivo / DFIR</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#logs">Log Analysis (DeepBlueCLI)</a></li><li><a href="#wela">Hardening (WELA)</a></li>
+<li><a href="#sniper">PersistenceSniper</a></li><li><a href="#trawler">Trawler</a></li>
+<li><a href="#kansa">Kansa</a></li><li><a href="#audit">Audit Script</a></li>
+<li><a href="#acl">AD ACL Scanner</a></li><li><a href="#impact">Scripts de Impacto</a></li>
+<li><a href="#mitre">MITRE</a></li><li><a href="#mitig">Mitigações</a></li>
+<li><a href="#lab">Laboratório</a></li><li><a href="#revq">Revisão</a></li>
+<li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o papel do PowerShell na defesa e investigação forense (DFIR); analisar logs com DeepBlueCLI; auditar e endurecer sistemas com WELA; encontrar persistência com PersistenceSniper, Trawler e Kansa; realizar auditorias com o script de audit; detetar abuso de DACL em AD com AD ACL Scanner; compreender o AdminSDHolder e a Machine Account Quota (MAQ); <strong>construir scripts de impacto</strong> nativos que replicam a lógica defensiva.</span>
+<span class="en">Understand PowerShell's role in defense and forensic investigation (DFIR); analyze logs with DeepBlueCLI; audit and harden systems with WELA; find persistence with PersistenceSniper, Trawler, and Kansa; perform audits with the audit script; detect DACL abuse in AD with AD ACL Scanner; understand AdminSDHolder and Machine Account Quota (MAQ); <strong>build native impact scripts</strong> that replicate defensive logic.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Os defensores beneficiam imenso de aprender as mesmas técnicas que os atacantes usam, mas do lado oposto. Quando um atacante tem footholds numa organização, raramente depende de um único mecanismo — constrói múltiplos fallbacks. Já vimos casos em que os incident responders removeram scheduled tasks e serviços, mas credenciais esquecidas e ferramentas de acesso remoto como o AnyDesk permitiram aos atacantes reentrar dias depois. Também vimos atacantes plantarem processos auxiliares (watchdogs) que ressuscitam payloads após remoções. Por isso, trata o ambiente como se fosse "radioativo": assume que há sobreviventes e procura-os em todo o lado.</span>
+<span class="en">Defenders benefit immensely from learning the same techniques attackers use, but from the other side. When an attacker has footholds across an estate, they rarely rely on a single mechanism — they build multiple fallbacks. We've seen cases where incident responders removed scheduled tasks and services, but forgotten credentials and remote-access tools like AnyDesk allowed attackers to re-enter days later. We've also seen attackers plant helper processes (watchdogs) that resurrect payloads after removals. So treat the environment as if it were "radioactive": assume there are survivors and look for them everywhere.</span>
+</div>
+</section>
+
+<section id="logs">
+<h2>3. DeepBlueCLI — Análise de Logs <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O DeepBlueCLI é uma ferramenta PowerShell criada para ajudar defensores a identificar rapidamente comportamento suspeito em logs de eventos do Windows. A sua força está na simplicidade: não precisas de configurações complexas, ficheiros de regras longos, ou conhecimento profundo de internals do Windows. Mapeia padrões de ataque comuns diretamente para indicadores de log, apresentando os resultados de forma fácil de ler e agir.</span>
+<span class="en">DeepBlueCLI is a PowerShell-based tool created to help defenders quickly identify suspicious behavior in Windows event logs. Its strength lies in simplicity: you don't need complex configurations, long rule files, or a deep understanding of Windows internals. It maps common attack patterns directly to log indicators, presenting results in a way that's easy to read and act upon.</span>
+</div>
+<h3>3.1 Análise de log exportado / Exported log analysis</h3>
+<pre>PS > .\DeepBlue.ps1 -file .\evtx\sliver-security.evtx</pre>
+<div class="lang">
+<span class="pt">O output mostra indicadores: <code class="inline">cmd.exe</code> a aceder ao share ADMIN$ (movimento lateral), <code class="inline">cmd.exe</code> via WMI através de <code class="inline">WmiPrvSE.exe</code> (execução remota), e <code class="inline">cmd.exe /Q /c JOINT_BALL.exe</code> (payload Sliver).</span>
+<span class="en">The output shows indicators: <code class="inline">cmd.exe</code> accessing ADMIN$ share (lateral movement), <code class="inline">cmd.exe</code> via WMI through <code class="inline">WmiPrvSE.exe</code> (remote execution), and <code class="inline">cmd.exe /Q /c JOINT_BALL.exe</code> (Sliver payload).</span>
+</div>
+<h3>3.2 Análise de ofuscação / Obfuscation analysis</h3>
+<pre>PS > .\DeepBlue.ps1 -file .\evtx\Powershell-Invoke-Obfuscation-many.evtx</pre>
+<div class="lang">
+<span class="pt">Linhas de comando muito longas com nomes fortemente modificados (variantes de <code class="inline">iNVOke</code>). Passam por frameworks de ofuscação, tornando-os difíceis de detetar com regras simples.</span>
+<span class="en">Very long command lines with heavily modified names (<code class="inline">iNVOke</code> variants). They pass through obfuscation frameworks, making them hard to detect with simple rules.</span>
+</div>
+<h3>3.3 Análise live / Live analysis</h3>
+<pre>PS > .\DeepBlue.ps1 -log security</pre>
+<div class="lang">
+<span class="pt">Destaca imediatamente brute-force: várias contas com tentativas de logon falhadas. O DeepBlueCLI conta o total, dando uma visão geral imediata.</span>
+<span class="en">Immediately highlights brute-force: several accounts with failed logon attempts. DeepBlueCLI counts the total, giving an immediate overview.</span>
+</div>
+</section>
+
+<section id="wela">
+<h2>4. WELA — Auditoria e Hardening <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O WELA é um script PowerShell da Yamato Security que foca em auditar e endurecer sistemas Windows. Ao contrário do DeepBlueCLI (que olha para o passado), o WELA ajuda a compreender a postura de segurança atual e guia-te para a melhorar. Audita configurações contra uma baseline e destaca áreas fora dos padrões. É frequentemente sinalizado por antivírus (usa técnicas avançadas), mas é legítimo e defensivo.</span>
+<span class="en">WELA is a PowerShell script from Yamato Security that focuses on auditing and hardening Windows systems. Unlike DeepBlueCLI (which looks at the past), WELA helps you understand the current security posture and guides you to improve it. It audits settings against a baseline and highlights areas outside standards. It's often flagged by antivirus (uses advanced techniques), but it's legitimate and defensive.</span>
+</div>
+<pre>PS > .\WELA.ps1 -Help</pre>
+<div class="lang">
+<span class="pt">O WELA analisa configurações como PowerShell v2 (que deve ser desativado), Sysmon, e outras opções. O relatório começa com uma visão geral da saúde de segurança do sistema.</span>
+<span class="en">WELA analyzes settings like PowerShell v2 (which should be disabled), Sysmon, and other options. The report starts with a high-level overview of the system's security health.</span>
+</div>
+</section>
+
+<section id="sniper">
+<h2>5. PersistenceSniper — Encontrar Persistência <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O PersistenceSniper é um módulo PowerShell moderno que enumera localizações de persistência conhecidas e apresenta-as de forma amigável. Percorre serviços, scheduled tasks, chaves Run, Winlogon, pastas Startup, subscrições WMI, AppInit DLLs, e mais. Devolve resultados estruturados, anota itens suspeitos e mapeia achados para ATT&CK.</span>
+<span class="en">PersistenceSniper is a modern PowerShell module that enumerates known persistence locations and presents them in analyst-friendly form. It walks services, scheduled tasks, Run keys, Winlogon, Startup folders, WMI subscriptions, AppInit DLLs, and more. It returns structured results, notes suspicious items, and maps findings to ATT&CK.</span>
+</div>
+<h3>5.1 Instalação / Installation</h3>
+<pre>PS > powershell -ep bypass
+PS > Install-Module -Name PersistenceSniper -Scope CurrentUser -Force -SkipPublisherCheck
+PS > Import-Module PersistenceSniper</pre>
+<h3>5.2 Scan</h3>
+<pre>PS > Find-AllPersistence -Verbose</pre>
+<div class="lang">
+<span class="pt">O output é verboso: verás entradas para binários de sistema legítimos, mas nem tudo é hostil. O PersistenceSniper classifica e mapeia alterações ao BootExecute para T1547.001. Usa-o como primeira passagem no triage.</span>
+<span class="en">The output is verbose: you'll see entries for legitimate system binaries, but not everything is hostile. PersistenceSniper classifies and maps BootExecute changes to T1547.001. Use it as a first pass during triage.</span>
+</div>
+</section>
+
+<section id="trawler">
+<h2>6. Trawler — Caça com Menos Ruído <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O Trawler aborda o mesmo problema com ênfase diferente: reduz o ruído e apresenta apenas itens que parecem persistência de adversário. Útil para caçar em escala. O trade-off é que pode produzir falsos negativos se o atacante imitar um item allow-listed. Qualquer achado precisa de validação humana. Suporta scan de imagens offline e drives montados.</span>
+<span class="en">Trawler approaches the same problem with a different emphasis: reduces noise and presents only items that look like adversary persistence. Useful for hunting at scale. The trade-off is it can produce false negatives if the attacker mimics an allow-listed item. Any finding needs human validation. Supports scanning offline images and mounted drives.</span>
+</div>
+<pre>PS > .\trawler.ps1</pre>
+<div class="lang">
+<span class="pt">Permite vários minutos. Se testaste o mesmo método de persistência, espera que apareça perto do fim. Usa o Trawler para um conjunto compacto de leads de alta confiança.</span>
+<span class="en">Allow several minutes. If you tested the same persistence method, expect it near the end. Use Trawler for a compact set of high-confidence leads.</span>
+</div>
+</section>
+
+<section id="kansa">
+<h2>7. Kansa — Resposta em Escala <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O Kansa é um framework modular de resposta a incidentes em PowerShell que se destaca na recolha de artefactos forenses em muitos hosts usando WinRM. Enquanto o PersistenceSniper e o Trawler focam no host local, o Kansa é a ferramenta para extrair os mesmos artefactos de centenas de computadores e agregar resultados.</span>
+<span class="en">Kansa is a modular incident-response framework in PowerShell that excels at collecting forensic artifacts across many hosts using WinRM. While PersistenceSniper and Trawler focus on the local host, Kansa is the tool to pull the same artifacts from hundreds of computers and aggregate results.</span>
+</div>
+<h3>7.1 Configurar WinRM / Configure WinRM</h3>
+<pre>PS > winrm quickconfig -q</pre>
+<h3>7.2 Executar Kansa / Run Kansa</h3>
+<pre>PS > .\kansa.ps1 -TargetList targets.txt -Modules Get-PrefetchListing,Get-Netstat,Get-DNSCache</pre>
+<div class="lang">
+<span class="pt">O Kansa usa módulos read-only e agrega outputs. Os módulos incluem <code class="inline">Get-PrefetchListing</code>, <code class="inline">Get-Netstat</code>, <code class="inline">Get-DNSCache</code>.</span>
+<span class="en">Kansa uses read-only modules and aggregates outputs. Modules include <code class="inline">Get-PrefetchListing</code>, <code class="inline">Get-Netstat</code>, <code class="inline">Get-DNSCache</code>.</span>
+</div>
+</section>
+
+<section id="audit">
+<h2>8. Audit Script <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O script de audit (UK_Daniel_Card) audita a configuração do sistema e produz um relatório com uma visão geral da saúde de segurança. Destaca opções como PowerShell v2 (que deve ser desativado, pois permite downgrade attacks) e recomenda Sysmon para logging melhorado.</span>
+<span class="en">The audit script (UK_Daniel_Card) audits system configuration and produces a report with a security health overview. It highlights options like PowerShell v2 (which should be disabled, as it allows downgrade attacks) and recommends Sysmon for enhanced logging.</span>
+</div>
+<pre>PS > .\audit.ps1</pre>
+<div class="lang">
+<span class="pt">Pergunta se queres obfuscar detalhes sensíveis (MAC, usernames, hostnames). Em ambientes internos, geralmente não é necessário. Pode ser executado via GPO e escrever para um share central.</span>
+<span class="en">It asks whether to obfuscate sensitive details (MAC, usernames, hostnames). In internal environments, usually not needed. It can run via GPO and write to a central share.</span>
+</div>
+</section>
+
+<section id="acl">
+<h2>9. AD ACL Scanner — Abuso de DACL <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O abuso de DACL em Active Directory é perigoso e frequentemente ignorado. Uma DACL define quem pode aceder a um objeto AD e que ações pode executar. O abuso ocorre quando atacantes manipulam permissões para obter controlo persistente e invisível. Detetar é difícil sem monitorizar objetos de alto valor.</span>
+<span class="en">DACL abuse in Active Directory is dangerous and often overlooked. A DACL defines who can access an AD object and what actions they can perform. Abuse occurs when attackers manipulate permissions to gain persistent and invisible control. Detection is hard without monitoring high-value objects.</span>
+</div>
+<h3>9.1 AdminSDHolder</h3>
+<div class="lang">
+<span class="pt">O AdminSDHolder protege contas privilegiadas aplicando um security descriptor consistente. Atacantes gostam dele porque <strong>GenericAll</strong> sobre o AdminSDHolder concede controlo de longo prazo sobre contas privilegiadas.</span>
+<span class="en">AdminSDHolder protects privileged accounts by enforcing a consistent security descriptor. Attackers like it because <strong>GenericAll</strong> over AdminSDHolder grants long-term control over privileged accounts.</span>
+</div>
+<h3>9.2 Machine Account Quota (MAQ)</h3>
+<div class="lang">
+<span class="pt">Por omissão, cada utilizador de domínio tem MAQ = 10 (pode criar até 10 objetos de computador). Isto simplifica joins legítimos, mas abre caminhos de ataque (RBCD, shadow credentials). Reduzir MAQ para 0 remove muitos vetores.</span>
+<span class="en">By default, every domain user has MAQ = 10 (can create up to 10 computer objects). This simplifies legitimate joins but opens attack paths (RBCD, shadow credentials). Reducing MAQ to 0 removes many vectors.</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>10. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">As ferramentas originais são excelentes, mas por vezes precisas de uma verificação rápida e nativa, sem depender de módulos externos. Os scripts abaixo replicam a lógica defensiva em PowerShell puro, com output legível e exportação para relatório.</span>
+<span class="en">The original tools are excellent, but sometimes you need a quick, native check without depending on external modules. The scripts below replicate defensive logic in pure PowerShell, with readable output and report export.</span>
+</div>
+
+<h3>10.1 Script 6.1 — Deteção de Brute-Force e Spraying / Brute-Force &amp; Spraying Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> analisar eventos 4625 (failed logon) e 4648 (explicit credentials) e agrupar por conta/IP para detetar brute-force e password spraying. <strong>Evidência:</strong> <code class="inline">logon-alerts.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> analyze events 4625 (failed logon) and 4648 (explicit credentials) and group by account/IP to detect brute-force and password spraying. <strong>Evidence:</strong> <code class="inline">logon-alerts.csv</code>.</span>
+</div>
+<pre># Script 6.1 - Logon Anomaly Detection
+$log = "Security"
+$out = ".\logon-alerts.csv"
+$events = Get-WinEvent -LogName $log -MaxEvents 5000 -ErrorAction SilentlyContinue |
+    Where-Object { $_.Id -in @(4625,4648) }
+$results = foreach ($e in $events) {
+    $xml = [xml]$e.ToXml()
+    $data = @{}
+    $xml.Event.EventData.Data | ForEach-Object { $data[$_.Name] = $_.'#text' }
+    [PSCustomObject]@{
+        TimeCreated = $e.TimeCreated
+        EventId     = $e.Id
+        TargetUser  = $data['TargetUserName']
+        IpAddress   = $data['IpAddress']
+        Process     = $data['ProcessName']
+    }
+}
+$results | Group-Object TargetUser, IpAddress |
+    Where-Object { $_.Count -gt 3 } |
+    ForEach-Object {
+        [PSCustomObject]@{
+            TargetUser = $_.Group[0].TargetUser
+            IpAddress  = $_.Group[0].IpAddress
+            FailCount  = $_.Count
+            FirstSeen  = ($_.Group | Measure-Object TimeCreated -Minimum).Minimum
+            LastSeen   = ($_.Group | Measure-Object TimeCreated -Maximum).Maximum
+        }
+    } | Sort-Object FailCount -Descending | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Saved: $out" -ForegroundColor Green
+Get-Content $out</pre>
+
+<h3>10.2 Script 6.2 — Persistência Rápida / Quick Persistence Sweep</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> verificar nativamente Run keys (HKLM/HKCU), Winlogon (Shell/Userinit), pastas Startup e Scheduled Tasks não desativadas. <strong>Evidência:</strong> <code class="inline">persistence-quick.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> natively check Run keys (HKLM/HKCU), Winlogon (Shell/Userinit), Startup folders, and enabled Scheduled Tasks. <strong>Evidence:</strong> <code class="inline">persistence-quick.csv</code>.</span>
+</div>
+<pre># Script 6.2 - Quick Persistence Sweep
+$out = ".\persistence-quick.csv"
+$results = @()
+
+# Run keys
+$runKeys = @(
+    "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run",
+    "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce",
+    "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run",
+    "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
+)
+foreach ($k in $runKeys) {
+    if (Test-Path $k) {
+        (Get-ItemProperty $k).PSObject.Properties |
+            Where-Object { $_.Name -notmatch '^PS' } |
+            ForEach-Object { $results += [PSCustomObject]@{ Type="RunKey"; Path=$k; Name=$_.Name; Value=$_.Value } }
+    }
+}
+
+# Winlogon
+$wl = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+if (Test-Path $wl) {
+    $p = Get-ItemProperty $wl
+    foreach ($n in @("Shell","Userinit")) {
+        if ($p.$n) { $results += [PSCustomObject]@{ Type="Winlogon"; Path=$wl; Name=$n; Value=$p.$n } }
+    }
+}
+
+# Startup folders
+$startups = @("$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Startup") + (Get-ChildItem "C:\Users" -Directory -EA SilentlyContinue | ForEach-Object { "$($_.FullName)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" })
+foreach ($s in $startups) {
+    if (Test-Path $s) {
+        Get-ChildItem $s -File -EA SilentlyContinue |
+            ForEach-Object { $results += [PSCustomObject]@{ Type="StartupFolder"; Path=$s; Name=$_.Name; Value=$_.FullName } }
+    }
+}
+
+# Scheduled Tasks
+Get-ScheduledTask -EA SilentlyContinue | Where-Object { $_.State -ne "Disabled" } |
+    ForEach-Object {
+        $results += [PSCustomObject]@{ Type="ScheduledTask"; Path=$_.TaskPath; Name=$_.TaskName; Value=($_.Actions.Execute -join ";") }
+    }
+
+$results | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Saved: $out ($($results.Count) items)" -ForegroundColor Green</pre>
+
+<h3>10.3 Script 6.3 — Auditoria de ACLs de Alto Valor / High-Value ACL Audit</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> listar permissões perigosas (<strong>GenericAll</strong>, <strong>WriteDACL</strong>, <strong>WriteOwner</strong>) em objetos de alto valor (Domain Admins, AdminSDHolder, DCs). Requer o módulo ActiveDirectory (RSAT). <strong>Evidência:</strong> <code class="inline">acl-findings.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> list dangerous permissions (<strong>GenericAll</strong>, <strong>WriteDACL</strong>, <strong>WriteOwner</strong>) on high-value objects (Domain Admins, AdminSDHolder, DCs). Requires ActiveDirectory module (RSAT). <strong>Evidence:</strong> <code class="inline">acl-findings.csv</code>.</span>
+</div>
+<pre># Script 6.3 - High-Value ACL Audit
+Import-Module ActiveDirectory -ErrorAction Stop
+$out = ".\acl-findings.csv"
+$targets = @("Domain Admins","Enterprise Admins","AdminSDHolder")
+$results = @()
+$dangerous = @("GenericAll","WriteDACL","WriteOwner","GenericWrite")
+
+foreach ($t in $targets) {
+    try {
+        $obj = Get-ADObject -Filter "Name -eq '$t'" -Properties nTSecurityDescriptor -EA Stop
+        $acl = $obj.nTSecurityDescriptor.Access
+        foreach ($ace in $acl) {
+            if ($ace.AccessControlType -eq "Allow" -and $ace.ActiveDirectoryRights -in $dangerous) {
+                $results += [PSCustomObject]@{
+                    Target    = $t
+                    Trustee   = $ace.IdentityReference
+                    Right     = $ace.ActiveDirectoryRights
+                    Severity  = if ($ace.ActiveDirectoryRights -eq "GenericAll") { "CRITICAL" } else { "HIGH" }
+                }
+            }
+        }
+    } catch { Write-Warning "Failed: $t - $($_.Exception.Message)" }
+}
+
+# MAQ
+$maq = (Get-ADDomain).DistinguishedName
+$maqVal = (Get-ADObject -Identity $maq -Properties ms-DS-MachineAccountQuota).'ms-DS-MachineAccountQuota'
+$results += [PSCustomObject]@{ Target="Domain"; Trustee="MachineAccountQuota"; Right="MAQ=$maqVal"; Severity=if($maqVal -gt 0){"HIGH"}else{"OK"} }
+
+$results | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Saved: $out" -ForegroundColor Green
+$results | Format-Table -AutoSize</pre>
+</section>
+
+<section id="mitre">
+<h2>11. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Brute Force: Password Guessing</td><td>T1110.001</td><td>DeepBlueCLI, Script 6.1</td></tr>
+<tr><td>Brute Force: Password Spraying</td><td>T1110.003</td><td>DeepBlueCLI, Script 6.1</td></tr>
+<tr><td>Boot or Logon Autostart Execution</td><td>T1547</td><td>PersistenceSniper, Script 6.2</td></tr>
+<tr><td>Scheduled Task/Job</td><td>T1053</td><td>Trawler, Script 6.2</td></tr>
+<tr><td>Account Manipulation</td><td>T1098</td><td>AD ACL Scanner, Script 6.3</td></tr>
+<tr><td>Domain Trust Modification</td><td>T1484</td><td>AdminSDHolder, Script 6.3</td></tr>
+<tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>Todo o capítulo</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>12. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Ativar Script Block Logging (4104) e Module Logging (4103)</strong> — essencial para DeepBlueCLI e Script 6.1.</li>
+<li><strong>Desativar PowerShell 2.0</strong> — evita downgrade attacks.</li>
+<li><strong>Implementar Sysmon</strong> — melhora drasticamente a telemetria.</li>
+<li><strong>Reduzir MAQ para 0</strong> — remove vetores de ataque em AD.</li>
+<li><strong>Monitorizar AdminSDHolder</strong> — alterações são críticas.</li>
+<li><strong>Auditar ACLs regularmente</strong> — usar ADACLScanner ou Script 6.3.</li>
+<li><strong>Correr WELA e audit.ps1 periodicamente</strong> — baseline de hardening.</li>
+<li><strong>Usar PersistenceSniper/Trawler no triage</strong> — primeira passagem rápida.</li>
+<li><strong>Kansa para resposta em escala</strong> — recolha centralizada via WinRM.</li>
+<li><strong>Honeytokens em AdminSDHolder e MAQ</strong> — deteta abuso.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>13. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows 10/11 isolada com Sysmon (opcional), PowerShell logging ativado, e um DC Windows Server (para Script 6.3). Snapshot antes. <strong>Objetivo:</strong> correr as ferramentas originais e os scripts complementares, comparar outputs e produzir um relatório.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows 10/11 VM with Sysmon (optional), PowerShell logging enabled, and a Windows Server DC (for Script 6.3). Snapshot before. <strong>Goal:</strong> run the original tools and complementary scripts, compare outputs, and produce a report.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>DeepBlueCLI (log exportado)</td><td><code class="inline">.\DeepBlue.ps1 -file .\evtx\sliver-security.evtx</code></td><td>Output</td></tr>
+<tr><td>2</td><td>DeepBlueCLI (live)</td><td><code class="inline">.\DeepBlue.ps1 -log security</code></td><td>Output</td></tr>
+<tr><td>3</td><td>WELA</td><td><code class="inline">.\WELA.ps1 -Help</code></td><td>Relatório</td></tr>
+<tr><td>4</td><td>PersistenceSniper</td><td><code class="inline">Find-AllPersistence -Verbose</code></td><td>Output</td></tr>
+<tr><td>5</td><td>Trawler</td><td><code class="inline">.\trawler.ps1</code></td><td><code class="inline">detections.csv</code></td></tr>
+<tr><td>6</td><td>Audit script</td><td><code class="inline">.\audit.ps1</code></td><td>Relatório</td></tr>
+<tr><td>7</td><td>Script 6.1 (logons)</td><td><code class="inline">.\logon-detect.ps1</code></td><td><code class="inline">logon-alerts.csv</code></td></tr>
+<tr><td>8</td><td>Script 6.2 (persistência)</td><td><code class="inline">.\persistence-quick.ps1</code></td><td><code class="inline">persistence-quick.csv</code></td></tr>
+<tr><td>9</td><td>Script 6.3 (ACLs)</td><td><code class="inline">.\acl-audit.ps1</code></td><td><code class="inline">acl-findings.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Output de DeepBlueCLI (2 modos)</li>
+<li>Relatório WELA</li>
+<li>Output PersistenceSniper</li>
+<li><code class="inline">detections.csv</code> (Trawler)</li>
+<li>Relatório audit.ps1</li>
+<li><code class="inline">logon-alerts.csv</code></li>
+<li><code class="inline">persistence-quick.csv</code></li>
+<li><code class="inline">acl-findings.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>14. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Qual a diferença entre DeepBlueCLI e WELA? / What's the difference between DeepBlueCLI and WELA?</li>
+<li>Porque é que o Trawler pode produzir falsos negativos? / Why can Trawler produce false negatives?</li>
+<li>Quando usar Kansa em vez de PersistenceSniper? / When to use Kansa instead of PersistenceSniper?</li>
+<li>Porque é que o AdminSDHolder é um alvo de alto valor? / Why is AdminSDHolder a high-value target?</li>
+<li>O que é MAQ e porque deve ser reduzido? / What is MAQ and why should it be reduced?</li>
+<li>Como se deteta brute-force com PowerShell nativo? / How to detect brute-force with native PowerShell?</li>
+<li>Qual a vantagem do Script 6.2 sobre o PersistenceSniper? / What's the advantage of Script 6.2 over PersistenceSniper?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>15. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu o DFIR com PowerShell: análise de logs com DeepBlueCLI, hardening com WELA, caça de persistência com PersistenceSniper, Trawler e Kansa, auditoria com audit.ps1, e deteção de abuso de DACL em AD com AD ACL Scanner. Acrescentámos <strong>três scripts de impacto nativos</strong> (deteção de brute-force, varredura rápida de persistência, auditoria de ACLs de alto valor) que não dependem de módulos externos e produzem evidência exportável. O Cap. 7 (Live-Forensicator) entra na análise forense assistida por IA.</span>
+<span class="en">This chapter covered DFIR with PowerShell: log analysis with DeepBlueCLI, hardening with WELA, persistence hunting with PersistenceSniper, Trawler, and Kansa, auditing with audit.ps1, and detecting DACL abuse in AD with AD ACL Scanner. We added <strong>three native impact scripts</strong> (brute-force detection, quick persistence sweep, high-value ACL audit) that don't depend on external modules and produce exportable evidence. Ch. 7 (Live-Forensicator) moves into AI-assisted forensic analysis.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 6 / Ethical Hacker Training Manual — Ch. 6</div>
+<div style="margin-top:.6rem">
+<a href="cap05.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap07.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

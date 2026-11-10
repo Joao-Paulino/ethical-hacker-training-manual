@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 31 — Consolidação Final | Ch. 31</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 31 — Consolidação Final</h1>
+<div class="sub">Ch. 31 — Final Consolidation: Index, Scripts, Lab Checklist, MITRE</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>📚 Nível: Referência</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#index">Índice Completo</a></li>
+<li><a href="#scripts">Scripts por Categoria</a></li><li><a href="#labcheck">Checklist de Laboratório</a></li>
+<li><a href="#mitre">MITRE Consolidado</a></li><li><a href="#next">Próximos Passos</a></li>
+<li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos do Capítulo / Chapter Objectives</h2>
+<div class="lang">
+<span class="pt">Consolidar o manual num único ponto de referência: índice dos 31 capítulos (0–30), scripts por categoria, checklist de laboratório unificada, mapeamento MITRE consolidado, e próximos passos.</span>
+<span class="en">Consolidate the manual into a single reference point: index of the 31 chapters (0–30), scripts by category, unified lab checklist, consolidated MITRE mapping, and next steps.</span>
+</div>
+</section>
+
+<section id="index">
+<h2>2. Índice Completo / Complete Index</h2>
+<table>
+<tr><th>Cap.</th><th>Título</th><th>Tema</th></tr>
+<tr><td>0</td><td>Introdução: PowerShell para Hackers</td><td>Fundamentos</td></tr>
+<tr><td>1</td><td>PowerShell: The Basics</td><td>Fundamentos</td></tr>
+<tr><td>2</td><td>LDAP Filters para AD Recon</td><td>Recon AD</td></tr>
+<tr><td>3</td><td>Exploring PowerView</td><td>Recon AD</td></tr>
+<tr><td>4</td><td>Operational Scripts</td><td>Operações</td></tr>
+<tr><td>5</td><td>Crash and Burn</td><td>Destrutivo</td></tr>
+<tr><td>6</td><td>DFIR: Logs, Persistência, ACLs</td><td>DFIR</td></tr>
+<tr><td>7</td><td>Live-Forensicator</td><td>DFIR</td></tr>
+<tr><td>8</td><td>DFIR: AnyDesk, DeadMatter, Nyx, HTA, APTs</td><td>DFIR</td></tr>
+<tr><td>9</td><td>PsMapExec</td><td>AD Avançado</td></tr>
+<tr><td>10</td><td>Timeroasting Users</td><td>AD Avançado</td></tr>
+<tr><td>11</td><td>Dropping Nukes (Atomic Red Team)</td><td>Purple Team</td></tr>
+<tr><td>12</td><td>Tenebris-Gate</td><td>Evasão</td></tr>
+<tr><td>13</td><td>Impacket Framework</td><td>AD Avançado</td></tr>
+<tr><td>14</td><td>Sliver C2: Lateral Movement</td><td>C2</td></tr>
+<tr><td>15</td><td>PowerSploit</td><td>Pós-Exploração</td></tr>
+<tr><td>16</td><td>Evading Detection (Ofuscação)</td><td>Evasão</td></tr>
+<tr><td>17</td><td>Advanced Persistence</td><td>Persistência</td></tr>
+<tr><td>18</td><td>DFIR Tools (AnyDesk, DeadMatter, Nyx)</td><td>DFIR</td></tr>
+<tr><td>19</td><td>HTA Compromise</td><td>DFIR</td></tr>
+<tr><td>20</td><td>DeadMatter (AV/EDR Evasion)</td><td>Evasão</td></tr>
+<tr><td>21</td><td>Nyx (Anti-Forensics)</td><td>Anti-Forensics</td></tr>
+<tr><td>22</td><td>Advanced Windows Persistence</td><td>Persistência</td></tr>
+<tr><td>23</td><td>AMSI Bypass + Mimikatz + LOLBAS</td><td>Pós-Exploração</td></tr>
+<tr><td>24</td><td>Moving from Bash to PowerShell</td><td>Transição</td></tr>
+<tr><td>25</td><td>Survival Edition Part 1: Basic Recon</td><td>Recon</td></tr>
+<tr><td>26</td><td>Survival Edition Part 3: Know Your Enemy</td><td>Telemetria</td></tr>
+<tr><td>27</td><td>dsquery e Finding Modules</td><td>Recon AD</td></tr>
+<tr><td>28</td><td>Group Policy Basics</td><td>AD</td></tr>
+<tr><td>29</td><td>Backdooring Installers with DFMI</td><td>Red Team</td></tr>
+<tr><td>30</td><td>Hunting Chinese APTs (LOLBAS)</td><td>DFIR</td></tr>
+<tr><td>31</td><td>Consolidação Final</td><td>Referência</td></tr>
+</table>
+</section>
+
+<section id="scripts">
+<h2>3. Scripts de Impacto por Categoria / Impact Scripts by Category</h2>
+<div class="lang">
+<span class="pt">Os scripts de impacto produzidos ao longo do manual, agrupados por categoria. Todos incluem <code class="inline">param()</code>, tratamento de erros, exportação CSV e instruções de uso. Consulta o capítulo respetivo para o código completo.</span>
+<span class="en">Impact scripts produced throughout the manual, grouped by category. All include <code class="inline">param()</code>, error handling, CSV export, and usage instructions. See the respective chapter for the full code.</span>
+</div>
+<h3>3.1 Recon AD / AD Recon</h3>
+<table>
+<tr><th>Cap.</th><th>Script</th><th>Output</th></tr>
+<tr><td>2</td><td>Filtros LDAP (comandos)</td><td>Output</td></tr>
+<tr><td>3</td><td>Enumeração PowerView (comandos)</td><td>Output</td></tr>
+<tr><td>9</td><td>PsMapExec (módulos)</td><td>Output</td></tr>
+<tr><td>27</td><td>ad-recon.ps1, nopass-accounts.ps1, dsquery-detect.ps1</td><td>ad-recon.csv, nopass-accounts.csv, dsquery-detect.csv</td></tr>
+<tr><td>28</td><td>gpo-enum.ps1, cpassword-hunt.ps1, gpp-decrypt.ps1, sysvol-read-detect.ps1</td><td>gpo-enum.csv, cpassword-hunt.csv, sysvol-read-detect.csv</td></tr>
+</table>
+<h3>3.2 Credenciais / Credentials</h3>
+<table>
+<tr><th>Cap.</th><th>Script</th><th>Output</th></tr>
+<tr><td>10</td><td>uac-detect.ps1, dollar-detect.ps1, legacy-audit.ps1</td><td>uac-changes.csv, dollar-users.csv, legacy-computers.csv</td></tr>
+<tr><td>13</td><td>dcsync-detect.ps1</td><td>dcsync-detect.csv</td></tr>
+<tr><td>15</td><td>mimikatz-detect.ps1</td><td>mimikatz-detect.csv</td></tr>
+<tr><td>23</td><td>amsi-detect.ps1</td><td>amsi-bypass-detect.csv</td></tr>
+<tr><td>30</td><td>regsave-detect.ps1</td><td>regsave-detect.csv</td></tr>
+</table>
+<h3>3.3 Movimento Lateral / Lateral Movement</h3>
+<table>
+<tr><th>Cap.</th><th>Script</th><th>Output</th></tr>
+<tr><td>13</td><td>admin-share-detect.ps1, remote-exec-detect.ps1</td><td>admin-share-access.csv, remote-exec-detect.csv</td></tr>
+<tr><td>14</td><td>sliver-service-detect.ps1, token-impersonation.ps1, pivot-detect.ps1, suspicious-services.ps1</td><td>sliver-service-detect.csv, token-impersonation.csv, pivot-detect.csv, suspicious-services.csv</td></tr>
+</table>
+<h3>3.4 Persistência / Persistence</h3>
+<table>
+<tr><th>Cap.</th><th>Script</th><th>Output</th></tr>
+<tr><td>6</td><td>persistence-quick.ps1</td><td>persistence-quick.csv</td></tr>
+<tr><td>17</td><td>dsrm-detect.ps1, dcshadow-detect.ps1, skeleton-detect.ps1</td><td>dsrm-detect.csv, dcshadow-detect.csv, skeleton-detect.csv</td></tr>
+<tr><td>19</td><td>greenshot-persist.ps1</td><td>greenshot-persist.csv</td></tr>
+<tr><td>22</td><td>ifeo-detect.ps1, gflags-detect.ps1, appinit-detect.ps1, lsass-packages.ps1</td><td>ifeo-detect.csv, gflags-detect.csv, appinit-detect.csv, lsass-packages.csv</td></tr>
+</table>
+<h3>3.5 Evasão / Evasion</h3>
+<table>
+<tr><th>Cap.</th><th>Script</th><th>Output</th></tr>
+<tr><td>12</td><td>masquerade-detect.ps1, api-hash-detect.ps1, syscall-detect.ps1, nonmodule-exec.ps1</td><td>masquerade-detect.csv, api-hash-detect.csv, syscall-detect.csv, nonmodule-exec.csv</td></tr>
+<tr><td>16</td><td>encoded-ps-detect.ps1, arg-obfuscation-detect.ps1, fragmented-script-detect.ps1</td><td>encoded-ps-detect.csv, arg-obfuscation-detect.csv, fragmented-script-detect.csv</td></tr>
+<tr><td>20</td><td>memcapture-detect.ps1, large-dumps.ps1, cg-check.ps1</td><td>memcapture-detect.csv, large-dumps.csv</td></tr>
+<tr><td>21</td><td>log-cleared.ps1, prefetch-detect.ps1, psreadline-detect.ps1</td><td>log-cleared.csv</td></tr>
+</table>
+<h3>3.6 DFIR e Deteção / DFIR and Detection</h3>
+<table>
+<tr><th>Cap.</th><th>Script</th><th>Output</th></tr>
+<tr><td>6</td><td>logon-detect.ps1, acl-audit.ps1</td><td>logon-alerts.csv, acl-findings.csv</td></tr>
+<tr><td>7</td><td>artifact-verify.ps1, evtx-integrity.ps1, ioc-extract.ps1</td><td>artifact-manifest.csv, evtx-integrity.csv, iocs-extracted.csv</td></tr>
+<tr><td>8</td><td>anydesk-analyzer.ps1, hta-detect.ps1, lolbas-detect.ps1, integrity-check.ps1</td><td>anydesk-artifacts.csv, hta-detections.csv, lolbas-detections.csv</td></tr>
+<tr><td>19</td><td>mshta-url-detect.ps1, lnk-analyzer.ps1</td><td>mshta-url-detect.csv, lnk-commands.csv</td></tr>
+<tr><td>25</td><td>posture-check.ps1, net-recon.ps1, session-enum.ps1</td><td>posture-check.csv, net-recon.csv, sessions.csv</td></tr>
+<tr><td>26</td><td>logging-config.ps1, telemetry-validation.ps1, amsi-bypass.ps1</td><td>logging-config.csv, telemetry-validation.csv, amsi-bypass.csv</td></tr>
+<tr><td>29</td><td>msi-inspect.ps1, msiexec-detect.ps1, msi-signature-check.ps1</td><td>msiexec-detect.csv</td></tr>
+<tr><td>30</td><td>certutil-detect.ps1, portproxy-detect.ps1, dnscmd-detect.ps1</td><td>certutil-detect.csv, portproxy-detect.csv, dnscmd-detect.csv</td></tr>
+</table>
+</section>
+
+<section id="labcheck">
+<h2>4. Checklist de Laboratório Unificada / Unified Lab Checklist</h2>
+<div class="lang">
+<span class="pt">Checklist transversal a todos os capítulos, para garantir consistência e evidência auditável.</span>
+<span class="en">Cross-chapter checklist to ensure consistency and auditable evidence.</span>
+</div>
+<h3>4.1 Antes de começar / Before starting</h3>
+<ul class="checklist">
+<li>Snapshot da VM (ou clone) / VM snapshot (or clone)</li>
+<li>Rede host-only isolada / Isolated host-only network</li>
+<li>Kali atualizado com as ferramentas necessárias / Kali updated with required tools</li>
+<li>Windows com Sysmon + PowerShell logging (para capítulos de deteção) / Windows with Sysmon + PowerShell logging (for detection chapters)</li>
+<li>Pasta de evidências criada (<code class="inline">.\loot</code>) / Evidence folder created</li>
+<li>Registo de data/hora, operador, case ID / Date/time, operator, case ID log</li>
+</ul>
+<h3>4.2 Durante o exercício / During the exercise</h3>
+<ul class="checklist">
+<li>Comandos registados com timestamp / Commands logged with timestamp</li>
+<li>Outputs exportados (CSV/JSON) / Outputs exported (CSV/JSON)</li>
+<li>Hashes SHA256 dos artefactos / SHA256 hashes of artifacts</li>
+<li>PCAP quando aplicável / PCAP when applicable</li>
+<li>Screenshots de findings críticos / Screenshots of critical findings</li>
+<li>Notas de false positives / Notes on false positives</li>
+</ul>
+<h3>4.3 No fim / At the end</h3>
+<ul class="checklist">
+<li>Relatório Markdown gerado / Markdown report generated</li>
+<li>Manifesto SHA256 / SHA256 manifest</li>
+<li>Snapshot revertido (se aplicável) / Snapshot reverted (if applicable)</li>
+<li>Limpeza de artefactos temporários / Cleanup of temporary artifacts</li>
+<li>Lições aprendidas registadas / Lessons learned recorded</li>
+</ul>
+</section>
+
+<section id="mitre">
+<h2>5. MITRE ATT&amp;CK Consolidado / Consolidated MITRE</h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Capítulos</th></tr>
+<tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>0, 1, 4, 5, 12, 15, 16, 23, 24, 29, 30</td></tr>
+<tr><td>OS Credential Dumping: LSASS Memory</td><td>T1003.001</td><td>9, 13, 15, 20, 23</td></tr>
+<tr><td>OS Credential Dumping: SAM</td><td>T1003.002</td><td>9, 13, 30</td></tr>
+<tr><td>OS Credential Dumping: NTDS</td><td>T1003.003</td><td>9, 13</td></tr>
+<tr><td>Steal or Forge Kerberos Tickets: Kerberoasting</td><td>T1558.003</td><td>2, 3, 9, 13</td></tr>
+<tr><td>Steal or Forge Kerberos Tickets: AS-REP Roasting</td><td>T1558.004</td><td>2, 3, 9, 10, 13</td></tr>
+<tr><td>Use Alternate Authentication Material: Pass the Ticket</td><td>T1550.003</td><td>9, 14</td></tr>
+<tr><td>Remote Services: SMB/Windows Admin Shares</td><td>T1021.002</td><td>9, 13, 14</td></tr>
+<tr><td>Windows Management Instrumentation</td><td>T1047</td><td>13, 14</td></tr>
+<tr><td>Create or Modify System Process: Windows Service</td><td>T1543.003</td><td>14</td></tr>
+<tr><td>System Binary Proxy Execution</td><td>T1218</td><td>19, 23, 30</td></tr>
+<tr><td>Event Triggered Execution: IFEO Injection</td><td>T1546.012</td><td>22</td></tr>
+<tr><td>Event Triggered Execution: WMI Event Subscription</td><td>T1546.003</td><td>22</td></tr>
+<tr><td>Hijack Execution Flow: AppInit DLLs</td><td>T1574.010</td><td>22</td></tr>
+<tr><td>Boot or Logon Autostart Execution: LSASS Driver</td><td>T1547.008</td><td>22</td></tr>
+<tr><td>Indicator Removal: Clear Windows Event Logs</td><td>T1070.001</td><td>1, 8, 18, 21</td></tr>
+<tr><td>Indicator Removal: Clear Command History</td><td>T1070.003</td><td>1, 21</td></tr>
+<tr><td>Obfuscated Files or Information</td><td>T1027</td><td>1, 16, 23</td></tr>
+<tr><td>Impair Defenses: Disable or Modify Tools</td><td>T1562.001</td><td>1, 5, 23, 26</td></tr>
+<tr><td>Ingress Tool Transfer</td><td>T1105</td><td>1, 4, 12, 13, 14, 29, 30</td></tr>
+<tr><td>Exfiltration to Cloud Storage</td><td>T1567.002</td><td>4</td></tr>
+<tr><td>Credentials from Web Browsers</td><td>T1555.003</td><td>4</td></tr>
+<tr><td>Private Keys</td><td>T1552.004</td><td>4</td></tr>
+<tr><td>Unsecured Credentials: Group Policy Preferences</td><td>T1552.006</td><td>28</td></tr>
+<tr><td>Account Discovery: Domain Account</td><td>T1087.002</td><td>2, 3, 9, 27</td></tr>
+<tr><td>Permission Groups Discovery: Domain Groups</td><td>T1069.002</td><td>2, 3, 27</td></tr>
+<tr><td>Remote System Discovery</td><td>T1018</td><td>2, 3, 27, 30</td></tr>
+<tr><td>System Information Discovery</td><td>T1082</td><td>0, 25, 30</td></tr>
+<tr><td>System Owner/User Discovery</td><td>T1033</td><td>25</td></tr>
+</table>
+</section>
+
+<section id="next">
+<h2>6. Próximos Passos / Next Steps</h2>
+<h3>6.1 Para consolidar / To consolidate</h3>
+<ul class="checklist">
+<li>Rever todos os capítulos e scripts em laboratório isolado / Review all chapters and scripts in isolated lab</li>
+<li>Praticar cada técnica com snapshot e reverter / Practice each technique with snapshot and revert</li>
+<li>Preencher o relatório de pentest com os outputs / Fill the pentest report with outputs</li>
+</ul>
+<h3>6.2 Para aprofundar / To deepen</h3>
+<ul class="checklist">
+<li>Certificações: OSCP, CRTP, CRTO, PNPT / Certifications</li>
+<li>Formação Hackers-Arise (PowerShell for Hackers, etc.) / Hackers-Arise training</li>
+<li>Laboratórios: Hack The Box, TryHackMe, Proving Grounds / Labs</li>
+<li>AD: BloodHound, Certipy, Rubeus, Mimikatz avançado / AD tools</li>
+<li>DFIR: Volatility, KAPE, Velociraptor, Chainsaw / DFIR tools</li>
+</ul>
+<h3>6.3 Para o blue team / For the blue team</h3>
+<ul class="checklist">
+<li>Implementar Sigma rules para as técnicas do manual / Implement Sigma rules</li>
+<li>Configurar Sysmon + Script Block Logging + Transcription / Configure logging</li>
+<li>Testar deteções com Atomic Red Team (Cap. 11) / Test detections with Atomic Red Team</li>
+<li>Construir dashboards no SIEM / Build SIEM dashboards</li>
+<li>Correr purple team exercises regulares / Run regular purple team exercises</li>
+</ul>
+</section>
+
+<section id="sum">
+<h2>7. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo consolidou o manual: índice dos 31 capítulos (0–30), scripts de impacto por categoria, checklist de laboratório unificada, mapeamento MITRE consolidado e próximos passos. O manual cobre desde os fundamentos do PowerShell até às técnicas mais avançadas de AD, evasão, persistência e DFIR, sempre com scripts de impacto prontos a executar e orientações de deteção para o blue team. O Cap. 32 (Kill Chain) entra no caso integrado de ponta a ponta.</span>
+<span class="en">This chapter consolidated the manual: index of the 31 chapters (0–30), impact scripts by category, unified lab checklist, consolidated MITRE mapping, and next steps. The manual covers from PowerShell fundamentals to the most advanced AD, evasion, persistence, and DFIR techniques, always with ready-to-run impact scripts and detection guidance for the blue team. Ch. 32 (Kill Chain) moves into the end-to-end integrated case.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 31 / Ethical Hacker Training Manual — Ch. 31</div>
+<div style="margin-top:.6rem">
+<a href="cap30.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap32.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

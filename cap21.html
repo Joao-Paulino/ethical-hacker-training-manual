@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 21 — Nyx: Anti-Forensics | Ch. 21</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 21 — Nyx: Anti-Forensics</h1>
+<div class="sub">Ch. 21 — Hiding Your Presence with Nyx</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🛡️ Nível: Anti-Forensics / Avançado</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#what">O que é Nyx</a></li><li><a href="#modules">Módulos Windows</a></li>
+<li><a href="#usage">Uso</a></li><li><a href="#limits">Limitações</a></li>
+<li><a href="#impact">Scripts de Impacto</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o Nyx como ferramenta anti-forense cross-platform; conhecer os módulos Windows (<code class="inline">events</code>, <code class="inline">history</code>, <code class="inline">registry</code>, <code class="inline">filesystem</code>, <code class="inline">temp</code>, <code class="inline">security</code>, <code class="inline">advanced</code>); executar DryRun e execução real; compreender as limitações (alpha, sem secure erase, EDR cloud); <strong>construir scripts de impacto nativos</strong> para deteção pós-limpeza.</span>
+<span class="en">Understand Nyx as a cross-platform anti-forensic tool; know the Windows modules (<code class="inline">events</code>, <code class="inline">history</code>, <code class="inline">registry</code>, <code class="inline">filesystem</code>, <code class="inline">temp</code>, <code class="inline">security</code>, <code class="inline">advanced</code>); run DryRun and actual execution; understand limitations (alpha, no secure erase, EDR cloud); <strong>build native impact scripts</strong> for post-cleaning detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Durante engagements red team, muitas vezes temos de lidar com os logs que os diferentes sistemas operativos armazenam. Cada ação pode deixar evidência digital. Essa evidência é exatamente aquilo em que as equipas azuis e os investigadores forenses se baseiam para reconstruir um ataque. Por vezes, um engagement red team destina-se a simular um adversário o mais realisticamente possível. Os hackers tentam frequentemente esconder o que fizeram apagando evidência ou alterando artefactos forenses para dificultar as investigações. Se queremos avaliar com precisão a capacidade de uma organização detetar intrusões sofisticadas, também precisamos de testar quão bem responde quando um atacante tenta remover esses rastos.</span>
+<span class="en">During red team engagements, we often have to deal with the logs that different operating systems store. Every action can leave behind digital evidence. That evidence is exactly what blue teams and digital forensics investigators rely on when reconstructing an attack. Sometimes, a red team engagement is meant to simulate an adversary as realistically as possible. Hackers frequently attempt to hide what they did by erasing evidence or altering forensic artifacts to make investigations more difficult. If we want to accurately evaluate an organization's ability to detect sophisticated intrusions, we also need to test how well it responds when an attacker attempts to remove those traces.</span>
+</div>
+</section>
+
+<section id="what">
+<h2>3. O que é Nyx <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O Nyx é um script self-contained para limpar rastos forenses em Linux, macOS e Windows. Os scripts percorrem uma coleção predefinida de artefactos forenses e removem ou limpam evidência que possa ter sido gerada durante o uso do sistema. Nenhuma ferramenta anti-forense pode garantir que todos os rastos desaparecem. Ambientes empresariais modernos recolhem telemetria de muitas fontes, incluindo EDR, servidores de logs centralizados, monitorização de rede, cloud e backups. Mesmo que os artefactos locais sejam modificados ou apagados, a evidência pode ainda existir noutro lado.</span>
+<span class="en">Nyx is a self-contained script for cleaning forensic traces on Linux, macOS, and Windows. The scripts walk through a predefined collection of forensic artifacts and remove or clean evidence that may have been generated during system usage. No anti-forensics tool can guarantee that every trace of activity disappears. Modern enterprise environments collect telemetry from many different sources including EDR, centralized log servers, network monitoring, cloud services, and backup solutions. Even if local artifacts are modified or deleted, evidence may still exist elsewhere.</span>
+</div>
+<div class="callout danger">
+<strong>⚠️ Aviso / Warning:</strong>
+<div class="lang">
+<span class="pt">O Nyx está em <strong>alpha</strong> e a limpeza é <strong>irreversível</strong>. Usa apenas em laboratório autorizado. O objetivo do manual é <strong>detetar</strong> e <strong>mitigar</strong>, não executar em produção.</span>
+<span class="en">Nyx is <strong>alpha</strong> and cleaning is <strong>irreversible</strong>. Use only in authorized lab. This manual's goal is to <strong>detect</strong> and <strong>mitigate</strong>, not run in production.</span>
+</div>
+</div>
+</section>
+
+<section id="modules">
+<h2>4. Módulos Windows <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">A tabela oficial do GitHub lista os artefactos limpos por cada módulo Windows:</span>
+<span class="en">The official GitHub table lists the artifacts cleaned by each Windows module:</span>
+</div>
+<table>
+<tr><th>Módulo</th><th>Artefactos limpos / Artifacts cleaned</th></tr>
+<tr><td><code class="inline">events</code></td><td>Security, System, Application, Sysmon, WinRM, PowerShell/Operational, AppLocker, AMSI</td></tr>
+<tr><td><code class="inline">history</code></td><td>PowerShell/CMD history, Prefetch, Jump Lists, Recent Docs, Windows Timeline, Search history, IE/Edge history</td></tr>
+<tr><td><code class="inline">registry</code></td><td>MRUs, USB history, BAM/DAM, ShellBags, UserAssist, Terminal Server Client, Media Player, Office MRUs</td></tr>
+<tr><td><code class="inline">filesystem</code></td><td>USN journal, Recycle Bin, thumbcache, shortcuts, index files, SRUM database, notification history</td></tr>
+<tr><td><code class="inline">temp</code></td><td>Temp dirs, DNS cache, VSS shadows, WER archives, memory dumps, NetBIOS/ARP cache, cmdkey credentials, Defender history</td></tr>
+<tr><td><code class="inline">security</code></td><td>EDR/AV logs: CrowdStrike, SentinelOne, Carbon Black, McAfee, Symantec; FTK Imager artifacts; Hyper-V, WSL, Docker Desktop logs</td></tr>
+<tr><td><code class="inline">advanced</code></td><td>Certificates, tasks, services, Wi-Fi/VPN profiles with NYX-TEST mask; Chrome extensions nyxtest*; crypto files *nyx*</td></tr>
+</table>
+<div class="lang">
+<span class="pt">O modo <code class="inline">-Advanced</code> faz também: ajuste de ACLs em <code class="inline">C:\Windows\Prefetch</code> (com backup e restore), paragem do WSearch para apagar <code class="inline">Windows.edb</code>, e <code class="inline">powercfg -h off</code> + <code class="inline">ClearPageFileAtShutdown=1</code>.</span>
+<span class="en"><code class="inline">-Advanced</code> mode also: adjusts ACLs on <code class="inline">C:\Windows\Prefetch</code> (with backup and restore), stops WSearch to delete <code class="inline">Windows.edb</code>, and runs <code class="inline">powercfg -h off</code> + <code class="inline">ClearPageFileAtShutdown=1</code>.</span>
+</div>
+</section>
+
+<section id="usage">
+<h2>5. Uso <span class="badge orig">Original</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Antes de limpar, corre sempre o <code class="inline">-DryRun</code> para ver o que será limpo sem modificar nada.</span>
+<span class="en">Before cleaning, always run <code class="inline">-DryRun</code> to see what will be cleaned without modifying anything.</span>
+</div>
+<pre># Download
+PS > iwr https://raw.githubusercontent.com/evilsocket/nyx/refs/heads/main/nyx.ps1 -OutFile nyx.ps1
+
+# DryRun
+PS > .\nyx.ps1 -DryRun
+
+# Execução real
+PS > .\nyx.ps1
+
+# Forçar (sem prompt) e log
+PS > .\nyx.ps1 -Force -LogFile "nyx-audit.log"
+
+# Módulos específicos
+PS > .\nyx.ps1 -Modules events,history -Force
+
+# Modo avançado
+PS > .\nyx.ps1 -Advanced -Force</pre>
+<div class="lang">
+<span class="pt">A execução em memória também é possível (<code class="inline">iwr ... | iex</code>), mas o artigo nota que isso não garante invisibilidade — EDR moderno monitoriza comportamento, AMSI e memória, não apenas ficheiros.</span>
+<span class="en">In-memory execution is also possible (<code class="inline">iwr ... | iex</code>), but the article notes it doesn't guarantee invisibility — modern EDR monitors behavior, AMSI, and memory, not just files.</span>
+</div>
+</section>
+
+<section id="limits">
+<h2>6. Limitações <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">A análise técnica do Nyx identifica limitações importantes: não há <strong>secure erase</strong> (apenas <code class="inline">rm</code>/<code class="inline">truncate</code>/<code class="inline">Clear-Content</code>), não limpa espaço livre, não trata <code class="inline">$LogFile</code> ou <code class="inline">$MFT</code> slack em NTFS, e a limpeza de logs de EDR é muitas vezes ineficaz porque estes mantêm telemetria em kernel/cloud.</span>
+<span class="en">Technical analysis of Nyx identifies important limitations: no <strong>secure erase</strong> (only <code class="inline">rm</code>/<code class="inline">truncate</code>/<code class="inline">Clear-Content</code>), doesn't wipe free space, doesn't handle <code class="inline">$LogFile</code> or <code class="inline">$MFT</code> slack on NTFS, and EDR log cleaning is often ineffective because they keep telemetry in kernel/cloud.</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>7. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam o blue team a detetar atividade de limpeza de artefactos forenses.</span>
+<span class="en">The scripts below help the blue team detect forensic artifact cleaning activity.</span>
+</div>
+
+<h3>7.1 Script 21.1 — Deteção de Limpeza de Logs / Log Clearing Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar eventos 1102 (Security log cleared) e 104 (System log cleared). <strong>Evidência:</strong> <code class="inline">log-cleared.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect events 1102 (Security log cleared) and 104 (System log cleared). <strong>Evidence:</strong> <code class="inline">log-cleared.csv</code>.</span>
+</div>
+<pre># Script 21.1 - Log Clearing Detection
+$out = ".\log-cleared.csv"
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 500 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 1102 } | ForEach-Object {
+    $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Event="1102"; Log="Security" }
+  }
+Get-WinEvent -LogName System -MaxEvents 500 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 104 } | ForEach-Object {
+    $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Event="104"; Log="System" }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Log cleared events: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>7.2 Script 21.2 — Deteção de Prefetch Vazio / Empty Prefetch Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> verificar se a pasta Prefetch está vazia ou com poucos ficheiros (indicador de limpeza). <strong>Evidência:</strong> output no ecrã.</span>
+<span class="en"><strong>Goal:</strong> check if the Prefetch folder is empty or has very few files (cleaning indicator). <strong>Evidence:</strong> on-screen output.</span>
+</div>
+<pre># Script 21.2 - Empty Prefetch Detection
+$pf = Get-ChildItem "C:\Windows\Prefetch\*.pf" -EA SilentlyContinue
+$count = $pf.Count
+if ($count -lt 10) {
+  Write-Host "[!] Prefetch has only $count files - possible cleaning" -ForegroundColor Red
+} else {
+  Write-Host "[+] Prefetch has $count files - normal" -ForegroundColor Green
+}
+$pf | Select-Object -First 5 Name, LastWriteTime | Format-Table -AutoSize</pre>
+
+<h3>7.3 Script 21.3 — Deteção de PSReadLine Vazio / Empty PSReadLine Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> verificar se o histórico do PowerShell foi limpo (ficheiro vazio ou inexistente). <strong>Evidência:</strong> output no ecrã.</span>
+<span class="en"><strong>Goal:</strong> check if PowerShell history was cleared (empty or missing file). <strong>Evidence:</strong> on-screen output.</span>
+</div>
+<pre># Script 21.3 - Empty PSReadLine Detection
+$hist = "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt"
+if (-not (Test-Path $hist)) {
+  Write-Host "[!] PSReadLine history file MISSING - possible cleaning" -ForegroundColor Red
+} elseif ((Get-Item $hist).Length -eq 0) {
+  Write-Host "[!] PSReadLine history file is EMPTY - possible cleaning" -ForegroundColor Red
+} else {
+  Write-Host "[+] PSReadLine history has $((Get-Item $hist).Length) bytes - normal" -ForegroundColor Green
+}</pre>
+</section>
+
+<section id="mitre">
+<h2>8. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Indicator Removal: Clear Windows Event Logs</td><td>T1070.001</td><td>events</td></tr>
+<tr><td>Indicator Removal: Clear Command History</td><td>T1070.003</td><td>history</td></tr>
+<tr><td>Indicator Removal: File Deletion</td><td>T1070.004</td><td>filesystem, temp</td></tr>
+<tr><td>Indicator Removal: Timestomp</td><td>T1070.006</td><td>registry (MRUs)</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>9. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Centralizar logs no SIEM</strong> — o Nyx limpa logs locais, mas o SIEM preserva a evidência.</li>
+<li><strong>Monitorizar eventos 1102 e 104</strong> — Script 21.1.</li>
+<li><strong>Alertar sobre Prefetch vazio</strong> — Script 21.2.</li>
+<li><strong>Alertar sobre PSReadLine vazio</strong> — Script 21.3.</li>
+<li><strong>Ativar Credential Guard</strong> — protege contra extração pós-limpeza.</li>
+<li><strong>Monitorizar execução de <code class="inline">wevtutil cl</code></strong> via Sysmon/EDR.</li>
+<li><strong>Honeytokens</strong> — logs canário, Prefetch falsos.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>10. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows isolada com snapshot. Correr Nyx em modo <code class="inline">-DryRun</code> e depois apenas com o módulo <code class="inline">history</code>. Verificar com os scripts de deteção. Reverter snapshot. <strong>Objetivo:</strong> compreender o impacto e validar deteções.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows VM with snapshot. Run Nyx in <code class="inline">-DryRun</code> mode and then only with the <code class="inline">history</code> module. Verify with detection scripts. Revert snapshot. <strong>Goal:</strong> understand impact and validate detections.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>DryRun</td><td><code class="inline">.\nyx.ps1 -DryRun</code></td><td>Output</td></tr>
+<tr><td>2</td><td>Limpar apenas history</td><td><code class="inline">.\nyx.ps1 -Modules history -Force</code></td><td>Output</td></tr>
+<tr><td>3</td><td>Deteção logs</td><td><code class="inline">.\log-cleared.ps1</code></td><td><code class="inline">log-cleared.csv</code></td></tr>
+<tr><td>4</td><td>Deteção Prefetch</td><td><code class="inline">.\prefetch-detect.ps1</code></td><td>Output</td></tr>
+<tr><td>5</td><td>Deteção PSReadLine</td><td><code class="inline">.\psreadline-detect.ps1</code></td><td>Output</td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Output DryRun</li>
+<li>Output limpeza</li>
+<li><code class="inline">log-cleared.csv</code></li>
+<li>Output Prefetch/PSReadLine</li>
+<li>Snapshot revertido</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>11. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Quais são os módulos Windows do Nyx? / What are Nyx's Windows modules?</li>
+<li>Porque é que o <code class="inline">-DryRun</code> é obrigatório? / Why is <code class="inline">-DryRun</code> mandatory?</li>
+<li>O que faz o módulo <code class="inline">security</code>? / What does the <code class="inline">security</code> module do?</li>
+<li>Porque é que a limpeza de logs de EDR é muitas vezes ineficaz? / Why is EDR log cleaning often ineffective?</li>
+<li>Como se deteta limpeza de logs no blue team? / How to detect log clearing on the blue team?</li>
+<li>Porque é que a centralização de logs é crucial? / Why is log centralization crucial?</li>
+<li>O que é o modo <code class="inline">-Advanced</code>? / What is <code class="inline">-Advanced</code> mode?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>12. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu o Nyx, uma ferramenta anti-forense cross-platform: módulos Windows (<code class="inline">events</code>, <code class="inline">history</code>, <code class="inline">registry</code>, <code class="inline">filesystem</code>, <code class="inline">temp</code>, <code class="inline">security</code>, <code class="inline">advanced</code>), uso com <code class="inline">-DryRun</code> e <code class="inline">-Force</code>, e limitações (alpha, sem secure erase, EDR cloud). A conclusão é que nenhuma ferramenta anti-forense garante invisibilidade total — a centralização de logs e a monitorização de eventos de limpeza são as defesas mais eficazes. Acrescentámos <strong>três scripts de impacto</strong> (deteção de limpeza de logs, Prefetch vazio, PSReadLine vazio) que ajudam o blue team a detetar esta técnica. O Cap. 22 entra na série Advanced Windows Persistence.</span>
+<span class="en">This chapter covered Nyx, a cross-platform anti-forensic tool: Windows modules (<code class="inline">events</code>, <code class="inline">history</code>, <code class="inline">registry</code>, <code class="inline">filesystem</code>, <code class="inline">temp</code>, <code class="inline">security</code>, <code class="inline">advanced</code>), usage with <code class="inline">-DryRun</code> and <code class="inline">-Force</code>, and limitations (alpha, no secure erase, EDR cloud). The conclusion is that no anti-forensic tool guarantees total invisibility — log centralization and monitoring of cleaning events are the most effective defenses. We added <strong>three impact scripts</strong> (log clearing detection, empty Prefetch, empty PSReadLine) that help the blue team detect this technique. Ch. 22 moves into the Advanced Windows Persistence series.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 21 / Ethical Hacker Training Manual — Ch. 21</div>
+<div style="margin-top:.6rem">
+<a href="cap20.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap22.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

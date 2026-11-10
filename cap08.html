@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 8 — DFIR: Ferramentas e Artefactos | Ch. 8</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 8 — DFIR: Ferramentas e Artefactos</h1>
+<div class="sub">Ch. 8 — DFIR: Tools and Artifacts</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🛡️ Nível: DFIR / Avançado</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#anydesk">AnyDesk</a></li>
+<li><a href="#deadmatter">DeadMatter</a></li><li><a href="#nyx">Nyx</a></li>
+<li><a href="#hta">HTA Compromise</a></li><li><a href="#apts">APTs e LOLBAS</a></li>
+<li><a href="#impact">Scripts de Impacto</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Analisar artefactos forenses do AnyDesk (logs, traces, registo); usar o DeadMatter para extrair credenciais de dumps de memória sem offsets fixos; usar o Nyx para limpar artefactos forenses (e compreender o impacto); investigar um compromisso baseado em HTA; compreender como APTs chineses abusam de ferramentas nativas (LOLBAS); <strong>construir scripts de impacto nativos</strong> para deteção e análise.</span>
+<span class="en">Analyze AnyDesk forensic artifacts (logs, traces, registry); use DeadMatter to extract credentials from memory dumps without fixed offsets; use Nyx to clean forensic artifacts (and understand the impact); investigate an HTA-based compromise; understand how Chinese APTs abuse native tools (LOLBAS); <strong>build native impact scripts</strong> for detection and analysis.</span>
+</div>
+</section>
+
+<section id="anydesk">
+<h2>2. AnyDesk — Artefactos Forenses <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O AnyDesk é uma ferramenta de acesso remoto legítima, mas é frequentemente abusada por APTs. Os artefactos forenses incluem ficheiros de trace, logs de sessão, registo e Prefetch. O LOLRMM documenta os caminhos exatos dos ficheiros de trace: <code class="inline">%programdata%\AnyDesk\ad_svc.trace</code>, <code class="inline">%programdata%\AnyDesk\connection_trace.txt</code>, <code class="inline">%APPDATA%\AnyDesk\connection_trace.txt</code>, <code class="inline">%APPDATA%\AnyDesk\ad.trace</code>, e <code class="inline">C:\Windows\SysWOW64\config\systemprofile\AppData\Roaming\AnyDesk\*</code>. Um estudo forense confirma que os logs de sessão, traces de transferência de ficheiros e traces de conexão são recuperáveis em todos os cenários, e que os artefactos de memória são críticos para capturar conexões em curso.</span>
+<span class="en">AnyDesk is a legitimate remote access tool, but it's frequently abused by APTs. Forensic artifacts include trace files, session logs, registry, and Prefetch. LOLRMM documents the exact trace file paths: <code class="inline">%programdata%\AnyDesk\ad_svc.trace</code>, <code class="inline">%programdata%\AnyDesk\connection_trace.txt</code>, <code class="inline">%APPDATA%\AnyDesk\connection_trace.txt</code>, <code class="inline">%APPDATA%\AnyDesk\ad.trace</code>, and <code class="inline">C:\Windows\SysWOW64\config\systemprofile\AppData\Roaming\AnyDesk\*</code>. A forensic study confirms that session logs, file transfer traces, and connection traces are recoverable in all scenarios, and memory artifacts are critical for capturing in-session connections.</span>
+</div>
+<h3>2.1 Comandos de análise / Analysis commands</h3>
+<pre># Listar artefactos AnyDesk
+Get-ChildItem "$env:PROGRAMDATA\AnyDesk" -Recurse -EA SilentlyContinue
+Get-ChildItem "$env:APPDATA\AnyDesk" -Recurse -EA SilentlyContinue
+
+# Ler traces
+Get-Content "$env:PROGRAMDATA\AnyDesk\ad_svc.trace" -Tail 100
+Get-Content "$env:APPDATA\AnyDesk\connection_trace.txt" -Tail 50</pre>
+</section>
+
+<section id="deadmatter">
+<h2>3. DeadMatter — Extração de Credenciais de Memória <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O DeadMatter é uma ferramenta C# que extrai credenciais (NTLM hashes, DPAPI keys) de dumps de memória <strong>sem offsets fixos</strong>, usando estrutura scanning e carving. Funciona em raw dumps, minidumps, ficheiros de hibernação e ficheiros de memória de VMs. É útil quando o EDR/AV bloqueia o dump direto do LSASS — em vez de exfiltrar um dump enorme, processa localmente e extrai só o essencial.</span>
+<span class="en">DeadMatter is a C# tool that extracts credentials (NTLM hashes, DPAPI keys) from memory dumps <strong>without fixed offsets</strong>, using structure scanning and carving. It works on raw dumps, minidumps, hibernation files, and VM memory files. It's useful when EDR/AV blocks direct LSASS dumping — instead of exfiltrating a huge dump, it processes locally and extracts only the essentials.</span>
+</div>
+<h3>3.1 Compilar / Build</h3>
+<pre>PS > git clone https://github.com/qsecure-labs/DeadMatter.git
+PS > cd DeadMatter
+PS > dotnet build -c release</pre>
+<div class="lang">
+<span class="pt">O executável fica em <code class="inline">bin\Release\Deadmatter.exe</code>.</span>
+<span class="en">The executable ends up in <code class="inline">bin\Release\Deadmatter.exe</code>.</span>
+</div>
+<h3>3.2 Verificar Credential Guard / Check Credential Guard</h3>
+<pre>PS > Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard</pre>
+<div class="lang">
+<span class="pt">Se estiver ativo, a extração de credenciais fica comprometida.</span>
+<span class="en">If enabled, credential extraction is compromised.</span>
+</div>
+<h3>3.3 Extrair / Extract</h3>
+<pre>:: Extrair com mimikatz + carving
+Deadmatter.exe -f memory_dump.raw
+
+:: Apenas carving
+Deadmatter.exe -f memory_dump.raw -m carve
+
+:: Fingerprint do OS
+Deadmatter.exe -f memory_dump.raw -m none -i</pre>
+</section>
+
+<section id="nyx">
+<h2>4. Nyx — Limpeza de Artefactos Forenses <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O Nyx é um script self-contained que limpa artefactos forenses em Linux, macOS e Windows. Em Windows, os módulos incluem <code class="inline">events</code> (Security, Sysmon, PowerShell/Operational, AMSI, etc.), <code class="inline">history</code> (PowerShell history, Prefetch, Jump Lists), <code class="inline">registry</code> (MRUs, USB history, ShellBags, UserAssist).</span>
+<span class="en">Nyx is a self-contained script that cleans forensic artifacts on Linux, macOS, and Windows. On Windows, modules include <code class="inline">events</code> (Security, Sysmon, PowerShell/Operational, AMSI, etc.), <code class="inline">history</code> (PowerShell history, Prefetch, Jump Lists), <code class="inline">registry</code> (MRUs, USB history, ShellBags, UserAssist).</span>
+</div>
+<h3>4.1 Dry run (obrigatório antes de executar) / Dry run (mandatory before running)</h3>
+<pre>PS > iwr https://raw.githubusercontent.com/evilsocket/nyx/refs/heads/main/nyx.ps1 -OutFile nyx.ps1
+PS > .\nyx.ps1 -DryRun</pre>
+<h3>4.2 Executar / Run</h3>
+<pre>PS > .\nyx.ps1
+# Ou módulos específicos:
+PS > .\nyx.ps1 -Modules events -Force
+PS > .\nyx.ps1 -Modules history -Advanced -Force</pre>
+<div class="callout danger">
+<strong>⚠️ Aviso / Warning:</strong>
+<div class="lang">
+<span class="pt">O Nyx é alpha e a limpeza é <strong>irreversível</strong>. Usa apenas em laboratório autorizado. O artigo original demonstra o Nyx como técnica anti-forense — o objetivo do manual é <strong>detetar</strong> e <strong>mitigar</strong>, não executar em produção.</span>
+<span class="en">Nyx is alpha and cleaning is <strong>irreversible</strong>. Use only in authorized lab. The original article demonstrates Nyx as an anti-forensic technique — this manual's goal is to <strong>detect</strong> and <strong>mitigate</strong>, not run in production.</span>
+</div>
+</div>
+</section>
+
+<section id="hta">
+<h2>5. Compromisso baseado em HTA <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Os atacantes abusam do <code class="inline">mshta.exe</code> para executar ficheiros HTA (HTML Application) remotos ou locais, contornando defesas e executando código sem dropar binários. A regra de deteção procura <code class="inline">mshta.exe</code> com <code class="inline">http://</code>, <code class="inline">https://</code> ou <code class="inline">ftp://</code> na linha de comando.</span>
+<span class="en">Attackers abuse <code class="inline">mshta.exe</code> to execute remote or local HTA (HTML Application) files, bypassing defenses and executing code without dropping binaries. The detection rule looks for <code class="inline">mshta.exe</code> with <code class="inline">http://</code>, <code class="inline">https://</code>, or <code class="inline">ftp://</code> in the command line.</span>
+</div>
+<pre># Deteção: mshta.exe com URL
+Get-WinEvent -LogName Security -MaxEvents 1000 |
+  Where-Object { $_.Id -eq 4688 } |
+  ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $cmd = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    if ($cmd -match "mshta\.exe.*(https?|ftp)://") { $cmd }
+  }</pre>
+</section>
+
+<section id="apts">
+<h2>6. APTs Chineses e LOLBAS <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">APTs chineses abusam de ferramentas nativas do Windows (LOLBAS) como <code class="inline">nltest</code>, <code class="inline">certutil</code>, <code class="inline">netsh</code>, <code class="inline">reg.exe</code>, <code class="inline">vssadmin</code> para reconhecimento, roubo de credenciais e movimento lateral, misturando-se com atividade administrativa rotineira. Exemplos: <code class="inline">nltest /dclist</code> (listar DCs), <code class="inline">certutil -urlcache -split -f</code> (download), <code class="inline">reg save hklm\sam</code> (dump SAM), <code class="inline">netsh interface portproxy</code> (túnel).</span>
+<span class="en">Chinese APTs abuse native Windows tools (LOLBAS) like <code class="inline">nltest</code>, <code class="inline">certutil</code>, <code class="inline">netsh</code>, <code class="inline">reg.exe</code>, <code class="inline">vssadmin</code> for reconnaissance, credential theft, and lateral movement, blending into routine admin activity. Examples: <code class="inline">nltest /dclist</code> (list DCs), <code class="inline">certutil -urlcache -split -f</code> (download), <code class="inline">reg save hklm\sam</code> (SAM dump), <code class="inline">netsh interface portproxy</code> (tunnel).</span>
+</div>
+<pre># Deteção de LOLBAS suspeitos
+$patterns = @(
+  "nltest.*\/dclist",
+  "certutil.*-urlcache.*-f",
+  "reg.*save.*hklm\\\\sam",
+  "netsh.*portproxy",
+  "vssadmin.*create.*shadow"
+)
+Get-WinEvent -LogName Security -MaxEvents 2000 |
+  Where-Object { $_.Id -eq 4688 } |
+  ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $cmd = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    foreach ($p in $patterns) { if ($cmd -match $p) { [PSCustomObject]@{ Time=$_.TimeCreated; Cmd=$cmd; Pattern=$p } } }
+  }</pre>
+</section>
+
+<section id="impact">
+<h2>7. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo consolidam a análise dos artefactos numa única execução, com output legível e exportação para relatório.</span>
+<span class="en">The scripts below consolidate artifact analysis into a single run, with readable output and report export.</span>
+</div>
+
+<h3>7.1 Script 8.1 — Análise de Artefactos AnyDesk / AnyDesk Artifact Analysis</h3>
+<pre># Script 8.1 - AnyDesk Artifact Analyzer
+$paths = @(
+  "$env:PROGRAMDATA\AnyDesk",
+  "$env:APPDATA\AnyDesk",
+  "C:\Windows\SysWOW64\config\systemprofile\AppData\Roaming\AnyDesk"
+)
+$results = @()
+foreach ($p in $paths) {
+  if (Test-Path $p) {
+    Get-ChildItem $p -Recurse -File -EA SilentlyContinue | ForEach-Object {
+      $results += [PSCustomObject]@{
+        Path = $_.FullName; Size = $_.Length
+        SHA256 = (Get-FileHash $_.FullName -Algorithm SHA256).Hash
+        LastWrite = $_.LastWriteTime
+      }
+    }
+  }
+}
+$out = ".\anydesk-artifacts.csv"
+$results | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] AnyDesk artifacts: $($results.Count) -> $out" -ForegroundColor Green</pre>
+
+<h3>7.2 Script 8.2 — Deteção de Execução HTA / HTA Execution Detection</h3>
+<pre># Script 8.2 - HTA Execution Detector
+$out = ".\hta-detections.csv"
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4688 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $cmd = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    $proc = ($xml.Event.EventData.Data | Where-Object Name -eq "NewProcessName").'#text'
+    if ($proc -match "mshta\.exe" -and $cmd -match "(https?|ftp)://") {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Process=$proc; Cmd=$cmd }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] HTA hits: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+
+<h3>7.3 Script 8.3 — Deteção de LOLBAS / LOLBAS Detection</h3>
+<pre># Script 8.3 - LOLBAS Detector
+$out = ".\lolbas-detections.csv"
+$patterns = @{
+  "nltest" = "nltest.*\/dclist"; "certutil_dl" = "certutil.*-urlcache.*-f"
+  "reg_sam" = "reg.*save.*hklm\\\\sam"; "portproxy" = "netsh.*portproxy"
+  "vssadmin" = "vssadmin.*create.*shadow"; "dnscmd" = "dnscmd.*\/enumrecords"
+}
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4688 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $cmd = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    foreach ($k in $patterns.Keys) { if ($cmd -match $patterns[$k]) { $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Technique=$k; Cmd=$cmd } } }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] LOLBAS hits: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>7.4 Script 8.4 — Verificação de Integridade Pós-Nyx / Post-Nyx Integrity Check</h3>
+<pre># Script 8.4 - Forensic Artifact Integrity Check (deteta limpeza)
+$checks = [ordered]@{
+  "Security log exists" = (Get-WinEvent -LogName Security -MaxEvents 1 -EA SilentlyContinue) -ne $null
+  "PowerShell history exists" = Test-Path "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt"
+  "Prefetch files count" = (Get-ChildItem "C:\Windows\Prefetch\*.pf" -EA SilentlyContinue).Count
+  "Sysmon log exists" = (Get-WinEvent -LogName "Microsoft-Windows-Sysmon/Operational" -MaxEvents 1 -EA SilentlyContinue) -ne $null
+  "AMSI log exists" = (Get-WinEvent -LogName "Microsoft-Windows-Windows Defender/Operational" -MaxEvents 1 -EA SilentlyContinue) -ne $null
+}
+$checks.GetEnumerator() | ForEach-Object {
+  $c = if ($_.Value -eq $true -or ($_.Value -is [int] -and $_.Value -gt 0)) { "Green" } else { "Red" }
+  Write-Host "$($_.Key): $($_.Value)" -ForegroundColor $c
+}</pre>
+</section>
+
+<section id="mitre">
+<h2>8. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Remote Access Software</td><td>T1219</td><td>AnyDesk</td></tr>
+<tr><td>System Binary Proxy Execution: Mshta</td><td>T1218.005</td><td>HTA Compromise</td></tr>
+<tr><td>OS Credential Dumping: LSASS Memory</td><td>T1003.001</td><td>DeadMatter</td></tr>
+<tr><td>Indicator Removal: Clear Windows Event Logs</td><td>T1070.001</td><td>Nyx</td></tr>
+<tr><td>Indicator Removal: File Deletion</td><td>T1070.004</td><td>Nyx</td></tr>
+<tr><td>System Information Discovery</td><td>T1082</td><td>LOLBAS (nltest, systeminfo)</td></tr>
+<tr><td>Ingress Tool Transfer</td><td>T1105</td><td>certutil -urlcache</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>9. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Monitorizar AnyDesk</strong> — alertar sobre instalação/execução não aprovada; recolher traces para forense.</li>
+<li><strong>Credential Guard</strong> — ativar para proteger credenciais de memory carving.</li>
+<li><strong>Centralizar logs</strong> — o Nyx limpa artefactos locais, mas SIEM/EDR externos preservam evidência.</li>
+<li><strong>Desativar mshta.exe</strong> via AppLocker/WDAC se não for necessário.</li>
+<li><strong>Monitorizar LOLBAS</strong> — alertar sobre <code class="inline">nltest</code>, <code class="inline">certutil -urlcache</code>, <code class="inline">reg save hklm\sam</code>, <code class="inline">netsh portproxy</code>.</li>
+<li><strong>Sysmon + Script Block Logging</strong> — telemetria que o Nyx não consegue limpar se centralizada.</li>
+<li><strong>Honeytokens</strong> — traces AnyDesk falsos, logs canário.</li>
+<li><strong>Backups offline</strong> — contra limpeza de artefactos.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>10. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows isolada com snapshot. Instalar AnyDesk (simulação), criar atividade HTA simulada, e correr os scripts de deteção. Opcional: testar Nyx em snapshot e reverter. <strong>Objetivo:</strong> analisar artefactos, detetar técnicas e produzir relatório.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows VM with snapshot. Install AnyDesk (simulation), create simulated HTA activity, and run detection scripts. Optional: test Nyx on snapshot and revert. <strong>Goal:</strong> analyze artifacts, detect techniques, and produce report.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>AnyDesk artifacts</td><td><code class="inline">.\anydesk-analyzer.ps1</code></td><td><code class="inline">anydesk-artifacts.csv</code></td></tr>
+<tr><td>2</td><td>HTA detection</td><td><code class="inline">.\hta-detect.ps1</code></td><td><code class="inline">hta-detections.csv</code></td></tr>
+<tr><td>3</td><td>LOLBAS detection</td><td><code class="inline">.\lolbas-detect.ps1</code></td><td><code class="inline">lolbas-detections.csv</code></td></tr>
+<tr><td>4</td><td>Nyx DryRun</td><td><code class="inline">.\nyx.ps1 -DryRun</code></td><td>Output</td></tr>
+<tr><td>5</td><td>Integrity check</td><td><code class="inline">.\integrity-check.ps1</code></td><td>Output</td></tr>
+<tr><td>6</td><td>(Opcional) DeadMatter</td><td><code class="inline">Deadmatter.exe -f dump.raw -m carve</code></td><td>Hashes extraídos</td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li><code class="inline">anydesk-artifacts.csv</code></li>
+<li><code class="inline">hta-detections.csv</code></li>
+<li><code class="inline">lolbas-detections.csv</code></li>
+<li>Output Nyx DryRun</li>
+<li>Integrity check</li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>11. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Quais são os caminhos dos traces do AnyDesk? / What are the AnyDesk trace paths?</li>
+<li>Porque é que o DeadMatter não depende de offsets fixos? / Why doesn't DeadMatter depend on fixed offsets?</li>
+<li>O que faz o Nyx e porque é perigoso? / What does Nyx do and why is it dangerous?</li>
+<li>Como se deteta execução de HTA via mshta.exe? / How to detect HTA execution via mshta.exe?</li>
+<li>Dá três exemplos de LOLBAS usados por APTs chineses. / Give three LOLBAS examples used by Chinese APTs.</li>
+<li>Como se mitiga o abuso do AnyDesk? / How to mitigate AnyDesk abuse?</li>
+<li>Porque é que a centralização de logs é crucial contra o Nyx? / Why is log centralization crucial against Nyx?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>12. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu ferramentas e artefactos DFIR: análise de traces do AnyDesk (T1219), extração de credenciais de memória com DeadMatter (T1003.001), limpeza de artefactos com Nyx (T1070.001/004), investigação de compromissos HTA via mshta.exe (T1218.005), e abuso de LOLBAS por APTs chineses (T1082, T1105). Acrescentámos <strong>quatro scripts de impacto</strong> (análise de AnyDesk, deteção de HTA, deteção de LOLBAS, verificação de integridade pós-Nyx) que consolidam a análise e produzem evidência auditável. O Cap. 9 (PsMapExec) entra na exploração de Active Directory com PowerShell.</span>
+<span class="en">This chapter covered DFIR tools and artifacts: AnyDesk trace analysis (T1219), memory credential extraction with DeadMatter (T1003.001), artifact cleaning with Nyx (T1070.001/004), HTA compromise investigation via mshta.exe (T1218.005), and LOLBAS abuse by Chinese APTs (T1082, T1105). We added <strong>four impact scripts</strong> (AnyDesk analysis, HTA detection, LOLBAS detection, post-Nyx integrity check) that consolidate analysis and produce auditable evidence. Ch. 9 (PsMapExec) moves into Active Directory exploitation with PowerShell.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 8 / Ethical Hacker Training Manual — Ch. 8</div>
+<div style="margin-top:.6rem">
+<a href="cap07.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap09.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

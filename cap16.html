@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 16 — Evading Detection | Ch. 16</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 16 — Evading Detection</h1>
+<div class="sub">Ch. 16 — Obfuscation: psobf, ArgFuscator e PowerShell Script Obfuscator</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Avançado / Evasão</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#psobf">psobf</a></li><li><a href="#argfuscator">ArgFuscator</a></li>
+<li><a href="#jakoby">I-Am-Jakoby Obfuscator</a></li><li><a href="#impact">Scripts de Impacto</a></li>
+<li><a href="#mitre">MITRE</a></li><li><a href="#mitig">Mitigações</a></li>
+<li><a href="#lab">Laboratório</a></li><li><a href="#revq">Revisão</a></li>
+<li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender a ofuscação como técnica de evasão; instalar e usar o <strong>psobf</strong> (5 níveis de ofuscação); usar o <strong>ArgFuscator</strong> para ofuscar argumentos de linha de comando; usar o <strong>PowerShell Script Obfuscator</strong> de I-Am-Jakoby (Base64, Hex, ASCII, URL, binário, reversão); compreender porque a ofuscação em camadas aumenta o tempo de análise dos defensores; <strong>construir scripts de impacto nativos</strong> para deteção.</span>
+<span class="en">Understand obfuscation as an evasion technique; install and use <strong>psobf</strong> (5 obfuscation levels); use <strong>ArgFuscator</strong> to obfuscate command-line arguments; use the <strong>PowerShell Script Obfuscator</strong> by I-Am-Jakoby (Base64, Hex, ASCII, URL, binary, reversal); understand why layered obfuscation increases defender analysis time; <strong>build native impact scripts</strong> for detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">A ofuscação é uma das técnicas mais eficazes para evadir deteção. Ao transformar o código, tornas os padrões estáticos irreconhecíveis para assinaturas de AV e regras de SIEM simples. O artigo original apresenta três ferramentas complementares: o <strong>psobf</strong> (focado em scripts completos), o <strong>ArgFuscator</strong> (focado em argumentos de linha de comando) e o <strong>PowerShell Script Obfuscator</strong> de I-Am-Jakoby (codificação multi-camada).</span>
+<span class="en">Obfuscation is one of the most effective techniques for evading detection. By transforming the code, you make static patterns unrecognizable to AV signatures and simple SIEM rules. The original article presents three complementary tools: <strong>psobf</strong> (focused on complete scripts), <strong>ArgFuscator</strong> (focused on command-line arguments), and the <strong>PowerShell Script Obfuscator</strong> by I-Am-Jakoby (multi-layer encoding).</span>
+</div>
+</section>
+
+<section id="psobf">
+<h2>3. psobf — Obfuscador de Scripts <span class="badge orig">Original</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O <code class="inline">psobf</code> é um obfuscador de PowerShell escrito em Go. Oferece <strong>5 níveis de ofuscação</strong>, desde a simples separação de caracteres até à fragmentação completa do script. Cada nível adiciona complexidade e dificulta a análise estática.</span>
+<span class="en"><code class="inline">psobf</code> is a PowerShell obfuscator written in Go. It offers <strong>5 obfuscation levels</strong>, from simple character splitting to full script fragmentation. Each level adds complexity and makes static analysis harder.</span>
+</div>
+<h3>3.1 Instalação / Installation</h3>
+<pre># Requer Go instalado
+go install github.com/TaurusOmar/psobf@latest</pre>
+<h3>3.2 Níveis de ofuscação / Obfuscation levels</h3>
+<table>
+<tr><th>Nível</th><th>Técnica</th><th>Exemplo de output</th></tr>
+<tr><td>1</td><td>Separação de caracteres / Character splitting</td><td><code class="inline">$([char[]]("W","r","i","t","e"...)) -join ''</code></td></tr>
+<tr><td>2</td><td>Base64 encoding</td><td><code class="inline">[Convert]::FromBase64String('V3JpdGUt...')</code></td></tr>
+<tr><td>3</td><td>Base64 alternativo / Alternative Base64</td><td><code class="inline">$e = [Convert]::FromBase64String(...)</code></td></tr>
+<tr><td>4</td><td>Compressão + Base64 / Compression + Base64</td><td>GZip + Base64</td></tr>
+<tr><td>5</td><td>Fragmentação / Fragmentation</td><td>Script dividido em partes reconstruídas em runtime</td></tr>
+</table>
+<h3>3.3 Uso / Usage</h3>
+<pre># Ofuscação básica
+psobf -i revshell.ps1 -o obf.ps1 -level 5
+
+# Com pipeline específico
+psobf -i sample.ps1 -o out.ps1 -level 2 -pipeline "strenc" -strenc rc4 -strkey 0011223344556677 -seed 7</pre>
+<div class="lang">
+<span class="pt">O nível 5 é o mais agressivo, fragmentando o script em pedaços que são reconstruídos em runtime. Isto quebra assinaturas estáticas e dificulta a análise.</span>
+<span class="en">Level 5 is the most aggressive, fragmenting the script into pieces rebuilt at runtime. This breaks static signatures and hinders analysis.</span>
+</div>
+</section>
+
+<section id="argfuscator">
+<h2>4. ArgFuscator — Obfuscador de Argumentos <span class="badge orig">Original</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O <strong>ArgFuscator</strong> é uma aplicação web standalone que gera linhas de comando ofuscadas para executáveis nativos do sistema. Foca-se em <strong>argumentos</strong>, não em scripts completos, explorando falhas de parsing dos executáveis para contornar regras de deteção baseadas em linha de comando.</span>
+<span class="en"><strong>ArgFuscator</strong> is a standalone web application that generates obfuscated command lines for native system executables. It focuses on <strong>arguments</strong>, not complete scripts, exploiting executables' parsing flaws to bypass command-line-based detection rules.</span>
+</div>
+<h3>4.1 Funcionalidades / Features</h3>
+<table>
+<tr><th>Funcionalidade</th><th>Descrição</th></tr>
+<tr><td>Case randomization</td><td>Mistura maiúsculas/minúsculas aleatoriamente</td></tr>
+<tr><td>Quote tricks</td><td>Inserção de aspas em posições inválidas mas aceites</td></tr>
+<tr><td>Abbreviation expansion</td><td>Expansão de abreviaturas de argumentos</td></tr>
+<tr><td>Substitutions</td><td>Substituições equivalentes (ex.: <code class="inline">/</code> vs <code class="inline">-</code>)</td></tr>
+<tr><td>68 comandos suportados</td><td>whoami, net, netstat, cmd, powershell, etc.</td></tr>
+</table>
+<h3>4.2 Uso / Usage</h3>
+<pre># Interface web: ArgFuscator.net
+# Exemplo de comando original:
+whoami /all
+
+# Output ofuscado (exemplo):
+WhOaMi /AlL
+
+# Ou com aspas e substituições:
+"w"h"o"a"m"i" /a"l"l</pre>
+<div class="lang">
+<span class="pt">O ArgFuscator é particularmente útil para contornar regras de SIEM que procuram strings exatas como <code class="inline">whoami /all</code> ou <code class="inline">net user</code>.</span>
+<span class="en">ArgFuscator is particularly useful for bypassing SIEM rules that look for exact strings like <code class="inline">whoami /all</code> or <code class="inline">net user</code>.</span>
+</div>
+</section>
+
+<section id="jakoby">
+<h2>5. PowerShell Script Obfuscator (I-Am-Jakoby) <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O <strong>PowerShell Script Obfuscator</strong> de I-Am-Jakoby fornece um conjunto mais amplo de transformações. Em vez de focar em argumentos, visa <strong>scripts completos</strong>. Pode ofuscar código PowerShell através de Base64, Hex, ASCII, URL encoding, representações binárias, ou até reversão de strings.</span>
+<span class="en">The <strong>PowerShell Script Obfuscator</strong> by I-Am-Jakoby provides a broader set of transformations. Rather than focusing on arguments, it targets <strong>entire scripts</strong>. It can obfuscate PowerShell code through Base64, Hex, ASCII, URL encoding, binary representations, or even string reversal.</span>
+</div>
+<h3>5.1 Exemplo de uso / Usage example</h3>
+<pre># Reverse shell em Base64, executada com -e
+PS > powershell -e "JABjAGwAaQBlAG4AdAAgAD0A..."
+
+# Com Netcat a escutar, o payload ofuscado entrega a conexão</pre>
+<div class="lang">
+<span class="pt">A verdadeira vantagem vem de <strong>empilhar métodos</strong>. Um script que passa por binary encoding, depois string reversal, e finalmente Base64 parecerá totalmente aleatório até ser descodificado passo a passo. Mesmo que os defensores capturem o script ofuscado, o tempo necessário para remover múltiplas camadas cria margem de manobra.</span>
+<span class="en">The real advantage comes from <strong>stacking methods</strong>. A script that goes through binary encoding, then string reversal, and finally Base64 will look entirely random until decoded step by step. Even if defenders capture the obfuscated script, the time required to peel back multiple layers creates breathing room.</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>6. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam o blue team a detetar atividade de ofuscação e execução suspeita de PowerShell.</span>
+<span class="en">The scripts below help the blue team detect obfuscation activity and suspicious PowerShell execution.</span>
+</div>
+
+<h3>6.1 Script 16.1 — Deteção de Comandos PowerShell Codificados / Encoded PowerShell Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar <code class="inline">powershell -e</code>, <code class="inline">-EncodedCommand</code> e <code class="inline">-enc</code> em eventos 4688 e 4104. <strong>Evidência:</strong> <code class="inline">encoded-ps-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect <code class="inline">powershell -e</code>, <code class="inline">-EncodedCommand</code>, and <code class="inline">-enc</code> in events 4688 and 4104. <strong>Evidence:</strong> <code class="inline">encoded-ps-detect.csv</code>.</span>
+</div>
+<pre># Script 16.1 - Encoded PowerShell Detection
+$out = ".\encoded-ps-detect.csv"
+$hits = @()
+# Event 4688 - process creation
+Get-WinEvent -LogName Security -MaxEvents 2000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4688 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $cmd = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    if ($cmd -match "powershell.*(-e |-enc |-EncodedCommand)") {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Source="4688"; Command=$cmd }
+    }
+  }
+# Event 4104 - script block
+Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 2000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4104 } | ForEach-Object {
+    if ($_.Message -match "powershell.*(-e |-enc )") {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Source="4104"; Command=$_.Message.Substring(0,[Math]::Min(200,$_.Message.Length)) }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Encoded PS hits: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>6.2 Script 16.2 — Deteção de Ofuscação de Argumentos / Argument Obfuscation Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar padrões típicos do ArgFuscator (case randomization, aspas inválidas) em linhas de comando. <strong>Evidência:</strong> <code class="inline">arg-obfuscation-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect typical ArgFuscator patterns (case randomization, invalid quotes) in command lines. <strong>Evidence:</strong> <code class="inline">arg-obfuscation-detect.csv</code>.</span>
+</div>
+<pre># Script 16.2 - Argument Obfuscation Detection
+$out = ".\arg-obfuscation-detect.csv"
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 2000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4688 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $cmd = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    # Heuristic: mixed case in command names, excessive quotes
+    if ($cmd -match "^[A-Za-z]*[A-Z][a-z]+[A-Z]" -or $cmd -match '"[a-z]"[a-z]"' -or $cmd -match '[\"]{3,}') {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Command=$cmd }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Arg obfuscation hits: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+
+<h3>6.3 Script 16.3 — Deteção de Scripts Fragmentados / Fragmented Script Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar padrões de fragmentação do psobf nível 5 (arrays de strings reconstruídos com <code class="inline">-join</code> e <code class="inline">Invoke-Expression</code>). <strong>Evidência:</strong> <code class="inline">fragmented-script-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect psobf level 5 fragmentation patterns (string arrays rebuilt with <code class="inline">-join</code> and <code class="inline">Invoke-Expression</code>). <strong>Evidence:</strong> <code class="inline">fragmented-script-detect.csv</code>.</span>
+</div>
+<pre># Script 16.3 - Fragmented Script Detection
+$out = ".\fragmented-script-detect.csv"
+$hits = @()
+Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4104 } | ForEach-Object {
+    $msg = $_.Message
+    if (($msg -match "-join" -and $msg -match "Invoke-Expression") -or ($msg -match "\\$fragments" -and $msg -match "Invoke-Expression")) {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Snippet=$msg.Substring(0,[Math]::Min(300,$msg.Length)) }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Fragmented scripts: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+</section>
+
+<section id="mitre">
+<h2>7. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Obfuscated Files or Information</td><td>T1027</td><td>psobf, Jakoby, ArgFuscator</td></tr>
+<tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>Todo o capítulo</td></tr>
+<tr><td>Deobfuscate/Decode Files or Information</td><td>T1140</td><td>Contramedida do blue team</td></tr>
+<tr><td>Indicator Removal</td><td>T1070</td><td>Ofuscação dificulta logging</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>8. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>AMSI ativo</strong> — deteta payloads ofuscados em tempo real (descodifica antes de escanear).</li>
+<li><strong>Script Block Logging (4104)</strong> — regista o código <em>após</em> descodificação parcial, apanhando muitos obfuscadores.</li>
+<li><strong>Detetar <code class="inline">-EncodedCommand</code></strong> — Script 16.1.</li>
+<li><strong>Detetar ofuscação de argumentos</strong> — Script 16.2.</li>
+<li><strong>Detetar fragmentação</strong> — Script 16.3.</li>
+<li><strong>Desativar PowerShell 2.0</strong> — evita downgrade.</li>
+<li><strong>Constrained Language Mode</strong> — bloqueia <code class="inline">Invoke-Expression</code> e <code class="inline">[char[]]</code> casts.</li>
+<li><strong>AppLocker/WDAC</strong> — restringe execução de scripts não assinados.</li>
+<li><strong>Análise de sandbox</strong> — executar scripts suspeitos em ambiente controlado para descodificar.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>9. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows 10/11 isolada com PowerShell logging ativado. Kali com psobf instalado (Go). Snapshot antes. <strong>Objetivo:</strong> ofuscar um script com psobf (níveis 1–5), testar ArgFuscator (web), e correr os scripts de deteção.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows 10/11 VM with PowerShell logging enabled. Kali with psobf installed (Go). Snapshot before. <strong>Goal:</strong> obfuscate a script with psobf (levels 1–5), test ArgFuscator (web), and run detection scripts.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Ofuscar nível 1</td><td><code class="inline">psobf -i script.ps1 -o obf1.ps1 -level 1</code></td><td>Output</td></tr>
+<tr><td>2</td><td>Ofuscar nível 5</td><td><code class="inline">psobf -i script.ps1 -o obf5.ps1 -level 5</code></td><td>Output</td></tr>
+<tr><td>3</td><td>Executar obf5</td><td><code class="inline">powershell -File obf5.ps1</code></td><td>Output</td></tr>
+<tr><td>4</td><td>ArgFuscator</td><td><code class="inline">whoami /all</code> → <code class="inline">WhOaMi /AlL</code></td><td>Output</td></tr>
+<tr><td>5</td><td>Deteção encoded</td><td><code class="inline">.\encoded-ps-detect.ps1</code></td><td><code class="inline">encoded-ps-detect.csv</code></td></tr>
+<tr><td>6</td><td>Deteção arg</td><td><code class="inline">.\arg-obfuscation-detect.ps1</code></td><td><code class="inline">arg-obfuscation-detect.csv</code></td></tr>
+<tr><td>7</td><td>Deteção fragmentos</td><td><code class="inline">.\fragmented-script-detect.ps1</code></td><td><code class="inline">fragmented-script-detect.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Scripts obf1 e obf5</li>
+<li>Output de execução</li>
+<li>Comando ArgFuscator</li>
+<li><code class="inline">encoded-ps-detect.csv</code></li>
+<li><code class="inline">arg-obfuscation-detect.csv</code></li>
+<li><code class="inline">fragmented-script-detect.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>10. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Quais são os 5 níveis de ofuscação do psobf? / What are psobf's 5 obfuscation levels?</li>
+<li>Qual a diferença entre psobf e ArgFuscator? / What's the difference between psobf and ArgFuscator?</li>
+<li>O que faz o PowerShell Script Obfuscator de I-Am-Jakoby? / What does I-Am-Jakoby's PowerShell Script Obfuscator do?</li>
+<li>Porque é que empilhar métodos de ofuscação é vantajoso? / Why is stacking obfuscation methods advantageous?</li>
+<li>Como se deteta <code class="inline">powershell -e</code>? / How to detect <code class="inline">powershell -e</code>?</li>
+<li>Porque é que o Script Block Logging (4104) é eficaz contra ofuscação? / Why is Script Block Logging (4104) effective against obfuscation?</li>
+<li>Como se mitiga a ofuscação de argumentos? / How to mitigate argument obfuscation?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>11. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu três ferramentas de ofuscação: <strong>psobf</strong> (5 níveis, de separação de caracteres a fragmentação), <strong>ArgFuscator</strong> (obfuscação de argumentos de linha de comando via case randomization, aspas e substituições), e o <strong>PowerShell Script Obfuscator</strong> de I-Am-Jakoby (Base64, Hex, ASCII, URL, binário, reversão, e empilhamento de camadas). A ofuscação em camadas aumenta o tempo de análise dos defensores e cria margem de manobra. Acrescentámos <strong>três scripts de impacto</strong> (deteção de comandos codificados, ofuscação de argumentos, scripts fragmentados) que ajudam o blue team a detetar estas técnicas. O Cap. 17 entra na DFIR com Live-Forensicator.</span>
+<span class="en">This chapter covered three obfuscation tools: <strong>psobf</strong> (5 levels, from character splitting to fragmentation), <strong>ArgFuscator</strong> (command-line argument obfuscation via case randomization, quotes, and substitutions), and the <strong>PowerShell Script Obfuscator</strong> by I-Am-Jakoby (Base64, Hex, ASCII, URL, binary, reversal, and layer stacking). Layered obfuscation increases defender analysis time and creates breathing room. We added <strong>three impact scripts</strong> (encoded command detection, argument obfuscation, fragmented scripts) that help the blue team detect these techniques. Ch. 17 moves into DFIR with Live-Forensicator.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 16 / Ethical Hacker Training Manual — Ch. 16</div>
+<div style="margin-top:.6rem">
+<a href="cap15.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap17.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

